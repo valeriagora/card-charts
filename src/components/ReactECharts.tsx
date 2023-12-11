@@ -12,6 +12,7 @@ export interface ReactEChartsProps {
   style?: CSSProperties;
   settings?: SetOptionOpts;
   loading?: boolean;
+  withImage?: boolean;
 }
 
 export function ReactECharts({
@@ -19,6 +20,7 @@ export function ReactECharts({
   style,
   settings,
   loading,
+  withImage = false,
 }: ReactEChartsProps): JSX.Element {
   const chartRef = useRef<HTMLDivElement>(null);
 
@@ -66,7 +68,6 @@ export function ReactECharts({
       style={{
         width: "100%",
         height: "100%",
-        // border: "1px dashed #343",
         ...style,
       }}
     />
