@@ -1,25 +1,5 @@
 import { ReactEChartsProps } from "@/components/ReactECharts";
 
-export const data = [
-  {
-    value: 10,
-    name: "Search Engine Search Engine Search Engine Search Engine e Search Engine Search Engine Search Engine e Search Engine Search Engine Search Engine",
-  },
-  { value: 35, name: "Direct" },
-  { value: 25, name: "Other" },
-  { value: 15, name: "Option 1" },
-  { value: 2, name: "Option 2" },
-  { value: 3, name: "Option 3" },
-  { value: 4, name: "Option 4" },
-  { value: 3, name: "Option 5 Engine Search Engine Search Engine Search" },
-  { value: 2, name: "Option 6" },
-  { value: 2, name: "Option 7" },
-  { value: 2, name: "Option 8" },
-  { value: 2, name: "Option 9" },
-  { value: 2, name: "Option 10" },
-  { value: 2, name: "Option 11" },
-  { value: 1, name: "Option 12" },
-];
 const pieLegendWidths = {
   sm: 148,
   md: [152, 300],
@@ -38,14 +18,15 @@ const pieColors = [
   "#F9DE82",
   "#39519B",
 ];
-const pieLegendFormatter = (maxSymbols: number) => (name: string) => {
-  const percents = data.find((item) => item.name === name)?.value;
-  const label = `{value|${percents}%} {name|${name}}`;
-  const overflowed = `{value|${percents}%} {name|${
-    name.slice(0, maxSymbols - 1) + "..."
-  }}`;
-  return name.length < maxSymbols ? label : overflowed;
-};
+const pieLegendFormatter =
+  (data: any[], maxSymbols: number) => (name: string) => {
+    const percents = data.find((item) => item.name === name)?.value;
+    const label = `{value|${percents}%} {name|${name}}`;
+    const overflowed = `{value|${percents}%} {name|${
+      name.slice(0, maxSymbols - 1) + "..."
+    }}`;
+    return name.length < maxSymbols ? label : overflowed;
+  };
 const pieTooltip = {
   trigger: "item",
 };
@@ -58,6 +39,8 @@ const pieLegend = {
   top: "center",
   orient: "vertical",
   inactiveColor: "#333",
+  itemGap: 8,
+  pageButtonGap: 16,
 };
 const pieLegendTextStyle = {
   width: pieLegendWidths.sm,
@@ -87,7 +70,7 @@ const pieSeries = {
     show: false,
   },
 };
-export const smOption: ReactEChartsProps["option"] = {
+export const smOption: ReactEChartsProps["option"] = (data) => ({
   tooltip: pieTooltip,
   grid: {
     ...pieGrid,
@@ -96,27 +79,29 @@ export const smOption: ReactEChartsProps["option"] = {
   series: {
     ...pieSeries,
     center: ["60px", "50%"],
-    radius: ["60%", "90%"],
+    radius: [40, 56],
     data,
   },
   legend: {
-    formatter: pieLegendFormatter(pieLegendMaxSymbolsCount.sm),
+    formatter: pieLegendFormatter(data, pieLegendMaxSymbolsCount.sm),
     ...pieLegend,
     left: 124,
     textStyle: {
       ...pieLegendTextStyle,
     },
   },
-};
+});
 //
+
 export const getMdOption: ReactEChartsProps["option"] = (
+  data: any[],
   withImage: boolean
 ) => ({
   tooltip: pieTooltip,
   series: {
     ...pieSeries,
     center: ["25%", "50%"],
-    radius: ["30%", "50%"],
+    radius: [52, 92],
     data,
   },
   grid: {
@@ -125,6 +110,7 @@ export const getMdOption: ReactEChartsProps["option"] = (
   },
   legend: {
     formatter: pieLegendFormatter(
+      data,
       pieLegendMaxSymbolsCount.md[withImage ? 0 : 1]
     ),
     textStyle: {
@@ -132,17 +118,19 @@ export const getMdOption: ReactEChartsProps["option"] = (
       width: pieLegendWidths.md[withImage ? 0 : 1],
     },
     ...pieLegend,
+    pageIconSize: 16,
     left: "50%",
   },
 });
 export const getLgOption: ReactEChartsProps["option"] = (
+  data: any[],
   withImage: boolean
 ) => ({
   tooltip: pieTooltip,
   series: {
     ...pieSeries,
     center: ["25%", "50%"],
-    radius: ["60%", "90%"],
+    radius: [51, 91],
     data,
   },
   grid: {
@@ -154,6 +142,7 @@ export const getLgOption: ReactEChartsProps["option"] = (
       fontSize: 1,
     },
     formatter: pieLegendFormatter(
+      data,
       pieLegendMaxSymbolsCount.lg[withImage ? 0 : 1]
     ),
     textStyle: {

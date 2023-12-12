@@ -1,5 +1,5 @@
 .sm {
-  padding: 16px 20px;
+  padding: 12px 20px;
   width: 320px;
   height: 200px;
   background: #222430;
@@ -26,13 +26,14 @@
   font-style: normal;
   font-weight: 500;
   line-height: 20px;
+  height: 40px;
   color: #fff;
 }
 .lg {
   margin: 10px 0;
-  padding: 16px 20px;
+  padding: 12px 20px 24px;
   width: 100%;
-  min-height: 200px;
+  min-height: 272px;
   background: #222430;
   border-radius: 16px;
   box-sizing: border-box;
@@ -43,7 +44,7 @@
 }
 .md {
   margin-top: 10px;
-  padding: 16px 20px;
+  padding: 12px 20px;
   width: 656px;
   height: 416px;
   background: #222430;

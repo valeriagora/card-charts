@@ -20,7 +20,6 @@ export function ReactECharts({
   style,
   settings,
   loading,
-  withImage = false,
 }: ReactEChartsProps): JSX.Element {
   const chartRef = useRef<HTMLDivElement>(null);
 
