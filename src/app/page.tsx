@@ -1,18 +1,15 @@
 "use client";
-import { ReactECharts } from "@/components/ReactECharts";
-import { getLgOption, getMdOption, smOption } from "@/data";
-import { styled } from "@mui/material";
-import { useState } from "react";
 import styles from "./page.module.css";
-import { Button } from "@mui/material";
+import { Button, styled } from "@mui/material";
+import Link from "next/link";
 
-const LgChart = styled("div")<{ height?: number }>(({ height }) => ({
+export const LgChart = styled("div")<{ height?: number }>(({ height }) => ({
   height: height > 188 ? height : 188,
   position: "relative",
   boxSizing: "border-box",
 }));
 
-const Image = ({ url }) => {
+export const Image = ({ url }) => {
   return (
     <div
       style={{
@@ -32,7 +29,7 @@ const Image = ({ url }) => {
   );
 };
 
-const SmallCard = ({ title, children }: any) => {
+export const SmallCard = ({ title, children }: any) => {
   return (
     <div className={styles.sm}>
       <h3 className={styles.title}>
@@ -42,7 +39,7 @@ const SmallCard = ({ title, children }: any) => {
     </div>
   );
 };
-const MediumCard = ({ title, children, imageUrl }: any) => {
+export const MediumCard = ({ title, children, imageUrl }: any) => {
   return (
     <div className={styles.md}>
       <h3 className={styles.title}>
@@ -55,7 +52,7 @@ const MediumCard = ({ title, children, imageUrl }: any) => {
     </div>
   );
 };
-const LargeCard = ({ data, title, children, imageUrl }: any) => {
+export const LargeCard = ({ data, title, children, imageUrl }: any) => {
   return (
     <div className={styles.lg}>
       <h3 className={styles.title}>
@@ -68,54 +65,7 @@ const LargeCard = ({ data, title, children, imageUrl }: any) => {
     </div>
   );
 };
+
 export default function Home() {
-  const url =
-    "https://images.unsplash.com/photo-1702068213563-2d29f10639ec?q=80&w=2048&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D";
-  const [imageUrl, setImageUrl] = useState("");
-  const [data] = useState([
-    {
-      value: 10,
-      name: "Search Engine Search Engine Search Engine Search Engine e Search Engine Search Engine Search Engine e Search Engine Search Engine Search Engine",
-    },
-    {
-      value: 20,
-      name: "Search Engine",
-    },
-    { value: 25, name: "Other" },
-    { value: 15, name: "Option 1" },
-    { value: 2, name: "Option 2" },
-    { value: 3, name: "Option 3" },
-    { value: 5, name: "Option 4" },
-    { value: 3, name: "Option 5 Engine Search Engine Search Engine Search" },
-    { value: 2, name: "Option 6" },
-    { value: 2, name: "Option 7" },
-    { value: 2, name: "Option 8" },
-    { value: 2, name: "Option 9" },
-    { value: 2, name: "Option 10" },
-    { value: 2, name: "Option 11" },
-    { value: 8, name: "Option 12" },
-    { value: 2, name: "Option 13" },
-  ]);
-
-  const toggleImg = () => {
-    setImageUrl(imageUrl ? "" : url);
-  };
-
-  const withImage = !!imageUrl;
-  return (
-    <>
-      <Button sx={{ marginBottom: 4 }} variant="contained" onClick={toggleImg}>
-        Toggle image
-      </Button>
-      <SmallCard>
-        <ReactECharts option={smOption(data)} />
-      </SmallCard>
-      <MediumCard imageUrl={imageUrl}>
-        <ReactECharts option={getMdOption(data, withImage)} />
-      </MediumCard>
-      <LargeCard data={data} imageUrl={imageUrl}>
-        <ReactECharts option={getLgOption(data, withImage)} />
-      </LargeCard>
-    </>
-  );
+  return <div />;
 }
