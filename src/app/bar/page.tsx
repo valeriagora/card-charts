@@ -5,29 +5,22 @@ import { SmallCard } from "../page";
 import { smOption } from "@/data/bar";
 import { url } from "../pie/page";
 
-const barData = [
-  {
-    value: 10,
-    name: "Search Engine Search Engine Search Engine Search Engine e Search Engine Search Engine Search Engine e Search Engine Search Engine Search Engine",
-  },
-  {
-    value: 20,
-    name: "Search Engine",
-  },
-  { value: 25, name: "Other" },
-  { value: 15, name: "Option 1" },
-  { value: 2, name: "Option 2" },
-  { value: 3, name: "Option 3" },
-  { value: 5, name: "Option 4" },
-  { value: 3, name: "Option 5 Engine Search Engine Search Engine Search" },
-  { value: 2, name: "Option 6" },
-  { value: 2, name: "Option 7" },
-  { value: 2, name: "Option 8" },
-  { value: 2, name: "Option 9" },
-  { value: 2, name: "Option 10" },
-  { value: 2, name: "Option 11" },
-  { value: 8, name: "Option 12" },
-  { value: 2, name: "Option 13" },
+type OptionSourceData = [string, string | number][];
+const barData: OptionSourceData = [
+  ["product", "amount"],
+  // ["...", 0],
+  ["Cocoa2", 5],
+  ["Yerba Mate", 10],
+  ["Cocoa", 15],
+  ["Brownie", 20],
+  ["Coffee", 25],
+  ["Matcha Latte dassadsda dssdds", 50],
+
+  // ["Brownie3", 1], // -
+  // ["Brownie4", 20],
+  // ["Cocoa24", 5],
+  // ["Coffee4", 25],
+  // ["Brownie34", 11],
 ];
 function Bar() {
   const [imageUrl, setImageUrl] = useState("");
@@ -36,6 +29,7 @@ function Bar() {
     setImageUrl(imageUrl ? "" : url);
   };
 
+  const hasOverflow = barData.length > 6;
   const withImage = !!imageUrl;
   return (
     <>
@@ -46,19 +40,20 @@ function Bar() {
       >
         Toggle image
       </Button> */}
-      {/* <SmallCard> */}
-      <div
-        style={{
-          width: 280,
-          height: 120,
-          border: "1px solid pink",
-          boxSizing: "border-box",
-          //   transform: "rotate(180deg)",
-        }}
-      >
-        <ReactECharts option={smOption(barData)} />
-      </div>
-      {/* </SmallCard> */}
+      <SmallCard>
+        <div
+          className="grid"
+          style={{
+            width: 280,
+            height: 120,
+            // border: "1px solid pink",
+            boxSizing: "border-box",
+            // background: "#292A33",
+          }}
+        >
+          <ReactECharts option={smOption(barData, hasOverflow)} />
+        </div>
+      </SmallCard>
       {/* <MediumCard imageUrl={imageUrl}>
         <ReactECharts option={getMdOption(pieData, withImage)} />
       </MediumCard>

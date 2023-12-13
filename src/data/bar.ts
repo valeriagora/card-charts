@@ -1,47 +1,93 @@
 import { ReactEChartsProps } from "@/components/ReactECharts";
 
-export const smOption: ReactEChartsProps["option"] = (data) => ({
+export const smOption: ReactEChartsProps["option"] = (
+  data: any[],
+  hasOverflow: boolean
+) => ({
+  color: "#25B4C8",
+  backgroundStyle: {
+    borderRadius: 10,
+  },
   dataset: {
-    source: [
-      ["product", "amount"],
-      ["Matcha Latte", -50],
-      ["Milk Tea", -10],
-      ["Cheese Cocoa", -15],
-      ["Cheese Brownie", -25],
-    ],
+    source: hasOverflow
+      ? [...data.slice(0, 1), ["...", 0], ...data.slice(1, 6)]
+      : data,
   },
   grid: {
-    backgroundColor: "#ddd",
-    borderColor: "#333",
-    top: 10,
-    bottom: 30,
-    // left: 50,
-    // right: 50,
+    top: 0,
+    bottom: 0,
+    right: 148,
   },
-  xAxis: { name: "amount" },
+  xAxis: {
+    name: null,
+    inverse: true,
+    axisLabel: { show: false },
+    splitLine: {
+      show: true,
+      lineStyle: {
+        color: "#6C7080",
+        width: 1,
+      },
+    },
+  },
   yAxis: {
+    axisLabel: {
+      margin: 12,
+
+      formatter: (name: string, idx: number) => {
+        console.log("V", idx, name);
+
+        if (idx) {
+          const item = data[idx];
+          const percents = item[1];
+          const label = `{value|${percents}%} {name|${name}}`;
+          return label;
+        }
+        const label = `{name|${name}}`;
+        return label;
+      },
+      textStyle: {
+        fontSize: 14,
+        fontWeight: 500,
+        color: "#6C7080",
+        fontFamily: "Manrope",
+        rich: {
+          value: {
+            color: "#fff",
+          },
+          name: {
+            color: "#C8CAD0",
+          },
+        },
+      },
+      width: 150,
+      overflow: "truncate",
+    },
+    position: "right",
     type: "category",
     axisLine: {
-      show: false,
-      // onZero: false,
+      show: true,
+      lineStyle: {
+        color: "#6C7080",
+      },
     },
     axisTick: {
       show: false,
     },
   },
-  label: { show: true },
   series: [
     {
       type: "bar",
       encode: {
-        // Map the "amount" column to X axis.
         x: "amount",
-        // Map the "product" column to Y axis
         y: "product",
+      },
+      itemStyle: {
+        // color: "#25B4C8",
+        barBorderRadius: 2,
       },
     },
   ],
-  // legend: { show: true, align: "right", right: 50 },
 });
 //
 

@@ -32,13 +32,13 @@ const pieTooltip = {
 };
 const pieLegend = {
   type: "scroll",
-  pageIconColor: "#3B3E4A",
-  pageIconInactiveColor: "#2F313B",
+  pageIconColor: "#C8CAD0",
+  pageIconInactiveColor: "#6C7080",
   pageIconSize: 10,
   icon: "circle",
   top: "center",
   orient: "vertical",
-  inactiveColor: "#333",
+  inactiveColor: "#6C7080",
   itemGap: 8,
   pageButtonGap: 16,
 };
@@ -68,6 +68,9 @@ const pieSeries = {
   color: pieColors,
   label: {
     show: false,
+  },
+  emptyCircleStyle: {
+    color: "#6C7080",
   },
 };
 export const smOption: ReactEChartsProps["option"] = (data) => ({
