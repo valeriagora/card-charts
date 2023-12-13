@@ -1,25 +1,31 @@
 "use client";
 import { ReactECharts } from "@/components/ReactECharts";
 import React, { useState } from "react";
-import { MediumCard, SmallCard } from "../page";
-import { smOption, getMdOption } from "@/data/bar";
+import { LargeCard, MediumCard, SmallCard } from "../page";
+import { smOption, getMdOption, getLgOption } from "@/data/bar";
 import { url } from "../pie/page";
+import { Button } from "@mui/material";
 
 type OptionSourceData = [string, string | number][];
 const barData: OptionSourceData = [
   ["product", "amount"],
+  // ['...', 0],
+  ["Close-ended 2 Boring dassadsda dssdds", 5],
+  ["Entertaining 2", 10],
+  ["Exciting 2", 5],
+  ["Boring", 5],
+
   ["Engaging", 5],
   ["Close-ended", 10],
   ["Intriguing", 15],
   ["Entertaining", 20],
   ["Exciting", 25],
-  ["Boring dassadsda dssdds", 50],
-
-  // ["Brownie3", 1],
-  // ["Brownie4", 20],
-  // ["Cocoa24", 5],
-  // ["Coffee4", 25],
-  // ["Brownie34", 11],
+  [
+    "Boring dassadsda dssdds Boring dassadsda dssdds Boring dassadsda dssdds",
+    50,
+  ],
+  ["Boring dassadsda", 1],
+  ["Boring 3", 3],
 ];
 function Bar() {
   const [imageUrl, setImageUrl] = useState("");
@@ -28,17 +34,19 @@ function Bar() {
     setImageUrl(imageUrl ? "" : url);
   };
 
-  const hasOverflow = barData.length > 6;
+  const smHasOverflow = barData.length > 6;
+  const mdHasOverflow = barData.length > 12;
   const withImage = !!imageUrl;
+  console.log("o", mdHasOverflow);
   return (
     <>
-      {/* <Button
+      <Button
         sx={{ marginBottom: 4, display: "block" }}
         variant="contained"
         onClick={toggleImg}
       >
         Toggle image
-      </Button> */}
+      </Button>
       <SmallCard>
         <div
           className="grid"
@@ -50,15 +58,15 @@ function Bar() {
             // background: "#292A33",
           }}
         >
-          <ReactECharts option={smOption(barData, hasOverflow)} />
+          <ReactECharts option={smOption(barData, smHasOverflow)} />
         </div>
       </SmallCard>
       <MediumCard imageUrl={imageUrl}>
-        <ReactECharts option={getMdOption(barData, withImage)} />
+        <ReactECharts option={getMdOption(barData, withImage, mdHasOverflow)} />
       </MediumCard>
-      {/*  <LargeCard data={pieData} imageUrl={imageUrl}>
-        <ReactECharts option={getLgOption(pieData, withImage)} />
-      </LargeCard> */}
+      <LargeCard data={barData} imageUrl={imageUrl}>
+        <ReactECharts option={getLgOption(barData, withImage)} />
+      </LargeCard>
     </>
   );
 }

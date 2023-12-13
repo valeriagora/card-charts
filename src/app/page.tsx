@@ -39,7 +39,12 @@ export const SmallCard = ({ title, children }: any) => {
     </div>
   );
 };
-export const MediumCard = ({ title, children, imageUrl }: any) => {
+export const MediumCard = ({
+  title,
+  children,
+  imageUrl,
+  type = "pie",
+}: any) => {
   return (
     <div className={styles.md}>
       <h3 className={styles.title}>
