@@ -50,12 +50,14 @@ export const smOption: ReactEChartsProps["option"] = (
         fontSize: 14,
         fontWeight: 500,
         color: "#6C7080",
-        fontFamily: "Manrope",
+        // fontFamily: "Manrope",
         rich: {
           value: {
+            fontFamily: "Manrope",
             color: "#fff",
           },
           name: {
+            fontFamily: "Manrope",
             color: "#C8CAD0",
           },
         },
@@ -90,7 +92,99 @@ export const smOption: ReactEChartsProps["option"] = (
   ],
 });
 //
+export const getMdOption: ReactEChartsProps["option"] = (
+  data: any[],
+  hasOverflow: boolean
+) => ({
+  color: "#25B4C8",
+  backgroundStyle: {
+    borderRadius: 10,
+  },
+  dataset: {
+    source: hasOverflow
+      ? [...data.slice(0, 1), ["...", 0], ...data.slice(1, 6)]
+      : data,
+  },
+  grid: {
+    top: 0,
+    bottom: 0,
+    right: 148,
+  },
+  xAxis: {
+    name: null,
+    inverse: true,
+    axisLabel: { show: false },
+    splitLine: {
+      show: true,
+      lineStyle: {
+        color: "#6C7080",
+        width: 1,
+      },
+    },
+  },
+  yAxis: {
+    axisLabel: {
+      margin: 12,
 
+      formatter: (name: string, idx: number) => {
+        console.log("V", idx, name);
+
+        if (idx) {
+          const item = data[idx];
+          const percents = item[1];
+          const label = `{value|${percents}%} {name|${name}}`;
+          return label;
+        }
+        const label = `{name|${name}}`;
+        return label;
+      },
+      textStyle: {
+        fontSize: 14,
+        fontWeight: 500,
+        color: "#6C7080",
+        // fontFamily: "Manrope",
+        rich: {
+          value: {
+            fontFamily: "Manrope",
+            color: "#fff",
+            width: 50,
+          },
+          name: {
+            fontFamily: "Manrope",
+            color: "#C8CAD0",
+            width: 50,
+          },
+        },
+      },
+      width: 150,
+      overflow: "truncate",
+    },
+    position: "right",
+    type: "category",
+    axisLine: {
+      show: true,
+      lineStyle: {
+        color: "#6C7080",
+      },
+    },
+    axisTick: {
+      show: false,
+    },
+  },
+  series: [
+    {
+      type: "bar",
+      encode: {
+        x: "amount",
+        y: "product",
+      },
+      itemStyle: {
+        // color: "#25B4C8",
+        barBorderRadius: 2,
+      },
+    },
+  ],
+});
 // export const getMdOption: ReactEChartsProps["option"] = (
 //   data: any[],
 //   withImage: boolean

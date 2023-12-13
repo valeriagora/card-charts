@@ -1,3 +1,5 @@
+@import url("https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600&display=swap");
+
 .sm {
   padding: 12px 20px;
   width: 320px;
@@ -17,6 +19,7 @@
   position: relative;
   width: 100%;
   height: 100%;
+  border: 1px solid crimson;
 }
 .title {
   margin: 0;

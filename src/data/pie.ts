@@ -41,17 +41,24 @@ const pieLegend = {
   inactiveColor: "#6C7080",
   itemGap: 8,
   pageButtonGap: 16,
+  pageTextStyle: {
+    fontFamily: "Manrope",
+    fontSize: 14,
+    color: "#C8CAD0",
+  },
+  // color: "#C8CAD0",
 };
 const pieLegendTextStyle = {
   width: pieLegendWidths.sm,
   overflow: "break",
-  fontFamily: "Manrope, sans-serif",
   rich: {
     value: {
+      fontFamily: "Manrope",
       color: "#fff",
       fontSize: 14,
     },
     name: {
+      fontFamily: "Manrope",
       color: "#6C7080",
       fontSize: 14,
     },

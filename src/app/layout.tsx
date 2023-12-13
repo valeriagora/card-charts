@@ -1,9 +1,9 @@
 import "./globals.css";
-import { Inter } from "next/font/google";
+import { Inter, Manrope } from "next/font/google";
 import Link from "next/link";
 import { Button } from "@mui/material";
 
-const inter = Inter({ subsets: ["latin"] });
+const inter = Manrope({ subsets: ["latin"] });
 
 export const metadata = {
   title: "Create Next App",

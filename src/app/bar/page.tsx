@@ -1,22 +1,21 @@
 "use client";
 import { ReactECharts } from "@/components/ReactECharts";
 import React, { useState } from "react";
-import { SmallCard } from "../page";
-import { smOption } from "@/data/bar";
+import { MediumCard, SmallCard } from "../page";
+import { smOption, getMdOption } from "@/data/bar";
 import { url } from "../pie/page";
 
 type OptionSourceData = [string, string | number][];
 const barData: OptionSourceData = [
   ["product", "amount"],
-  // ["...", 0],
-  ["Cocoa2", 5],
-  ["Yerba Mate", 10],
-  ["Cocoa", 15],
-  ["Brownie", 20],
-  ["Coffee", 25],
-  ["Matcha Latte dassadsda dssdds", 50],
+  ["Engaging", 5],
+  ["Close-ended", 10],
+  ["Intriguing", 15],
+  ["Entertaining", 20],
+  ["Exciting", 25],
+  ["Boring dassadsda dssdds", 50],
 
-  // ["Brownie3", 1], // -
+  // ["Brownie3", 1],
   // ["Brownie4", 20],
   // ["Cocoa24", 5],
   // ["Coffee4", 25],
@@ -54,10 +53,10 @@ function Bar() {
           <ReactECharts option={smOption(barData, hasOverflow)} />
         </div>
       </SmallCard>
-      {/* <MediumCard imageUrl={imageUrl}>
-        <ReactECharts option={getMdOption(pieData, withImage)} />
+      <MediumCard imageUrl={imageUrl}>
+        <ReactECharts option={getMdOption(barData, withImage)} />
       </MediumCard>
-      <LargeCard data={pieData} imageUrl={imageUrl}>
+      {/*  <LargeCard data={pieData} imageUrl={imageUrl}>
         <ReactECharts option={getLgOption(pieData, withImage)} />
       </LargeCard> */}
     </>

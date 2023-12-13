@@ -33,7 +33,7 @@ export const SmallCard = ({ title, children }: any) => {
   return (
     <div className={styles.sm}>
       <h3 className={styles.title}>
-        Which words would you use to describe the TV promo?
+        Which words would you use to describe the TV promo a?
       </h3>
       <div className={styles.smChart}>{children}</div>
     </div>
