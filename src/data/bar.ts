@@ -40,25 +40,30 @@ export const smOption: ReactEChartsProps["option"] = (
         if (idx) {
           const item = data[idx];
           const percents = item[1];
-          const label = `{value|${percents}%} {name|${name}}`;
+          const label = `{value|${percents}%}{space| }{name|${name}}`;
           return label;
         }
         const label = `{name|${name}}`;
         return label;
+      },
+      rich: {
+        value: {
+          color: 'red',
+          lineHeight: 10,
+          width:  25,
+        },
+        name: {
+          color: "#C8CAD0",
+        },
+        space: {
+          width:  5,
+        },  
       },
       textStyle: {
         fontSize: 14,
         fontWeight: 500,
         color: "#6C7080",
         fontFamily: "Manrope",
-        rich: {
-          value: {
-            color: "#fff",
-          },
-          name: {
-            color: "#C8CAD0",
-          },
-        },
       },
       width: 150,
       overflow: "truncate",
@@ -88,6 +93,12 @@ export const smOption: ReactEChartsProps["option"] = (
       },
     },
   ],
+  legend: {
+    formatter: function (name:any) {
+      // Using HTML for precise spacing
+      return `${name}<span style='display:inline-block;width:10px;'></span>`;
+    },
+  }
 });
 //
 
