@@ -7,6 +7,9 @@ export const LgChart = styled("div")<{ height?: number }>(({ height }) => ({
   height: height > 188 ? height : 188,
   position: "relative",
   boxSizing: "border-box",
+  display: "flex",
+  alignItems: "center",
+  border: "1px solid #ddd",
 }));
 
 export const Image = ({ url }) => {
