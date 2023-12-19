@@ -71,10 +71,10 @@ const SmToMdChart = styled("div")<{ size: "sm" | "md" }>(({ size }) => ({
 export const DndCard = ({ title, children, size, imageUrl }: any) => {
   return (
     <>
-      <CardContainer size={size}>
-        {/* <h3 className={styles.title}>
+      <CardContainer size={size} id="capture">
+        <h3 className={styles.title}>
           Which words would you use to describe the TV promo?
-        </h3> */}
+        </h3>
         <SmToMdChart size={size}>
           {children}
           {imageUrl && size !== "sm" && <Image url={imageUrl} />}

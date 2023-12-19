@@ -9,12 +9,14 @@ import { styled } from "@mui/material";
 import html2canvas from "html2canvas";
 type OptionSourceData = [string, string | number, string][];
 
-const images = [
-  {
-    url: "https://images.unsplash.com/photo-1702744473287-4cc284e97206?q=80&w=2864&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-    id: "Exciting 2",
-  },
-];
+export const images = {
+  exciting:
+    "https://images.unsplash.com/photo-1702744473287-4cc284e97206?q=80&w=2864&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+  entertaining:
+    "https://images.unsplash.com/photo-1682687981603-ae874bf432f2?q=80&w=2787&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDF8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+  closeEnded:
+    "https://images.unsplash.com/photo-1702893576128-21feb60299d1?q=80&w=2940&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+};
 const barData: OptionSourceData = [
   ["product", "amount", "url"],
   // ['...', 0],
@@ -29,21 +31,9 @@ const barData: OptionSourceData = [
   // ["Close-ended", 10],
   // ["Engaging", 5],
   // ["Boring", 5],
-  [
-    "Exciting 2",
-    5,
-    "https://images.unsplash.com/photo-1702744473287-4cc284e97206?q=80&w=2864&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-  ],
-  [
-    "Entertaining 2",
-    10,
-    "https://images.unsplash.com/photo-1682687981603-ae874bf432f2?q=80&w=2787&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDF8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-  ],
-  [
-    "Close-ended 2 Boring dassadsda dssdds",
-    5,
-    "https://images.unsplash.com/photo-1702893576128-21feb60299d1?q=80&w=2940&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-  ],
+  ["Exciting", 5, "exciting"],
+  ["Entertaining", 10, "entertaining"],
+  ["Close-ended", 5, "closeEnded"],
 
   // ["Boring 3", 3],
   // ["Engaging 4", 5],

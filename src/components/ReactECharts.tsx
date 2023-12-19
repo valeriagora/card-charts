@@ -78,7 +78,7 @@ export function ReactECharts({
 
   return (
     <div
-      id="capture"
+      // id="capture"
       ref={chartRef}
       style={{
         width: "100%",
