@@ -1,5 +1,5 @@
 "use client";
-import React, { useRef, useEffect } from "react";
+import React, { useRef, useEffect, RefObject } from "react";
 import { init, getInstanceByDom } from "echarts";
 import type { CSSProperties } from "react";
 import type { EChartsOption, ECharts, SetOptionOpts } from "echarts";
@@ -13,6 +13,8 @@ export interface ReactEChartsProps {
   settings?: SetOptionOpts;
   loading?: boolean;
   withImage?: boolean;
+  //
+  containerRef: RefObject<HTMLDivElement | null>;
 }
 
 export function ReactECharts({
@@ -20,8 +22,9 @@ export function ReactECharts({
   style,
   settings,
   loading,
+  containerRef,
 }: ReactEChartsProps): JSX.Element {
-  const chartRef = useRef<HTMLDivElement>(null);
+  const chartRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
     // Initialize chart
@@ -35,14 +38,26 @@ export function ReactECharts({
     function resizeChart() {
       chart?.resize();
     }
+
+    const ref = containerRef?.current;
+    const observer = new ResizeObserver(([{ target }]) => {
+      // const boundingClientRect = target.getBoundingClientRect();
+      // console.log(target, boundingClientRect);
+      chart?.resize();
+    });
+    if (ref) {
+      observer.observe(ref);
+    }
+    //
     window.addEventListener("resize", resizeChart);
 
     // Return cleanup function
     return () => {
       chart?.dispose();
       window.removeEventListener("resize", resizeChart);
+      ref && observer.unobserve(ref);
     };
-  }, []);
+  }, [containerRef]);
 
   useEffect(() => {
     // Update chart
@@ -63,6 +78,7 @@ export function ReactECharts({
 
   return (
     <div
+      id="capture"
       ref={chartRef}
       style={{
         width: "100%",

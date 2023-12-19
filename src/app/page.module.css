@@ -1,4 +1,4 @@
-@import url("https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Manrope:wght@100;200;300;400;500;600&display=swap");
 
 .mdChartContainer {
   width: 100%;
@@ -17,11 +17,14 @@
   justify-content: space-between;
 }
 .smChart {
+  /* position: relative;
+  overflow: hidden; */
+  /*  */
   width: 280px;
   height: 120px;
   display: flex;
   align-items: center;
-  border: 1px solid #ddd;
+  /* border: 1px solid slateblue; */
 }
 .mdChart {
   position: relative;
@@ -43,19 +46,7 @@
 
   color: #fff;
 }
-.lg {
-  margin: 10px 0;
-  padding: 12px 20px 24px;
-  width: 100%;
-  min-height: 272px;
-  background: #222430;
-  border-radius: 16px;
-  box-sizing: border-box;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  box-sizing: border-box;
-}
+
 .md {
   margin-top: 10px;
   padding: 12px 20px;

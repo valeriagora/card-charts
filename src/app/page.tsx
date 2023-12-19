@@ -2,9 +2,11 @@
 import styles from "./page.module.css";
 import { Button, styled } from "@mui/material";
 import Link from "next/link";
+import { useEffect, useState } from "react";
 
 export const LgChart = styled("div")<{ height?: number }>(({ height }) => ({
   height: height > 188 ? height : 188,
+  // height,
   position: "relative",
   boxSizing: "border-box",
   display: "flex",
@@ -31,15 +33,54 @@ export const Image = ({ url }) => {
     />
   );
 };
+const cardWidths = {
+  sm: 320,
+  md: 656,
+  lg: "100%",
+};
+const cardHeights = {
+  sm: 200,
+  md: 416,
+  lg: "100%",
+};
+const CardContainer = styled("div")<{ size: "sm" | "md" | "lg" }>(
+  ({ size }) => ({
+    padding: "12px 20px",
+    width: cardWidths[size],
+    height: cardHeights[size],
+    border: "2px solid crimson",
+    // width: size === "sm" ? 320 : 656,
+    // height: size === "sm" ? 200 : 416,
+    background: " #222430",
+    borderRadius: 16,
+    boxSizing: "border-box",
+    display: "flex",
+    flexDirection: "column",
+    justifyContent: "space-between",
+  })
+);
+const SmToMdChart = styled("div")<{ size: "sm" | "md" }>(({ size }) => ({
+  position: "relative",
+  width: "100%",
+  height: "100%",
+  display: "flex",
+  alignItems: "center",
+  border: "1px solid slateblue",
+}));
 
-export const SmallCard = ({ title, children }: any) => {
+export const DndCard = ({ title, children, size, imageUrl }: any) => {
   return (
-    <div className={styles.sm}>
-      <h3 className={styles.title}>
-        Which words would you use to describe the TV promo a?
-      </h3>
-      <div className={styles.smChart}>{children}</div>
-    </div>
+    <>
+      <CardContainer size={size}>
+        {/* <h3 className={styles.title}>
+          Which words would you use to describe the TV promo?
+        </h3> */}
+        <SmToMdChart size={size}>
+          {children}
+          {imageUrl && size !== "sm" && <Image url={imageUrl} />}
+        </SmToMdChart>
+      </CardContainer>
+    </>
   );
 };
 export const MediumCard = ({
@@ -60,9 +101,22 @@ export const MediumCard = ({
     </div>
   );
 };
+
+const LargeContainer = styled("div")(({}) => ({
+  margin: "10px 0",
+  padding: "12px 20px 24px",
+  width: "100%",
+  minHeight: "272px",
+  background: "#222430",
+  borderRadius: "16px",
+  boxSizing: "border-box",
+  display: "flex",
+  flexDirection: "column",
+  justifyContent: "space-between",
+}));
 export const LargeCard = ({ data, title, children, imageUrl }: any) => {
   return (
-    <div className={styles.lg}>
+    <LargeContainer>
       <h3 className={styles.title}>
         Which words would you use to describe the TV promo?
       </h3>
@@ -70,7 +124,7 @@ export const LargeCard = ({ data, title, children, imageUrl }: any) => {
         {children}
         {imageUrl && <Image url={imageUrl} />}
       </LgChart>
-    </div>
+    </LargeContainer>
   );
 };
 
