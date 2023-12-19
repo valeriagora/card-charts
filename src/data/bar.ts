@@ -1,4 +1,16 @@
 import { ReactEChartsProps } from "@/components/ReactECharts";
+function createSvgDataUrl(imageUrl) {
+  const svgString = `
+    <svg xmlns="http://www.w3.org/2000/svg" width="72" height="72">
+      <rect width="100%" height="100%" fill="black" />
+      <image href="${encodeURIComponent(imageUrl)}" x="50%" y="50%" height="100%" width="100%" transform="translate(-50%, -50%)" preserveAspectRatio="xMidYMid meet" />
+    </svg>
+  `;
+
+  return `data:image/svg+xml;base64,${window.btoa(svgString)}`;
+}
+
+
 
 export const getSmOption: ReactEChartsProps["option"] = (
   data: any[],
@@ -226,7 +238,7 @@ export const getMdOption: ReactEChartsProps["option"] = (
           backgroundColor: {
             // image:
             //   "https://images.unsplash.com/photo-1702839935474-1b56d70590c2?q=80&w=2787&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-            image: `https://plus.unsplash.com/premium_photo-1663045649003-a14867707a93?q=80&w=2940&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D`,
+            image: createSvgDataUrl(`https://plus.unsplash.com/premium_photo-1663045649003-a14867707a93?q=80&w=2940&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D`),
           },
         },
         value: {
