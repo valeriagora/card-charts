@@ -1,51 +1,19 @@
-import { images } from "@/app/bar/page";
 import { ReactEChartsProps } from "@/components/ReactECharts";
-
-function createSvgDataUrl(imageUrl: string) {
-  const svgString = `
-    <svg xmlns="http://www.w3.org/2000/svg" width="72" height="72">
-      <rect width="100%" height="100%" fill="black" />
-      <image href="${imageUrl}" x="0%" y="0%" height="100%" width="100%" transform="translate(-50%, -50%)" preserveAspectRatio="xMidYMid meet" />
-    </svg>
-  `;
-  // return "path://M 0 0 L 10 5 L 0 10 z";
-  // return "image://https://echarts.apache.org/examples/data/asset/img/weather/sunny_128.png";
-  // return "image://data:image;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAACXBIWXMAAAsTAAALEwEAmpwYAAAAlUlEQVRYw2NgGAWjYBSMgiEAooE4jUwcTQ0H1APxfzJxPTUcwA3ET8mw/ClUL1VAMhkOSKZmOmAG4kskWH4JqoeqwJ0EB7jTKkfsIMLyHbTMkrpA/AeP5X+gamgK5uBxwBx6FEySQPwFi+VfoHJ0AfW0KnTILZyoWuiQUzglMwwAgBVONCl0SCmc3BlGwSgYBaOAAgAAeotyvZwCFhMAAAAASUVORK5CYII=";
-  // return 'image://data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32"><path fill="%23f09f53" d="M4.996 4.996v22.008h22.008L4.996 4.996zm4 9 9.008 9.008H8.996v-9.008z"/><path fill="%231a4875" d="M27.357 26.65 5.35 4.643a.5.5 0 0 0-.854.353v22.008a.5.5 0 0 0 .5.5h22.008a.5.5 0 0 0 .353-.854zm-21.861-.146v-2h.5a.5.5 0 0 0 0-1h-.5v-1h1.5a.5.5 0 0 0 0-1h-1.5v-1h.5a.5.5 0 0 0 0-1h-.5v-1h1.5a.5.5 0 0 0 0-1h-1.5v-1h.5a.5.5 0 0 0 0-1h-.5v-1h1.5a.5.5 0 0 0 0-1h-1.5v-1h.5a.5.5 0 0 0 0-1h-.5v-1h1.5a.5.5 0 0 0 0-1h-1.5V6.203l20.301 20.301H5.496z"/><path fill="%231a4875" d="M8.996 23.504h9.008a.5.5 0 0 0 .354-.854L9.35 13.643a.5.5 0 0 0-.854.354v9.008a.5.5 0 0 0 .5.499zm.5-8.301 7.301 7.301H9.496v-7.301z"/></svg>';
-}
 
 export const getSmOption: ReactEChartsProps["option"] = (
   data: any[],
   hasOverflow: boolean
 ) => ({
-  // title: {
-  //   text: "Which words would you use to describe the TV promo a?",
-  //   textStyle: {
-  //     fontFamily: "Manrope",
-  //     color: "#fff",
-  //     width: 240,
-  //     fontWeight: 200,
-  //     fontSize: 14,
-  //     lineHeight: 20,
-  //     fontStyle: "normal",
-  //     overflow: "break",
-  //   },
-  // },
-  // toolbox: {
-  //   feature: {
-  //     saveAsImage: {
-  //       type: "svg",
-  //     },
-  //   },
-  // },
   color: "#25B4C8",
   backgroundStyle: {
     borderRadius: 10,
   },
   dataset: {
-    source: hasOverflow
-      ? [...data.slice(0, 1), ["...", 0], ...data.slice(1, 6)]
-      : data,
+    source:
+      //  hasOverflow
+      //   ? [...data.slice(0, 1), ["...", 0], ...data.slice(1, 6)]
+      //   :
+      data,
   },
   backgroundColor: "#292A33",
   show: true,
@@ -137,36 +105,60 @@ export const getSmOption: ReactEChartsProps["option"] = (
   ],
 });
 //
+const getOptionImageStyles = (
+  images: { [key: string]: string },
+  label: string
+) => ({
+  width: 72,
+  height: 72,
+  backgroundColor: {
+    image: images[label],
+    objectFit: "contain",
+  },
+});
+
+interface IOptionImages {
+  [key: string]: {
+    width: number;
+    backgroundColor: {
+      image: string;
+    };
+  };
+}
 export const getMdOption: ReactEChartsProps["option"] = (
-  data: any[],
+  data: {
+    labels: Array<Array<string>>;
+    values: number[];
+    images: { [key: string]: string };
+  },
   withImage: boolean,
-  hasOverflow: boolean
+  withImageOptions: boolean,
+  hasOverflow: boolean,
+  images: IOptionImages
 ) => {
-  let url;
-  // const url = data[idx + 1][2];
+  const imageOptions = Object.keys(data.labels).reduce((total, label) => {
+    const styles = getOptionImageStyles(data.images, label);
+    total[label] = styles;
+    return total;
+  }, {} as IOptionImages);
+
   return {
-    // title: {
-    //   text: "Which words would you use to describe the TV promo a?",
-    //   textStyle: {
-    //     fontFamily: "Manrope",
-    //     color: "#fff",
-    //     width: 584,
-    //     // height: 40, //
-    //     fontWeight: 200,
-    //     fontSize: 14,
-    //     lineHeight: 20,
-    //     fontStyle: "normal",
-    //     overflow: "break",
-    //   },
+    // backgroundStyle: {
+    //   borderRadius: 10,
     // },
-    color: "#25B4C8",
-    backgroundStyle: {
-      borderRadius: 10,
-    },
-    dataset: {
-      source: hasOverflow
-        ? [...data.slice(0, 1), ["...", 0], ...data.slice(1, 12)]
-        : data,
+    dataZoom: [
+      {
+        id: "dataZoomX",
+        type: "slider",
+        yAxisIndex: [0],
+        filterMode: "filter",
+      },
+    ],
+    toolbox: {
+      show: true,
+      feature: {
+        saveAsImage: { show: true },
+      },
     },
     backgroundColor: "#292A33",
     show: true,
@@ -174,6 +166,8 @@ export const getMdOption: ReactEChartsProps["option"] = (
       top: 0,
       bottom: 20,
       right: "50%",
+      // show: true,
+      // backgroundColor: "pink",
     },
     xAxis: {
       name: null,
@@ -195,101 +189,104 @@ export const getMdOption: ReactEChartsProps["option"] = (
     },
     yAxis: {
       axisLabel: {
+        // show: true,
         margin: 12,
-
         formatter: (name: string, idx: number) => {
-          console.log("name", name, idx);
-          // const url = data[idx][2];
-          // console.log("url", url);
-          if (hasOverflow) {
-            if (idx) {
-              const item = data[idx];
-              const percents = item[1];
-              const label = `{value|${percents}%}{space| }{name|${name}}`;
-              console.log("idx", item, percents, name);
-
-              return label;
-            }
-            const label = `{value| }{space| }{name|${name}}`;
+          console.log(name, data, idx);
+          const spacing = "  ";
+          if (withImageOptions) {
+            const percents = data.values[idx];
+            const imageId = Object.keys(data.labels)[idx];
+            const label = `{${imageId}|}${spacing}{percents|${percents}%}${spacing}{name|${name}}`;
             return label;
           }
-          // const
-          url = data[idx + 1][2];
-          console.log("url", url);
-          if (url) {
-            const item = data[idx + 1];
-            const percents = item[1];
-            //   console.log("url", item, percents);
-
-            return `{${url}| }{imgSpace| }{percents|${percents}%}{space| }{name|${name}}`;
-          }
-          const item = data[idx + 1];
-          const percents = item[1];
-          const label = `{value|${percents}%}{space| }{name|${name}}`;
-          return label;
         },
         rich: {
-          entertaining: {
-            width: 72,
-            fontSize: 60,
-            backgroundColor: {
-              image: createSvgDataUrl(images.entertaining),
-              // image: images.entertaining,
-            },
-          },
-          exciting: {
-            width: 72,
-            fontSize: 60,
-            backgroundColor: {
-              image: images.exciting,
-            },
-          },
-          closeEnded: {
-            width: 72,
-            fontSize: 60,
-            backgroundColor: {
-              image: images.closeEnded,
-            },
-          },
-
-          // url: {
-          //   width: 72,
-          //   fontSize: 60,
-          //   // borderColor: "#6c7080",
-          //   // borderWidth: 1,
-          //   // borderStyle: "solid",
-          //   // borderRadius: 4,
-          //   backgroundColor: {
-          //     image: url,
-          //     // "https://images.unsplash.com/photo-1702839935474-1b56d70590c2?q=80&w=2787&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-          //     // image: `https://plus.unsplash.com/premium_photo-1663045649003-a14867707a93?q=80&w=2940&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D`,
-          //   },
-          // },
-          value: {
+          ...imageOptions,
+          percents: {
             fontFamily: "Manrope",
-            color: "#fff",
-            lineHeight: 10,
-            width: 25,
+            color: "#C8CAD0",
+            // width: 5,
           },
           name: {
             fontFamily: "Manrope",
-            color: "#C8CAD0",
-          },
-          space: {
-            width: 5,
-          },
-          imgSpace: {
-            width: 8,
+            color: "#6c7080",
+            // width: 20,
           },
         },
+        // formatter: (name: string, idx: number) => {
+        //   const spacing = "  ";
+        //   // console.log("name,idx", name, idx); // if has overflow, idx with ... is 0
+        //   // if !hasOverflow, idx with axis label is 0
+        //   // hasOverflow + image options
+        //   if (hasOverflow) {
+        //     if (withImageOptions) {
+        //       console.log("name,idx", name, idx); // if has overflow, idx with ... is 0
+
+        //       // return "123";
+        //       // if (idx) {
+        //       const url = data[idx + 1][2];
+        //       const item = data[idx + 1];
+        //       const percents = item[1];
+        //       return `{${url}|}${spacing}{percents|${percents}%}${spacing}{name|${name}}`;
+        //       // }
+        //     }
+        //     if (idx) {
+        //       const item = data[idx];
+        //       const percents = item[1];
+        //       const label = `{value|${percents}%}${spacing}{name|${name}}`;
+        //       return label;
+        //     }
+        //     //
+        //     // url = data[idx + 1][2];
+        //     // console.log(data, idx);
+        //     // if (url) {
+        //     //   console.log("urll with overflow", url);
+
+        //     //   const item = data[idx + 1];
+        //     //   const percents = item[1];
+        //     //   return `{${url}|}${spacing}{percents|${percents}%}${spacing}{name|${name}}`;
+        //     // }
+        //     //
+        //     const label = `{value|}${spacing}{name|${name}}`;
+        //     return label;
+        //   }
+
+        //   // console.log("urll", url);
+        //   if (withImageOptions) {
+        //     const url = data[idx + 1][2];
+        //     const item = data[idx + 1];
+        //     const percents = item[1];
+        //     return `{${url}|}${spacing}{percents|${percents}%}${spacing}{name|${name}}`;
+        //   }
+        //   const item = data[idx + 1];
+        //   const percents = item[1];
+        //   const label = `{value|${percents}%}${spacing}{name|${name}}`;
+        //   return label;
+        // },
+
         textStyle: {
           fontSize: 14,
           fontWeight: 500,
           color: "#6C7080",
         },
-        width: withImage ? 180 : 290,
+        width: withImage
+          ? withImageOptions
+            ? 170
+            : 180
+          : withImageOptions
+          ? 310
+          : 310,
         overflow: "truncate",
       },
+      data:
+        // hasOverflow
+        // ? withImageOptions
+        //   ? Object.values(data.labels).slice(0, 4)
+        //   :
+        //  Object.values(data.labels).slice(0, 11)
+        // :
+        Object.values(data.labels),
       position: "right",
       type: "category",
       axisLine: {
@@ -302,20 +299,14 @@ export const getMdOption: ReactEChartsProps["option"] = (
         show: false,
       },
     },
-    series: [
-      {
-        type: "bar",
-        barWidth: "16px",
-        encode: {
-          x: "amount",
-          y: "product",
-        },
-        itemStyle: {
-          // color: "pink",
-          barBorderRadius: 2,
-        },
+    series: {
+      data: data.values,
+      type: "bar",
+      barWidth: 16,
+      itemStyle: {
+        color: "#25B4C8",
       },
-    ],
+    },
   };
 };
 export const getLgOption: ReactEChartsProps["option"] = (
@@ -396,17 +387,14 @@ export const getLgOption: ReactEChartsProps["option"] = (
       show: false,
     },
   },
-  series: [
-    {
-      type: "bar",
-      encode: {
-        x: "amount",
-        y: "product",
-      },
-      itemStyle: {
-        // color: "#25B4C8",
-        barBorderRadius: 2,
-      },
-    },
-  ],
+  // series: [
+  //   {
+  //     type: "bar",
+  //     barWidth: 16,
+  //     itemStyle: {
+  //       // color: "#25B4C8",
+  //       barBorderRadius: 2,
+  //     },
+  //   },
+  // ],
 });

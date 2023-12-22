@@ -7,47 +7,6 @@ import { url } from "../pie/page";
 import { Button } from "@mui/material";
 import { styled } from "@mui/material";
 import html2canvas from "html2canvas";
-type OptionSourceData = [string, string | number, string][];
-
-export const images = {
-  exciting:
-    "https://images.unsplash.com/photo-1702744473287-4cc284e97206?q=80&w=2864&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-  entertaining:
-    "https://images.unsplash.com/photo-1682687981603-ae874bf432f2?q=80&w=2787&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDF8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-  closeEnded:
-    "https://images.unsplash.com/photo-1702893576128-21feb60299d1?q=80&w=2940&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-};
-const barData: OptionSourceData = [
-  ["product", "amount", "url"],
-  // ['...', 0],
-  // ["Boring dassadsda", 1],
-  // [
-  //   "Boring dassadsda dssdds Boring dassadsda dssdds Boring dassadsda dssdds",
-  //   50,
-  // ],
-  // ["Exciting", 25],
-  // ["Entertaining", 20],
-  // ["Intriguing", 15],
-  // ["Close-ended", 10],
-  // ["Engaging", 5],
-  // ["Boring", 5],
-  ["Exciting", 5, "exciting"],
-  ["Entertaining", 10, "entertaining"],
-  ["Close-ended", 5, "closeEnded"],
-
-  // ["Boring 3", 3],
-  // ["Engaging 4", 5],
-  // ["Close-ended 4", 10],
-  // ["Intriguing 4", 15],
-  // ["Entertaining 4", 20],
-  // ["Exciting 4", 25],
-  // [
-  //   "Boring 4 dassadsda dssdds Boring dassadsda dssdds Boring dassadsda dssdds",
-  //   50,
-  // ],
-  // ["Boring 4 dassadsda", 1],
-  // ["Boring 4 3", 3],
-];
 
 const barContainerWidths = {
   sm: 280,
@@ -59,15 +18,49 @@ const barContainerHeights = {
   sm: 176, // 120
   md: 344,
 };
-
+const OverflowInfo = styled("div")({
+  position: "absolute",
+  bottom: 0,
+  right: "calc(50% - 155px)",
+  height: 24,
+  border: "1px solid #ddd",
+  fontSize: 12,
+  fontFamily: '"Manrope", sans-serif',
+  color: "#6c7080",
+});
+const barData = {
+  // common
+  labels: {
+    exciting: "Exciting",
+    intriguing: "Intriguing",
+    closeEnded: "Close-ended",
+    boring: "Boring",
+    engaging: "Engaging Engaging Engaging Engaging Engaging",
+  },
+  images: {
+    exciting:
+      "https://images.unsplash.com/photo-1702306258947-162c0847db0c?q=80&w=2667&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+    engaging:
+      "https://images.unsplash.com/photo-1702744473287-4cc284e97206?q=80&w=2864&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+    intriguing:
+      "https://images.unsplash.com/photo-1682686580391-615b1f28e5ee?q=80&w=2940&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDF8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+    closeEnded:
+      "https://images.unsplash.com/photo-1702893576128-21feb60299d1?q=80&w=2940&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+    boring:
+      "https://images.unsplash.com/photo-1703028408829-ba45aa14b782?q=80&w=2787&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+  },
+  values: [50, 20, 5, 24, 1],
+};
 const BarChartContainer = styled("div")<{
   height: number;
   size: "sm" | "md" | "lg";
 }>(({ height, size }) => {
   const maxHeight = barContainerHeights[size];
   return {
+    position: "relative",
     width: "100%",
-    height: height > maxHeight ? maxHeight : height,
+    height: maxHeight,
+    // height: height > maxHeight ? maxHeight : height,
     border: "1px solid pink",
   };
 });
@@ -78,20 +71,52 @@ const mdBarHeight = 16;
 const mdBarGap = 12;
 const xAxisLabelHeight = 16;
 
+interface IBarOptionsOverflow {
+  sm: {
+    simple: number;
+    withImgOptions: number;
+  };
+  md: {
+    simple: number;
+    withImgOptions: number;
+  };
+}
+const barOptionsOverflow: IBarOptionsOverflow = {
+  sm: { simple: 5, withImgOptions: 5 },
+  md: {
+    simple: 11,
+    withImgOptions: 4,
+  },
+};
+
 const BarContainer = forwardRef(function Container(
-  { length, children, size, withImageOptions },
+  {
+    length,
+    children,
+    size,
+    withImageOptions,
+    hasOverflow,
+  }: { size: "sm" | "md" | "lg" },
   ref
 ) {
   const height =
     size === "sm"
-      ? length * 20 + 8 + 40
+      ? (length - 1) * 20 + 8 + 40
       : withImageOptions
-      ? length * 72 + 16
-      : length * 28 + 16;
+      ? (length - 1) * 72 + 16
+      : (length - 1) * 28 + 16;
   // if size is S, max height is 120, M - 344, L - no max height
   return (
     <BarChartContainer size={size} height={height} ref={ref}>
       {children}
+      {/* {hasOverflow && (
+        <OverflowInfo>
+          {withImageOptions && size !== "lg"
+            ? barOptionsOverflow[size].withImgOptions
+            : barOptionsOverflow[size as "sm" | "md"].simple}{" "}
+          items of {length}
+        </OverflowInfo>
+      )} */}
     </BarChartContainer>
   );
 });
@@ -104,22 +129,35 @@ function Bar() {
     setImageUrl(imageUrl ? "" : url);
   };
 
-  const smHasOverflow = barData.length > 6;
-  const mdHasOverflow = barData.length > 12;
   const withImage = !!imageUrl;
+  // const withImageOptions = barData.some((elem) => !!elem[2]);
+  const withImageOptions = Object.values(barData.images).length;
+  const smHasOverflow = barData.values.length > 6;
+  const mdHasOverflow = withImageOptions
+    ? barData.values.length > 4
+    : barData.values.length > 11;
 
   const changeContainerSize = () => {
     setSize("sm");
   };
 
   const uploadChart = () => {
-    html2canvas(document.querySelector("#capture")!).then((canvas) => {
+    html2canvas(document.querySelector("#capture")!, {
+      allowTaint: true,
+      useCORS: true,
+    }).then((canvas) => {
       console.log("canvas", canvas);
       document.body.appendChild(canvas);
     });
   };
   const sm = getSmOption(barData, smHasOverflow);
-  const md = getMdOption(barData, withImage, mdHasOverflow);
+  const md = getMdOption(
+    barData,
+    withImage,
+    withImageOptions,
+    mdHasOverflow,
+    barData.images
+  );
   const lg = getLgOption(barData, withImage);
 
   const options = {
@@ -162,8 +200,10 @@ function Bar() {
         <BarContainer
           ref={containerRef}
           size={size}
-          length={barData.length - 1}
-          withImageOptions={!!barData[0][2] && barData[0][2] === "url"}
+          length={barData.values.length}
+          hasOverflow={mdHasOverflow}
+          withImageOptions={withImageOptions}
+          // withImageOptions={!!barData[0][2] && barData[0][2] === "url"}
         >
           <ReactECharts containerRef={containerRef} option={options[size]} />
         </BarContainer>
