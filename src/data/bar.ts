@@ -1,20 +1,24 @@
 import { ReactEChartsProps } from "@/components/ReactECharts";
+import { ECharts } from "echarts";
 
-export function imageToBase64(
-  url: string,
-  callback: (base64: string | ArrayBuffer | null) => void
-) {
-  fetch(url)
-    .then((response) => response.blob())
-    .then((blob) => {
-      const reader = new FileReader();
-      reader.readAsDataURL(blob);
-      reader.onloadend = () => {
-        const base64String = reader.result;
-        callback(base64String);
-      };
-    });
+export async function blobToBase64(blob: Blob): Promise<string> {
+  return new Promise((resolve, _) => {
+    const reader = new FileReader();
+    reader.onloadend = () => resolve(reader.result as string);
+    reader.readAsDataURL(blob);
+  });
 }
+export const getSvgBlob = async (chartInstance: ECharts) => {
+  const svgRows = (chartInstance.renderToSVGString() as string).split("\n");
+  svgRows.splice(
+    1,
+    0,
+    '<defs><style type="text/css">@import url(http://fonts.googleapis.com/css?family=Manrope);</style></defs>'
+  );
+  const blob = new Blob([svgRows.join("\n")], { type: "image/svg+xml" });
+  const base64 = await blobToBase64(blob);
+  return base64;
+};
 export const getBase64Image = (url: string): Promise<string> => {
   return new Promise((resolve, reject) => {
     const img = new Image();
@@ -36,31 +40,26 @@ export const getBase64Image = (url: string): Promise<string> => {
 };
 
 export const getSmOption: ReactEChartsProps["option"] = (
-  data: any[],
+  data: {
+    labels: { [key: string]: string }[];
+    values: number[];
+    images?: { [key: string]: string };
+  },
   hasOverflow: boolean
 ) => ({
-  color: "#25B4C8",
-  backgroundStyle: {
-    borderRadius: 10,
-  },
-  dataset: {
-    source:
-      //  hasOverflow
-      //   ? [...data.slice(0, 1), ["...", 0], ...data.slice(1, 6)]
-      //   :
-      data,
-  },
-  backgroundColor: "#292A33",
+  backgroundColor: "#222430",
   show: true,
   grid: {
-    top: 48,
-    bottom: 0,
+    top: 0,
+    bottom: hasOverflow ? 20 : 0,
     right: "50%",
   },
   xAxis: {
-    name: null,
+    name: "",
     inverse: true,
-    axisLabel: { show: false },
+    axisLabel: {
+      show: false,
+    },
     splitLine: {
       show: true,
       lineStyle: {
@@ -71,38 +70,23 @@ export const getSmOption: ReactEChartsProps["option"] = (
   },
   yAxis: {
     axisLabel: {
-      margin: 12,
-      show: true,
-
+      margin: 8,
       formatter: (name: string, idx: number) => {
-        if (hasOverflow) {
-          if (idx) {
-            const item = data[idx];
-            const percents = item[1];
-            const label = `{value|${percents}%}{space| }{name|${name}}`;
-            return label;
-          }
-          const label = `{value| }{space| }{name|${name}}`;
-          return label;
-        }
-        const item = data[idx + 1];
-        const percents = item[1];
-        const label = `{value|${percents}%}{space| }{name|${name}}`;
+        const spacing = "  ";
+        const percents = data.values[idx];
+        const label = `{percents|${percents}%}${spacing}{name|${name}}`;
         return label;
       },
       rich: {
-        value: {
-          fontFamily: "Manrope",
-          color: "#fff",
-          lineHeight: 10,
-          width: 25,
-        },
-        name: {
+        percents: {
+          fontSize: "14px",
           fontFamily: "Manrope",
           color: "#C8CAD0",
         },
-        space: {
-          width: 5,
+        name: {
+          fontSize: "14px",
+          fontFamily: "Manrope",
+          color: "#6c7080",
         },
       },
       textStyle: {
@@ -110,9 +94,12 @@ export const getSmOption: ReactEChartsProps["option"] = (
         fontWeight: 500,
         color: "#6C7080",
       },
-      width: 140,
+      width: 145,
       overflow: "truncate",
     },
+    data: hasOverflow
+      ? Object.values(data.labels).slice(0, 5)
+      : Object.values(data.labels),
     position: "right",
     type: "category",
     axisLine: {
@@ -125,19 +112,14 @@ export const getSmOption: ReactEChartsProps["option"] = (
       show: false,
     },
   },
-  series: [
-    {
-      type: "bar",
-      encode: {
-        x: "amount",
-        y: "product",
-      },
-      itemStyle: {
-        // color: "#25B4C8",
-        barBorderRadius: 2,
-      },
+  series: {
+    data: hasOverflow ? data.values.slice(0, 5) : data.values,
+    type: "bar",
+    barWidth: 16,
+    itemStyle: {
+      color: "#25B4C8",
     },
-  ],
+  },
 });
 //
 const getOptionImageStyles = (
@@ -152,7 +134,6 @@ const getOptionImageStyles = (
     },
   };
 };
-
 interface IOptionImages {
   [key: string]: {
     width: number;
@@ -165,7 +146,7 @@ export const getMdOption = (
   data: {
     labels: { [key: string]: string }[];
     values: number[];
-    images: { [key: string]: string };
+    images?: { [key: string]: string };
   },
   withImage: boolean,
   withImageOptions: boolean,
@@ -173,7 +154,7 @@ export const getMdOption = (
 ): ReactEChartsProps["option"] => {
   const imageOptions = data.images
     ? Object.keys(data.labels).reduce((total: IOptionImages, label: string) => {
-        const styles = getOptionImageStyles(data.images, label);
+        const styles = getOptionImageStyles(data.images!, label);
         total[label] = styles;
         return total;
       }, {})
@@ -183,7 +164,7 @@ export const getMdOption = (
     show: true,
     grid: {
       top: 0,
-      bottom: 20,
+      bottom: 28,
       right: "50%",
     },
     xAxis: {
@@ -194,7 +175,8 @@ export const getMdOption = (
         fontFamily: "Manrope",
         color: "#6C7080",
         fontSize: 12,
-        fontWeight: 400,
+        lineHeight: 20,
+        fontWeight: 500,
       },
       splitLine: {
         show: true,
@@ -206,7 +188,7 @@ export const getMdOption = (
     },
     yAxis: {
       axisLabel: {
-        margin: 12,
+        margin: 8,
         formatter: (name: string, idx: number) => {
           const spacing = "  ";
           if (withImageOptions) {
@@ -225,66 +207,13 @@ export const getMdOption = (
             fontSize: "14px",
             fontFamily: "Manrope",
             color: "#C8CAD0",
-            // width: 5,
           },
           name: {
             fontSize: "14px",
             fontFamily: "Manrope",
             color: "#6c7080",
-            // width: 20,
           },
         },
-        // formatter: (name: string, idx: number) => {
-        //   const spacing = "  ";
-        //   // console.log("name,idx", name, idx); // if has overflow, idx with ... is 0
-        //   // if !hasOverflow, idx with axis label is 0
-        //   // hasOverflow + image options
-        //   if (hasOverflow) {
-        //     if (withImageOptions) {
-        //       console.log("name,idx", name, idx); // if has overflow, idx with ... is 0
-
-        //       // return "123";
-        //       // if (idx) {
-        //       const url = data[idx + 1][2];
-        //       const item = data[idx + 1];
-        //       const percents = item[1];
-        //       return `{${url}|}${spacing}{percents|${percents}%}${spacing}{name|${name}}`;
-        //       // }
-        //     }
-        //     if (idx) {
-        //       const item = data[idx];
-        //       const percents = item[1];
-        //       const label = `{value|${percents}%}${spacing}{name|${name}}`;
-        //       return label;
-        //     }
-        //     //
-        //     // url = data[idx + 1][2];
-        //     // console.log(data, idx);
-        //     // if (url) {
-        //     //   console.log("urll with overflow", url);
-
-        //     //   const item = data[idx + 1];
-        //     //   const percents = item[1];
-        //     //   return `{${url}|}${spacing}{percents|${percents}%}${spacing}{name|${name}}`;
-        //     // }
-        //     //
-        //     const label = `{value|}${spacing}{name|${name}}`;
-        //     return label;
-        //   }
-
-        //   // console.log("urll", url);
-        //   if (withImageOptions) {
-        //     const url = data[idx + 1][2];
-        //     const item = data[idx + 1];
-        //     const percents = item[1];
-        //     return `{${url}|}${spacing}{percents|${percents}%}${spacing}{name|${name}}`;
-        //   }
-        //   const item = data[idx + 1];
-        //   const percents = item[1];
-        //   const label = `{value|${percents}%}${spacing}{name|${name}}`;
-        //   return label;
-        // },
-
         textStyle: {
           fontSize: 14,
           fontWeight: 500,
@@ -326,92 +255,112 @@ export const getMdOption = (
     },
   };
 };
-export const getLgOption: ReactEChartsProps["option"] = (
-  data: any[],
-  withImage?: boolean
-) => ({
-  color: "#25B4C8",
-  backgroundStyle: {
-    borderRadius: 10,
+export const getLgOption = (
+  data: {
+    labels: { [key: string]: string }[];
+    values: number[];
+    images?: { [key: string]: string };
   },
-  dataset: {
-    source: data,
-  },
-  grid: {
-    top: 0,
-    bottom: 20,
-    right: "50%",
-  },
-  xAxis: {
-    name: null,
-    // inverse: true,
-    axisLabel: {
-      show: true,
-      fontStyle: "Manrope",
-      color: "#6C7080",
-      fontSize: 12,
-      fontWeight: 400,
+  withImage: boolean,
+  withImageOptions: boolean
+  // hasOverflow: boolean
+): ReactEChartsProps["option"] => {
+  const imageOptions = data.images
+    ? Object.keys(data.labels).reduce((total: IOptionImages, label: string) => {
+        const styles = getOptionImageStyles(data.images!, label);
+        total[label] = styles;
+        return total;
+      }, {})
+    : [];
+  return {
+    backgroundColor: "#222430",
+    show: true,
+    grid: {
+      top: 0,
+      bottom: 28,
+      right: "50%",
     },
-    splitLine: {
-      show: true,
-      lineStyle: {
+    xAxis: {
+      name: "",
+      inverse: true,
+      axisLabel: {
+        show: true,
+        fontFamily: "Manrope",
         color: "#6C7080",
-        width: 1,
-      },
-    },
-  },
-  yAxis: {
-    axisLabel: {
-      margin: 12,
-      formatter: (name: string, idx: number) => {
-        const item = data[idx + 1];
-        const percents = item[1];
-        const label = `{value|${percents}%}{space| }{name|${name}}`;
-        return label;
-      },
-      rich: {
-        value: {
-          fontFamily: "Manrope",
-          color: "#fff",
-          lineHeight: 10,
-          width: 25,
-        },
-        name: {
-          fontFamily: "Manrope",
-          color: "#C8CAD0",
-        },
-        space: {
-          width: 5,
-        },
-      },
-      textStyle: {
-        fontSize: 14,
+        fontSize: 12,
+        lineHeight: 20,
         fontWeight: 500,
-        color: "#6C7080",
       },
-      width: withImage ? 350 : 450,
-      overflow: "truncate",
-    },
-    position: "right",
-    type: "category",
-    axisLine: {
-      show: true,
-      lineStyle: {
-        color: "#6C7080",
+      splitLine: {
+        show: true,
+        lineStyle: {
+          color: "#6C7080",
+          width: 1,
+        },
       },
     },
-    axisTick: {
-      show: false,
+    yAxis: {
+      axisLabel: {
+        margin: 8,
+        formatter: (name: string, idx: number) => {
+          const spacing = "  ";
+          if (withImageOptions) {
+            const percents = data.values[idx];
+            const imageId = Object.keys(data.labels)[idx];
+            const label = `{${imageId}|}${spacing}{percents|${percents}%}${spacing}{name|${name}}`;
+            return label;
+          }
+          const percents = data.values[idx];
+          const label = `{percents|${percents}%}${spacing}{name|${name}}`;
+          return label;
+        },
+        rich: {
+          ...imageOptions,
+          percents: {
+            fontSize: "14px",
+            fontFamily: "Manrope",
+            color: "#C8CAD0",
+          },
+          name: {
+            fontSize: "14px",
+            fontFamily: "Manrope",
+            color: "#6c7080",
+          },
+        },
+        textStyle: {
+          fontSize: 14,
+          fontWeight: 500,
+          color: "#6C7080",
+        },
+        width: withImage
+          ? withImageOptions
+            ? 170
+            : 180
+          : withImageOptions
+          ? 340
+          : 300,
+        overflow: "truncate",
+      },
+      data: Object.values(data.labels),
+      position: "right",
+      type: "category",
+      axisLine: {
+        show: true,
+        lineStyle: {
+          color: "#6C7080",
+        },
+      },
+      axisTick: {
+        show: false,
+      },
     },
-  },
-  // series: [
-  //   {
-  //     type: "bar",
-  //     barWidth: 16,
-  //     itemStyle: {
-  //       // color: "#25B4C8",
-  //       barBorderRadius: 2,
-  //     },
-  //   },
-  // ],
-});
+    series: {
+      data: data.values,
+      type: "bar",
+      barWidth: 16,
+      itemStyle: {
+        color: "#25B4C8",
+      },
+    },
+  };
+};

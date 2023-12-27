@@ -13,24 +13,34 @@ import {
   getMdOption,
   getLgOption,
   getBase64Image,
+  getSvgBlob,
 } from "@/data/bar";
 import { url } from "../pie/page";
 import { Button } from "@mui/material";
 import { styled } from "@mui/material";
 import { ECharts } from "echarts";
+import Image from "next/image";
 
 const barContainerHeights = {
-  sm: 176,
+  sm: 120, // 176
   md: 344,
+  // lg: "auto",
 };
 const OverflowInfo = styled("div")({
   position: "absolute",
   bottom: 0,
-  right: 30,
-  height: 24,
-  fontSize: 14,
-  lineHeight: "20px",
+  right: 0,
+  // left: `calc(50% + 12px)`,
+  // height: 20,
+  display: "flex",
+  alignItems: "center",
+  gap: 4,
+  // fontSize: 14,
+  // lineHeight: "20px",
+  // fontWeight: 500,
   fontWeight: 500,
+  fontSize: 12,
+  lineHeight: "20px",
   fontFamily: '"Manrope", sans-serif',
   color: "#6C7080",
 });
@@ -45,7 +55,7 @@ const BarChartContainer = styled("div")<{
     width: "100%",
     height: maxHeight,
     // height: height > maxHeight ? maxHeight : height,
-    border: "1px solid pink",
+    border: "1px solid slateblue",
   };
 });
 
@@ -101,11 +111,11 @@ const BarContainer = forwardRef(function Container(
       {children}
       {hasOverflow && (
         <OverflowInfo>
-          Showing{" "}
           {withImageOptions && size !== "lg"
             ? barOptionsOverflow[size].withImgOptions
             : barOptionsOverflow[size as "sm" | "md"].simple}{" "}
-          of {length} options{" "}
+          / {length} options{" "}
+          <Image width={16} height={16} src={"/info.svg"} alt="1" />
         </OverflowInfo>
       )}
     </BarChartContainer>
@@ -119,18 +129,32 @@ const imageUrls = [
   "https://images.unsplash.com/photo-1703028408829-ba45aa14b782?q=80&w=2787&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
   "https://images.unsplash.com/photo-1519925610903-381054cc2a1c?q=80&w=2940&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
 ];
-const labels = ["exciting", "intriguing", "closeEnded", "boring", , "engaging"];
+const labels = [
+  "exciting",
+  "intriguing",
+  "closeEnded",
+  "boring",
+  "engaging",
+  "option-1",
+];
 
 const urlToBase64 = async (url: string) => {
   let result = await getBase64Image(url);
   return result;
 };
+enum CardSize {
+  sm = "sm",
+  md = "md",
+  lg = "lg",
+}
 interface IBarProps {
   imageOptionUrls?: string[];
+  cardSize: CardSize;
 }
-// imageUrls
-
-function Bar({ imageOptionUrls = imageUrls }: IBarProps) {
+function Bar({
+  imageOptionUrls = imageUrls,
+  cardSize = CardSize.md,
+}: IBarProps) {
   const imgs =
     imageOptionUrls && imageOptionUrls?.length
       ? labels.reduce((total: { [key: string]: string }, label, idx) => {
@@ -151,32 +175,30 @@ function Bar({ imageOptionUrls = imageUrls }: IBarProps) {
       boring: "Boring",
       engaging: "Engaging",
       // option1: "Option 1",
-      // option2: "Option 2",
-      // option3: "Option 3",
-      // option4: "Option 4",
-      // option5: "Option 5",
-      // option6: "Option 6",
-      // option7: "Option 7",
+      option1: "Option 1",
+      option2: "Option 2",
+      option3: "Option 3",
+      option4: "Option 4",
+      option5: "Option 5",
+      option6: "Option 6",
+      option7: "Option 7",
     },
-    values: [
-      50, 20, 5, 24, 1,
-      // , 2, 3, 4, 5, 6, 7, 8
-    ],
+    values: [50, 20, 5, 24, 1, 1, 2, 3, 4, 5, 6, 7, 8],
     images: imgs,
   });
 
   const [imageUrl, setImageUrl] = useState("");
 
   const withImage = !!imageUrl;
-  const withImageOptions = imageOptionUrls && imageOptionUrls.length;
+  const withImageOptions = !!(imageOptionUrls && imageOptionUrls.length);
 
-  const smHasOverflow = barData.values.length > 6;
+  const smHasOverflow = barData.values.length > 5;
   const mdHasOverflow = withImageOptions
     ? barData.values.length > 4
     : barData.values.length > 11;
 
   const [chartInstance, setChartInstance] = useState<ECharts | null>(null);
-  const [size, setSize] = useState("md");
+  const [size, setSize] = useState<CardSize>(cardSize);
   const [isChartDownloading, setIsChartDownloading] = useState(false);
   const containerRef = useRef<HTMLDivElement | null>(null);
 
@@ -185,7 +207,7 @@ function Bar({ imageOptionUrls = imageUrls }: IBarProps) {
   };
 
   const changeContainerSize = () => {
-    setSize("sm");
+    setSize(CardSize.md);
   };
 
   const onRenderEnded = () => {
@@ -196,10 +218,8 @@ function Bar({ imageOptionUrls = imageUrls }: IBarProps) {
   const onChartInit = (chartInstance: ECharts) => {
     setChartInstance(chartInstance);
   };
-  const downloadChart = (chartInstance: ECharts) => {
-    const url = chartInstance.getDataURL({
-      type: "svg",
-    });
+  const downloadChart = async (chartInstance: ECharts) => {
+    const url = await getSvgBlob(chartInstance);
     const anchorElement = document.createElement("a");
     anchorElement.href = url;
     anchorElement.download = `chart.svg`;
@@ -245,6 +265,11 @@ function Bar({ imageOptionUrls = imageUrls }: IBarProps) {
     md,
     lg,
   };
+  const overflows = {
+    sm: smHasOverflow,
+    md: mdHasOverflow,
+    lg: false,
+  };
 
   return (
     <div
@@ -281,7 +306,7 @@ function Bar({ imageOptionUrls = imageUrls }: IBarProps) {
           ref={containerRef}
           size={size}
           length={barData.values.length}
-          hasOverflow={mdHasOverflow}
+          hasOverflow={overflows[size]}
           withImageOptions={withImageOptions}
         >
           <ReactECharts
