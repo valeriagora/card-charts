@@ -1,5 +1,5 @@
 "use client";
-import React, { useRef, useEffect, RefObject } from "react";
+import React, { useRef, useEffect, RefObject, useState } from "react";
 import { init, getInstanceByDom } from "echarts";
 import type { CSSProperties } from "react";
 import type { EChartsOption, ECharts, SetOptionOpts } from "echarts";
@@ -15,14 +15,18 @@ export interface ReactEChartsProps {
   withImage?: boolean;
   //
   containerRef: RefObject<HTMLDivElement | null>;
+  onChartInit?: (chartInstance: ECharts) => void;
+  onRenderEnded?: () => void;
 }
 
 export function ReactECharts({
   option,
   style,
   settings,
-  loading,
+  loading = false,
   containerRef,
+  onChartInit,
+  onRenderEnded,
 }: ReactEChartsProps): JSX.Element {
   const chartRef = useRef<HTMLDivElement | null>(null);
 
@@ -30,14 +34,17 @@ export function ReactECharts({
     // Initialize chart
     let chart: ECharts | undefined;
     if (chartRef.current !== null) {
+      console.log("chart init");
       chart = init(chartRef.current, null, { renderer: "svg" });
+      onChartInit instanceof Function && onChartInit(chart);
+      // setChart(chart);
     }
 
     // Add chart resize listener
     // ResizeObserver is leading to a bit janky UX
-    function resizeChart() {
-      chart?.resize();
-    }
+    // function resizeChart() {
+    //   chart?.resize();
+    // }
 
     const ref = containerRef?.current;
     const observer = new ResizeObserver(([{ target }]) => {
@@ -49,12 +56,12 @@ export function ReactECharts({
       observer.observe(ref);
     }
     //
-    window.addEventListener("resize", resizeChart);
+    // window.addEventListener("resize", resizeChart);
 
     // Return cleanup function
     return () => {
       chart?.dispose();
-      window.removeEventListener("resize", resizeChart);
+      // window.removeEventListener("resize", resizeChart);
       ref && observer.unobserve(ref);
     };
   }, [containerRef]);
@@ -64,8 +71,9 @@ export function ReactECharts({
     if (chartRef.current !== null) {
       const chart = getInstanceByDom(chartRef.current);
       chart?.setOption(option, settings);
+      onRenderEnded instanceof Function && onRenderEnded();
     }
-  }, [option, settings]); // Whenever theme changes we need to add option and setting due to it being deleted in cleanup function
+  }, [option, settings, onRenderEnded]); // Whenever theme changes we need to add option and setting due to it being deleted in cleanup function
 
   useEffect(() => {
     // Update chart
@@ -77,15 +85,19 @@ export function ReactECharts({
   }, [loading]);
 
   return (
-    <div
-      // id="capture"
-      ref={chartRef}
-      style={{
-        width: "100%",
-        height: "100%",
-        // border: "1px solid #ddd",
-        ...style,
-      }}
-    />
+    <>
+      <div
+        // id="capture"
+        ref={chartRef}
+        style={{
+          width: "100%",
+          height: "100%",
+          // border: "1px solid slateblue",
+          // borderRadius: 16,
+          // overflow: "hidden",
+          ...style,
+        }}
+      />
+    </>
   );
 }

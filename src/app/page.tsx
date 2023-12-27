@@ -46,9 +46,10 @@ const cardHeights = {
 const CardContainer = styled("div")<{ size: "sm" | "md" | "lg" }>(
   ({ size }) => ({
     padding: "12px 20px",
+    // padding: "0px 20px",
     width: cardWidths[size],
     height: cardHeights[size],
-    border: "2px solid crimson",
+    // border: "2px solid crimson",
     // width: size === "sm" ? 320 : 656,
     // height: size === "sm" ? 200 : 416,
     background: " #222430",
@@ -57,6 +58,8 @@ const CardContainer = styled("div")<{ size: "sm" | "md" | "lg" }>(
     display: "flex",
     flexDirection: "column",
     justifyContent: "space-between",
+    //
+    overflow: "hidden",
   })
 );
 const SmToMdChart = styled("div")<{ size: "sm" | "md" }>(({ size }) => ({
@@ -65,7 +68,7 @@ const SmToMdChart = styled("div")<{ size: "sm" | "md" }>(({ size }) => ({
   height: "100%",
   display: "flex",
   alignItems: "center",
-  border: "1px solid slateblue",
+  // border: "1px solid slateblue",
 }));
 
 export const DndCard = ({ title, children, size, imageUrl }: any) => {

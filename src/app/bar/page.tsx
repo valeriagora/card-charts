@@ -1,56 +1,40 @@
 "use client";
 import { ReactECharts } from "@/components/ReactECharts";
-import React, { forwardRef, useEffect, useRef, useState } from "react";
+import React, {
+  forwardRef,
+  ReactNode,
+  useCallback,
+  useRef,
+  useState,
+} from "react";
 import { LargeCard, MediumCard, DndCard } from "../page";
-import { getSmOption, getMdOption, getLgOption } from "@/data/bar";
+import {
+  getSmOption,
+  getMdOption,
+  getLgOption,
+  getBase64Image,
+} from "@/data/bar";
 import { url } from "../pie/page";
 import { Button } from "@mui/material";
 import { styled } from "@mui/material";
-import html2canvas from "html2canvas";
-
-const barContainerWidths = {
-  sm: 280,
-  md: 616,
-  lg: 992,
-};
+import { ECharts } from "echarts";
 
 const barContainerHeights = {
-  sm: 176, // 120
+  sm: 176,
   md: 344,
 };
 const OverflowInfo = styled("div")({
   position: "absolute",
   bottom: 0,
-  right: "calc(50% - 155px)",
+  right: 30,
   height: 24,
-  border: "1px solid #ddd",
-  fontSize: 12,
+  fontSize: 14,
+  lineHeight: "20px",
+  fontWeight: 500,
   fontFamily: '"Manrope", sans-serif',
-  color: "#6c7080",
+  color: "#6C7080",
 });
-const barData = {
-  // common
-  labels: {
-    exciting: "Exciting",
-    intriguing: "Intriguing",
-    closeEnded: "Close-ended",
-    boring: "Boring",
-    engaging: "Engaging Engaging Engaging Engaging Engaging",
-  },
-  images: {
-    exciting:
-      "https://images.unsplash.com/photo-1702306258947-162c0847db0c?q=80&w=2667&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-    engaging:
-      "https://images.unsplash.com/photo-1702744473287-4cc284e97206?q=80&w=2864&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-    intriguing:
-      "https://images.unsplash.com/photo-1682686580391-615b1f28e5ee?q=80&w=2940&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDF8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-    closeEnded:
-      "https://images.unsplash.com/photo-1702893576128-21feb60299d1?q=80&w=2940&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-    boring:
-      "https://images.unsplash.com/photo-1703028408829-ba45aa14b782?q=80&w=2787&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-  },
-  values: [50, 20, 5, 24, 1],
-};
+
 const BarChartContainer = styled("div")<{
   height: number;
   size: "sm" | "md" | "lg";
@@ -96,7 +80,13 @@ const BarContainer = forwardRef(function Container(
     size,
     withImageOptions,
     hasOverflow,
-  }: { size: "sm" | "md" | "lg" },
+  }: {
+    length: number;
+    children: ReactNode;
+    size: "sm" | "md" | "lg";
+    withImageOptions: boolean;
+    hasOverflow: boolean;
+  },
   ref
 ) {
   const height =
@@ -109,62 +99,153 @@ const BarContainer = forwardRef(function Container(
   return (
     <BarChartContainer size={size} height={height} ref={ref}>
       {children}
-      {/* {hasOverflow && (
+      {hasOverflow && (
         <OverflowInfo>
+          Showing{" "}
           {withImageOptions && size !== "lg"
             ? barOptionsOverflow[size].withImgOptions
             : barOptionsOverflow[size as "sm" | "md"].simple}{" "}
-          items of {length}
+          of {length} options{" "}
         </OverflowInfo>
-      )} */}
+      )}
     </BarChartContainer>
   );
 });
-function Bar() {
+
+const imageUrls = [
+  "https://images.unsplash.com/photo-1702744473287-4cc284e97206?q=80&w=2864&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+  "https://images.unsplash.com/photo-1682686580391-615b1f28e5ee?q=80&w=2940&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDF8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+  "https://images.unsplash.com/photo-1702893576128-21feb60299d1?q=80&w=2940&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+  "https://images.unsplash.com/photo-1703028408829-ba45aa14b782?q=80&w=2787&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+  "https://images.unsplash.com/photo-1519925610903-381054cc2a1c?q=80&w=2940&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+];
+const labels = ["exciting", "intriguing", "closeEnded", "boring", , "engaging"];
+
+const urlToBase64 = async (url: string) => {
+  let result = await getBase64Image(url);
+  return result;
+};
+interface IBarProps {
+  imageOptionUrls?: string[];
+}
+// imageUrls
+
+function Bar({ imageOptionUrls = imageUrls }: IBarProps) {
+  const imgs =
+    imageOptionUrls && imageOptionUrls?.length
+      ? labels.reduce((total: { [key: string]: string }, label, idx) => {
+          total[label] = imageOptionUrls[idx];
+          return total;
+        }, {})
+      : undefined;
+
+  const [barData, setBarData] = useState<{
+    labels: { [key: string]: string };
+    values: number[];
+    images?: { [key: string]: string };
+  }>({
+    labels: {
+      exciting: "Exciting",
+      intriguing: "Intriguing Intriguing Intriguing Intriguing Intriguing",
+      closeEnded: "Close-ended",
+      boring: "Boring",
+      engaging: "Engaging",
+      // option1: "Option 1",
+      // option2: "Option 2",
+      // option3: "Option 3",
+      // option4: "Option 4",
+      // option5: "Option 5",
+      // option6: "Option 6",
+      // option7: "Option 7",
+    },
+    values: [
+      50, 20, 5, 24, 1,
+      // , 2, 3, 4, 5, 6, 7, 8
+    ],
+    images: imgs,
+  });
+
   const [imageUrl, setImageUrl] = useState("");
+
+  const withImage = !!imageUrl;
+  const withImageOptions = imageOptionUrls && imageOptionUrls.length;
+
+  const smHasOverflow = barData.values.length > 6;
+  const mdHasOverflow = withImageOptions
+    ? barData.values.length > 4
+    : barData.values.length > 11;
+
+  const [chartInstance, setChartInstance] = useState<ECharts | null>(null);
   const [size, setSize] = useState("md");
+  const [isChartDownloading, setIsChartDownloading] = useState(false);
   const containerRef = useRef<HTMLDivElement | null>(null);
 
   const toggleImg = () => {
     setImageUrl(imageUrl ? "" : url);
   };
 
-  const withImage = !!imageUrl;
-  // const withImageOptions = barData.some((elem) => !!elem[2]);
-  const withImageOptions = Object.values(barData.images).length;
-  const smHasOverflow = barData.values.length > 6;
-  const mdHasOverflow = withImageOptions
-    ? barData.values.length > 4
-    : barData.values.length > 11;
-
   const changeContainerSize = () => {
     setSize("sm");
   };
 
-  const uploadChart = () => {
-    html2canvas(document.querySelector("#capture")!, {
-      allowTaint: true,
-      useCORS: true,
-    }).then((canvas) => {
-      console.log("canvas", canvas);
-      document.body.appendChild(canvas);
-    });
+  const onRenderEnded = () => {
+    // save as svg for chart with option images
+    isChartDownloading && chartInstance && downloadChart(chartInstance);
   };
-  const sm = getSmOption(barData, smHasOverflow);
-  const md = getMdOption(
-    barData,
-    withImage,
-    withImageOptions,
-    mdHasOverflow,
-    barData.images
-  );
-  const lg = getLgOption(barData, withImage);
 
+  const onChartInit = (chartInstance: ECharts) => {
+    setChartInstance(chartInstance);
+  };
+  const downloadChart = (chartInstance: ECharts) => {
+    const url = chartInstance.getDataURL({
+      type: "svg",
+    });
+    const anchorElement = document.createElement("a");
+    anchorElement.href = url;
+    anchorElement.download = `chart.svg`;
+    document.body.appendChild(anchorElement);
+    anchorElement.click();
+    setIsChartDownloading(false);
+  };
+  const saveAsImage = useCallback(async () => {
+    if (chartInstance) {
+      if (withImageOptions) {
+        // upload base64 images
+        const base64Promises: Promise<string>[] = [];
+        for (const url of imageOptionUrls) {
+          base64Promises.push(urlToBase64(url));
+        }
+        const getBase64Promises = async () =>
+          await Promise.all(base64Promises).then((values) => values);
+
+        const base64Urls = await getBase64Promises();
+        if (base64Urls.length) {
+          const base64Images = labels.reduce(
+            (tot: { [key: string]: string }, curr: string, idx: number) => {
+              tot[curr] = base64Urls[idx];
+              return tot;
+            },
+            {}
+          );
+          setBarData((prev) => ({ ...prev, images: base64Images }));
+          setIsChartDownloading(true);
+        }
+        return;
+      }
+      // save as svg without option images
+      downloadChart(chartInstance);
+    }
+  }, [chartInstance, withImageOptions, imageOptionUrls]);
+
+  const sm = getSmOption(barData, smHasOverflow);
+  const md = getMdOption(barData, withImage, withImageOptions, mdHasOverflow);
+  const lg = getLgOption(barData, withImage);
   const options = {
     sm,
     md,
     lg,
   };
+
   return (
     <div
       style={{
@@ -191,11 +272,10 @@ function Bar() {
       <Button
         sx={{ marginBottom: 4, display: "block" }}
         variant="contained"
-        onClick={uploadChart}
+        onClick={saveAsImage}
       >
         Upload chart
       </Button>
-
       <DndCard size={size} imageUrl={imageUrl}>
         <BarContainer
           ref={containerRef}
@@ -203,9 +283,13 @@ function Bar() {
           length={barData.values.length}
           hasOverflow={mdHasOverflow}
           withImageOptions={withImageOptions}
-          // withImageOptions={!!barData[0][2] && barData[0][2] === "url"}
         >
-          <ReactECharts containerRef={containerRef} option={options[size]} />
+          <ReactECharts
+            containerRef={containerRef}
+            option={options[size]}
+            onChartInit={onChartInit}
+            onRenderEnded={onRenderEnded}
+          />
         </BarContainer>
       </DndCard>
       {/* <MediumCard imageUrl={imageUrl}>

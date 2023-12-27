@@ -1,5 +1,40 @@
 import { ReactEChartsProps } from "@/components/ReactECharts";
 
+export function imageToBase64(
+  url: string,
+  callback: (base64: string | ArrayBuffer | null) => void
+) {
+  fetch(url)
+    .then((response) => response.blob())
+    .then((blob) => {
+      const reader = new FileReader();
+      reader.readAsDataURL(blob);
+      reader.onloadend = () => {
+        const base64String = reader.result;
+        callback(base64String);
+      };
+    });
+}
+export const getBase64Image = (url: string): Promise<string> => {
+  return new Promise((resolve, reject) => {
+    const img = new Image();
+    img.setAttribute("crossOrigin", "anonymous");
+    img.src = url;
+    img.onload = () => {
+      const canvas = document.createElement("canvas");
+      const ctx = canvas.getContext("2d");
+      canvas.width = img.width;
+      canvas.height = img.height;
+      if (ctx) {
+        ctx.drawImage(img, 0, 0);
+        const dataURL = canvas.toDataURL("image/png");
+        resolve(dataURL);
+      }
+    };
+    img.onerror = (error) => reject(error);
+  });
+};
+
 export const getSmOption: ReactEChartsProps["option"] = (
   data: any[],
   hasOverflow: boolean
@@ -108,14 +143,15 @@ export const getSmOption: ReactEChartsProps["option"] = (
 const getOptionImageStyles = (
   images: { [key: string]: string },
   label: string
-) => ({
-  width: 72,
-  height: 72,
-  backgroundColor: {
-    image: images[label],
-    objectFit: "contain",
-  },
-});
+) => {
+  return {
+    width: 72,
+    height: 72,
+    backgroundColor: {
+      image: images[label],
+    },
+  };
+};
 
 interface IOptionImages {
   [key: string]: {
@@ -125,56 +161,37 @@ interface IOptionImages {
     };
   };
 }
-export const getMdOption: ReactEChartsProps["option"] = (
+export const getMdOption = (
   data: {
-    labels: Array<Array<string>>;
+    labels: { [key: string]: string }[];
     values: number[];
     images: { [key: string]: string };
   },
   withImage: boolean,
   withImageOptions: boolean,
-  hasOverflow: boolean,
-  images: IOptionImages
-) => {
-  const imageOptions = Object.keys(data.labels).reduce((total, label) => {
-    const styles = getOptionImageStyles(data.images, label);
-    total[label] = styles;
-    return total;
-  }, {} as IOptionImages);
-
+  hasOverflow: boolean
+): ReactEChartsProps["option"] => {
+  const imageOptions = data.images
+    ? Object.keys(data.labels).reduce((total: IOptionImages, label: string) => {
+        const styles = getOptionImageStyles(data.images, label);
+        total[label] = styles;
+        return total;
+      }, {})
+    : [];
   return {
-    // backgroundStyle: {
-    //   borderRadius: 10,
-    // },
-    dataZoom: [
-      {
-        id: "dataZoomX",
-        type: "slider",
-        yAxisIndex: [0],
-        filterMode: "filter",
-      },
-    ],
-    toolbox: {
-      show: true,
-      feature: {
-        saveAsImage: { show: true },
-      },
-    },
-    backgroundColor: "#292A33",
+    backgroundColor: "#222430",
     show: true,
     grid: {
       top: 0,
       bottom: 20,
       right: "50%",
-      // show: true,
-      // backgroundColor: "pink",
     },
     xAxis: {
-      name: null,
+      name: "",
       inverse: true,
       axisLabel: {
         show: true,
-        fontStyle: "Manrope",
+        fontFamily: "Manrope",
         color: "#6C7080",
         fontSize: 12,
         fontWeight: 400,
@@ -189,10 +206,8 @@ export const getMdOption: ReactEChartsProps["option"] = (
     },
     yAxis: {
       axisLabel: {
-        // show: true,
         margin: 12,
         formatter: (name: string, idx: number) => {
-          console.log(name, data, idx);
           const spacing = "  ";
           if (withImageOptions) {
             const percents = data.values[idx];
@@ -200,15 +215,20 @@ export const getMdOption: ReactEChartsProps["option"] = (
             const label = `{${imageId}|}${spacing}{percents|${percents}%}${spacing}{name|${name}}`;
             return label;
           }
+          const percents = data.values[idx];
+          const label = `{percents|${percents}%}${spacing}{name|${name}}`;
+          return label;
         },
         rich: {
           ...imageOptions,
           percents: {
+            fontSize: "14px",
             fontFamily: "Manrope",
             color: "#C8CAD0",
             // width: 5,
           },
           name: {
+            fontSize: "14px",
             fontFamily: "Manrope",
             color: "#6c7080",
             // width: 20,
@@ -275,18 +295,15 @@ export const getMdOption: ReactEChartsProps["option"] = (
             ? 170
             : 180
           : withImageOptions
-          ? 310
-          : 310,
+          ? 340
+          : 300,
         overflow: "truncate",
       },
-      data:
-        // hasOverflow
-        // ? withImageOptions
-        //   ? Object.values(data.labels).slice(0, 4)
-        //   :
-        //  Object.values(data.labels).slice(0, 11)
-        // :
-        Object.values(data.labels),
+      data: hasOverflow
+        ? withImageOptions
+          ? Object.values(data.labels).slice(0, 4)
+          : Object.values(data.labels).slice(0, 11)
+        : Object.values(data.labels),
       position: "right",
       type: "category",
       axisLine: {
@@ -327,7 +344,7 @@ export const getLgOption: ReactEChartsProps["option"] = (
   },
   xAxis: {
     name: null,
-    inverse: true,
+    // inverse: true,
     axisLabel: {
       show: true,
       fontStyle: "Manrope",
