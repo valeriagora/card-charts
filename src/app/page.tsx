@@ -3,6 +3,7 @@ import styles from "./page.module.css";
 import { Button, styled } from "@mui/material";
 import Link from "next/link";
 import { useEffect, useState } from "react";
+import { CardSize } from "./bar/page";
 
 export const LgChart = styled("div")<{ height?: number }>(({ height }) => ({
   height: height > 188 ? height : 188,
@@ -34,41 +35,35 @@ export const Image = ({ url }) => {
   );
 };
 const cardWidths = {
-  sm: 320,
-  md: 656,
-  lg: "100%",
+  small: 320,
+  medium: 656,
+  large: "100%",
 };
 const cardHeights = {
-  sm: 200,
-  md: 416,
-  lg: "100%",
+  small: 200,
+  medium: 416,
+  large: "100%",
 };
-const CardContainer = styled("div")<{ size: "sm" | "md" | "lg" }>(
-  ({ size }) => ({
-    padding: "12px 20px",
-    // padding: "0px 20px",
-    width: cardWidths[size],
-    height: cardHeights[size],
-    // border: "2px solid crimson",
-    // width: size === "sm" ? 320 : 656,
-    // height: size === "sm" ? 200 : 416,
-    background: " #222430",
-    borderRadius: 16,
-    boxSizing: "border-box",
-    display: "flex",
-    flexDirection: "column",
-    justifyContent: "space-between",
-    //
-    overflow: "hidden",
-  })
-);
+const CardContainer = styled("div")<{ size: CardSize }>(({ size }) => ({
+  padding: "12px 20px",
+  width: cardWidths[size],
+  height: cardHeights[size],
+  background: " #222430",
+  borderRadius: 16,
+  boxSizing: "border-box",
+  display: "flex",
+  flexDirection: "column",
+  justifyContent: "space-between",
+  //
+  overflow: "hidden",
+}));
 const SmToMdChart = styled("div")<{ size: "sm" | "md" }>(({ size }) => ({
   position: "relative",
   width: "100%",
   height: "100%",
   display: "flex",
   alignItems: "center",
-  // border: "1px solid slateblue",
+  border: "1px solid slateblue",
 }));
 
 export const DndCard = ({ title, children, size, imageUrl }: any) => {

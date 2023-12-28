@@ -34,7 +34,6 @@ export function ReactECharts({
     // Initialize chart
     let chart: ECharts | undefined;
     if (chartRef.current !== null) {
-      console.log("chart init");
       chart = init(chartRef.current, null, { renderer: "svg" });
       onChartInit instanceof Function && onChartInit(chart);
       // setChart(chart);
@@ -70,7 +69,6 @@ export function ReactECharts({
     // Update chart
     if (chartRef.current !== null) {
       const chart = getInstanceByDom(chartRef.current);
-      console.log("setOption", option);
       chart?.setOption(option, settings);
       onRenderEnded instanceof Function && onRenderEnded();
     }

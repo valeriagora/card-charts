@@ -1,14 +1,14 @@
 import { ReactEChartsProps } from "@/components/ReactECharts";
 
 const pieLegendWidths = {
-  sm: 148,
-  md: [152, 300],
-  lg: [340, 440],
+  small: 148,
+  medium: [152, 300],
+  large: [340, 440],
 };
 const pieLegendMaxSymbolsCount = {
-  sm: 11,
-  md: [15, 30],
-  lg: [40, 55],
+  small: 11,
+  medium: [15, 30],
+  large: [40, 55],
 };
 const pieColors = [
   "#FF877C",
@@ -49,7 +49,7 @@ const pieLegend = {
   // color: "#C8CAD0",
 };
 const pieLegendTextStyle = {
-  width: pieLegendWidths.sm,
+  width: pieLegendWidths.small,
   overflow: "break",
   rich: {
     value: {
@@ -93,7 +93,7 @@ export const smOption: ReactEChartsProps["option"] = (data) => ({
     data,
   },
   legend: {
-    formatter: pieLegendFormatter(data, pieLegendMaxSymbolsCount.sm),
+    formatter: pieLegendFormatter(data, pieLegendMaxSymbolsCount.small),
     ...pieLegend,
     left: 124,
     textStyle: {

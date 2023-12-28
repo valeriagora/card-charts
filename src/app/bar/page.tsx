@@ -20,11 +20,16 @@ import { Button } from "@mui/material";
 import { styled } from "@mui/material";
 import { ECharts } from "echarts";
 import Image from "next/image";
+import Radio from "@mui/material/Radio";
+import RadioGroup from "@mui/material/RadioGroup";
+import FormControlLabel from "@mui/material/FormControlLabel";
+import FormControl from "@mui/material/FormControl";
+import FormLabel from "@mui/material/FormLabel";
 
 const barContainerHeights = {
-  sm: 120,
-  md: 344,
-  lg: "auto",
+  small: 120,
+  medium: 344,
+  large: "auto",
 };
 const OverflowInfo = styled("div")({
   position: "absolute",
@@ -40,9 +45,11 @@ const OverflowInfo = styled("div")({
   color: "#6C7080",
 });
 
+const OPTION_IMAGE_HEIGHT = 72;
+
 const BarChartContainer = styled("div")<{
   optionsCount: number;
-  size: "sm" | "md" | "lg";
+  size: CardSize;
   withImageOptions: boolean;
 }>(({ optionsCount, size, withImageOptions }) => {
   const maxHeight = barContainerHeights[size];
@@ -50,27 +57,28 @@ const BarChartContainer = styled("div")<{
     position: "relative",
     width: "100%",
     height:
-      size === CardSize.lg
+      size === CardSize.large
         ? withImageOptions
-          ? 72 * optionsCount + 30
+          ? OPTION_IMAGE_HEIGHT * optionsCount + 30
           : 40 * optionsCount
         : maxHeight,
+    border: "1px solid pink",
   };
 });
 
 interface IBarOptionsOverflow {
-  sm: {
+  small: {
     simple: number;
     withImgOptions: number;
   };
-  md: {
+  medium: {
     simple: number;
     withImgOptions: number;
   };
 }
 const barOptionsOverflow: IBarOptionsOverflow = {
-  sm: { simple: 5, withImgOptions: 5 },
-  md: {
+  small: { simple: 5, withImgOptions: 5 },
+  medium: {
     simple: 11,
     withImgOptions: 4,
   },
@@ -78,35 +86,37 @@ const barOptionsOverflow: IBarOptionsOverflow = {
 
 const BarContainer = forwardRef(function Container(
   {
-    length,
+    optionsCount,
     children,
     size,
     withImageOptions,
     hasOverflow,
   }: {
-    length: number;
+    optionsCount: number;
     children: ReactNode;
-    size: "sm" | "md" | "lg";
+    size: CardSize;
     withImageOptions: boolean;
     hasOverflow: boolean;
   },
   ref
 ) {
+  // needed to set the fixed height of chart container and show overflow text
   return (
     <BarChartContainer
       size={size}
-      optionsCount={length}
+      optionsCount={optionsCount}
       ref={ref}
       withImageOptions={withImageOptions}
     >
       {children}
       {hasOverflow && (
         <OverflowInfo>
-          {withImageOptions && size !== "lg"
+          {withImageOptions && size !== CardSize.large
             ? barOptionsOverflow[size].withImgOptions
-            : barOptionsOverflow[size as "sm" | "md"].simple}{" "}
-          / {length} options{" "}
-          <Image width={16} height={16} src={"/info.svg"} alt="1" />
+            : barOptionsOverflow[size as CardSize.small | CardSize.medium]
+                .simple}{" "}
+          / {optionsCount} options{" "}
+          <Image width={16} height={16} src={"/info.svg"} alt="info" />
         </OverflowInfo>
       )}
     </BarChartContainer>
@@ -138,10 +148,10 @@ const urlToBase64 = async (url: string) => {
   let result = await getBase64Image(url);
   return result;
 };
-enum CardSize {
-  sm = "sm",
-  md = "md",
-  lg = "lg",
+export enum CardSize {
+  small = "small",
+  medium = "medium",
+  large = "large",
 }
 interface IBarProps {
   imageOptionUrls?: string[];
@@ -149,7 +159,7 @@ interface IBarProps {
 }
 function Bar({
   imageOptionUrls = imageUrls,
-  cardSize = CardSize.lg,
+  cardSize = CardSize.large,
 }: IBarProps) {
   const imgs =
     imageOptionUrls && imageOptionUrls?.length
@@ -193,11 +203,13 @@ function Bar({
   const containerRef = useRef<HTMLDivElement | null>(null);
 
   const toggleImg = () => {
+    // if (size !== CardSize.small) {
     setImageUrl(imageUrl ? "" : url);
+    // }
   };
 
-  const changeContainerSize = () => {
-    setSize(CardSize.md);
+  const handleSizeChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setSize(event.target.value as CardSize);
   };
 
   const onRenderEnded = () => {
@@ -247,19 +259,24 @@ function Bar({
     }
   }, [chartInstance, withImageOptions, imageOptionUrls]);
   const overflows = {
-    sm: smHasOverflow,
-    md: mdHasOverflow,
-    lg: false,
+    small: smHasOverflow,
+    medium: mdHasOverflow,
+    large: false,
   };
-  const sm = getSmOption(barData, overflows[size]);
-  const md = getMdOption(barData, withImage, withImageOptions, overflows[size]);
-  const lg = getLgOption(barData, withImage, withImageOptions);
+  const small = getSmOption(barData, overflows[size]);
+  const medium = getMdOption(
+    barData,
+    withImage,
+    withImageOptions,
+    overflows[size]
+  );
+  const large = getLgOption(barData, withImage, withImageOptions);
   const options = {
-    sm,
-    md,
-    lg,
+    small,
+    medium,
+    large,
   };
-
+  // console.log("o", options[size]);
   return (
     <div
       style={{
@@ -273,28 +290,47 @@ function Bar({
         sx={{ marginBottom: 4, display: "block" }}
         variant="contained"
         onClick={toggleImg}
+        disabled={size === CardSize.small}
       >
         Toggle image
       </Button>
       <Button
         sx={{ marginBottom: 4, display: "block" }}
         variant="contained"
-        onClick={changeContainerSize}
-      >
-        Change card size
-      </Button>
-      <Button
-        sx={{ marginBottom: 4, display: "block" }}
-        variant="contained"
         onClick={saveAsImage}
       >
-        Upload chart
+        Export as svg
       </Button>
+      <FormControl>
+        <FormLabel id="radio-buttons-group-label">Card size</FormLabel>
+        <RadioGroup
+          aria-labelledby="radio-buttons-group-label"
+          value={size}
+          onChange={handleSizeChange}
+          name="radio-buttons-group"
+        >
+          <FormControlLabel
+            value={CardSize.small}
+            control={<Radio />}
+            label="Small"
+          />
+          <FormControlLabel
+            value={CardSize.medium}
+            control={<Radio />}
+            label="Medium"
+          />
+          <FormControlLabel
+            value={CardSize.large}
+            control={<Radio />}
+            label="Large"
+          />
+        </RadioGroup>
+      </FormControl>
       <DndCard size={size} imageUrl={imageUrl}>
         <BarContainer
           ref={containerRef}
           size={size}
-          length={barData.values.length}
+          optionsCount={barData.values.length}
           hasOverflow={overflows[size]}
           withImageOptions={withImageOptions}
         >
@@ -306,18 +342,6 @@ function Bar({
           />
         </BarContainer>
       </DndCard>
-      {/* <MediumCard imageUrl={imageUrl}>
-        <BarContainer size="md" length={barData.length}>
-          <ReactECharts
-            option={getMdOption(barData, withImage, mdHasOverflow)}
-          />
-        </BarContainer>
-      </MediumCard> */}
-      {/* <LargeCard data={barData} imageUrl={imageUrl}>
-        <BarContainer ref={containerRef} size="lg" length={barData.length}>
-          <ReactECharts option={getLgOption(barData, withImage)} />
-        </BarContainer>
-      </LargeCard> */}
     </div>
   );
 }
