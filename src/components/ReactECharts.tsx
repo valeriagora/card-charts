@@ -70,6 +70,7 @@ export function ReactECharts({
     // Update chart
     if (chartRef.current !== null) {
       const chart = getInstanceByDom(chartRef.current);
+      console.log("setOption", option);
       chart?.setOption(option, settings);
       onRenderEnded instanceof Function && onRenderEnded();
     }

@@ -255,6 +255,119 @@ export const getMdOption = (
     },
   };
 };
+// export const getLgOption = (
+//   data: {
+//     labels: { [key: string]: string }[];
+//     values: number[];
+//     images?: { [key: string]: string };
+//   },
+//   withImage: boolean,
+//   withImageOptions: boolean
+//   // hasOverflow: boolean
+// ): ReactEChartsProps["option"] => {
+//   const imageOptions = data.images
+//     ? Object.keys(data.labels).reduce((total: IOptionImages, label: string) => {
+//         const styles = getOptionImageStyles(data.images!, label);
+//         total[label] = styles;
+//         return total;
+//       }, {})
+//     : [];
+//   return {
+//     backgroundColor: "#222430",
+//     show: true,
+//     grid: {
+//       top: 0,
+//       bottom: 28,
+//       right: "50%",
+//     },
+//     xAxis: {
+//       name: "",
+//       inverse: true,
+//       axisLabel: {
+//         show: true,
+//         fontFamily: "Manrope",
+//         color: "#6C7080",
+//         fontSize: 12,
+//         lineHeight: 20,
+//         fontWeight: 500,
+//       },
+//       splitLine: {
+//         show: true,
+//         lineStyle: {
+//           color: "#6C7080",
+//           width: 1,
+//         },
+//       },
+//     },
+//     yAxis: {
+//       axisLabel: {
+//         margin: 8,
+//         formatter: (name: string, idx: number) => {
+//           const spacing = "  ";
+//           if (withImageOptions) {
+//             const percents = data.values[idx];
+//             const imageId = Object.keys(data.labels)[idx];
+//             const label = `{${imageId}|}${spacing}{percents|${percents}%}${spacing}{name|${name}}`;
+//             return label;
+//           }
+//           const percents = data.values[idx];
+//           const label = `{percents|${percents}%}${spacing}{name|${name}}`;
+//           return label;
+//         },
+//         rich: {
+//           ...imageOptions,
+//           percents: {
+//             fontSize: "14px",
+//             fontFamily: "Manrope",
+//             color: "#C8CAD0",
+//           },
+//           name: {
+//             fontSize: "14px",
+//             fontFamily: "Manrope",
+//             color: "#6c7080",
+//           },
+//         },
+//         fontSize: 14,
+//         fontWeight: 500,
+//         color: "#6C7080",
+//         // textStyle: {
+//         //   fontSize: 14,
+//         //   fontWeight: 500,
+//         //   color: "#6C7080",
+//         // },
+//         // width: withImage
+//         //   ? withImageOptions
+//         //     ? 170
+//         //     : 350
+//         //   : withImageOptions
+//         //   ? 340
+//         //   : 480,
+//         width: 340,
+//         overflow: "break",
+//       },
+//       data: Object.values(data.labels),
+//       position: "right",
+//       type: "category",
+//       axisLine: {
+//         show: true,
+//         lineStyle: {
+//           color: "#6C7080",
+//         },
+//       },
+//       axisTick: {
+//         show: false,
+//       },
+//     },
+//     series: {
+//       data: data.values,
+//       type: "bar",
+//       barWidth: 16,
+//       itemStyle: {
+//         color: "#25B4C8",
+//       },
+//     },
+//   };
+// };
 export const getLgOption = (
   data: {
     labels: { [key: string]: string }[];
@@ -263,7 +376,6 @@ export const getLgOption = (
   },
   withImage: boolean,
   withImageOptions: boolean
-  // hasOverflow: boolean
 ): ReactEChartsProps["option"] => {
   const imageOptions = data.images
     ? Object.keys(data.labels).reduce((total: IOptionImages, label: string) => {
@@ -334,11 +446,11 @@ export const getLgOption = (
         },
         width: withImage
           ? withImageOptions
-            ? 170
-            : 180
+            ? 410
+            : 430
           : withImageOptions
-          ? 340
-          : 300,
+          ? 550
+          : 570,
         overflow: "truncate",
       },
       data: Object.values(data.labels),

@@ -22,22 +22,17 @@ import { ECharts } from "echarts";
 import Image from "next/image";
 
 const barContainerHeights = {
-  sm: 120, // 176
+  sm: 120,
   md: 344,
-  // lg: "auto",
+  lg: "auto",
 };
 const OverflowInfo = styled("div")({
   position: "absolute",
   bottom: 0,
   right: 0,
-  // left: `calc(50% + 12px)`,
-  // height: 20,
   display: "flex",
   alignItems: "center",
   gap: 4,
-  // fontSize: 14,
-  // lineHeight: "20px",
-  // fontWeight: 500,
   fontWeight: 500,
   fontSize: 12,
   lineHeight: "20px",
@@ -46,24 +41,22 @@ const OverflowInfo = styled("div")({
 });
 
 const BarChartContainer = styled("div")<{
-  height: number;
+  optionsCount: number;
   size: "sm" | "md" | "lg";
-}>(({ height, size }) => {
+  withImageOptions: boolean;
+}>(({ optionsCount, size, withImageOptions }) => {
   const maxHeight = barContainerHeights[size];
   return {
     position: "relative",
     width: "100%",
-    height: maxHeight,
-    // height: height > maxHeight ? maxHeight : height,
-    border: "1px solid slateblue",
+    height:
+      size === CardSize.lg
+        ? withImageOptions
+          ? 72 * optionsCount + 30
+          : 40 * optionsCount
+        : maxHeight,
   };
 });
-
-const smBarHeight = 16;
-const smBarGap = 4;
-const mdBarHeight = 16;
-const mdBarGap = 12;
-const xAxisLabelHeight = 16;
 
 interface IBarOptionsOverflow {
   sm: {
@@ -99,15 +92,13 @@ const BarContainer = forwardRef(function Container(
   },
   ref
 ) {
-  const height =
-    size === "sm"
-      ? (length - 1) * 20 + 8 + 40
-      : withImageOptions
-      ? (length - 1) * 72 + 16
-      : (length - 1) * 28 + 16;
-  // if size is S, max height is 120, M - 344, L - no max height
   return (
-    <BarChartContainer size={size} height={height} ref={ref}>
+    <BarChartContainer
+      size={size}
+      optionsCount={length}
+      ref={ref}
+      withImageOptions={withImageOptions}
+    >
       {children}
       {hasOverflow && (
         <OverflowInfo>
@@ -128,6 +119,9 @@ const imageUrls = [
   "https://images.unsplash.com/photo-1702893576128-21feb60299d1?q=80&w=2940&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
   "https://images.unsplash.com/photo-1703028408829-ba45aa14b782?q=80&w=2787&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
   "https://images.unsplash.com/photo-1519925610903-381054cc2a1c?q=80&w=2940&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+  "https://images.unsplash.com/photo-1682687218147-9806132dc697?q=80&w=2875&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDF8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+  "https://images.unsplash.com/photo-1703615318360-788893a586d8?q=80&w=2785&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+  "https://images.unsplash.com/photo-1682687982029-edb9aecf5f89?q=80&w=2942&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDF8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
 ];
 const labels = [
   "exciting",
@@ -135,7 +129,9 @@ const labels = [
   "closeEnded",
   "boring",
   "engaging",
-  "option-1",
+  "option1",
+  "option2",
+  "option3",
 ];
 
 const urlToBase64 = async (url: string) => {
@@ -153,7 +149,7 @@ interface IBarProps {
 }
 function Bar({
   imageOptionUrls = imageUrls,
-  cardSize = CardSize.md,
+  cardSize = CardSize.lg,
 }: IBarProps) {
   const imgs =
     imageOptionUrls && imageOptionUrls?.length
@@ -162,7 +158,6 @@ function Bar({
           return total;
         }, {})
       : undefined;
-
   const [barData, setBarData] = useState<{
     labels: { [key: string]: string };
     values: number[];
@@ -170,20 +165,16 @@ function Bar({
   }>({
     labels: {
       exciting: "Exciting",
-      intriguing: "Intriguing Intriguing Intriguing Intriguing Intriguing",
+      intriguing:
+        "Intriguing Intriguing Intriguing Intriguing Intriguing Intriguing Intriguing Intriguing Intriguing Intriguing Intriguing",
       closeEnded: "Close-ended",
       boring: "Boring",
       engaging: "Engaging",
-      // option1: "Option 1",
       option1: "Option 1",
       option2: "Option 2",
       option3: "Option 3",
-      option4: "Option 4",
-      option5: "Option 5",
-      option6: "Option 6",
-      option7: "Option 7",
     },
-    values: [50, 20, 5, 24, 1, 1, 2, 3, 4, 5, 6, 7, 8],
+    values: [50, 20, 5, 24, 1, 2, 3, 4],
     images: imgs,
   });
 
@@ -191,7 +182,6 @@ function Bar({
 
   const withImage = !!imageUrl;
   const withImageOptions = !!(imageOptionUrls && imageOptionUrls.length);
-
   const smHasOverflow = barData.values.length > 5;
   const mdHasOverflow = withImageOptions
     ? barData.values.length > 4
@@ -256,19 +246,18 @@ function Bar({
       downloadChart(chartInstance);
     }
   }, [chartInstance, withImageOptions, imageOptionUrls]);
-
-  const sm = getSmOption(barData, smHasOverflow);
-  const md = getMdOption(barData, withImage, withImageOptions, mdHasOverflow);
-  const lg = getLgOption(barData, withImage);
-  const options = {
-    sm,
-    md,
-    lg,
-  };
   const overflows = {
     sm: smHasOverflow,
     md: mdHasOverflow,
     lg: false,
+  };
+  const sm = getSmOption(barData, overflows[size]);
+  const md = getMdOption(barData, withImage, withImageOptions, overflows[size]);
+  const lg = getLgOption(barData, withImage, withImageOptions);
+  const options = {
+    sm,
+    md,
+    lg,
   };
 
   return (
