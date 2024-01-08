@@ -1,5 +1,16 @@
 import { ReactEChartsProps } from "@/components/ReactECharts";
-import { ECharts } from "echarts";
+import {
+  ECharts,
+  CustomSeriesRenderItemParams,
+  SeriesOption,
+  CustomSeriesRenderItemAPI,
+} from "echarts";
+import {
+  BAR_CHART_ML_BOTTOM_PADDING,
+  BAR_CHART_S_BOTTOM_PADDING,
+  OPTION_IMAGE_HEIGHT,
+  IMAGE_OPTIONS_X_GAP,
+} from "../app/bar/page";
 
 export async function blobToBase64(blob: Blob): Promise<string> {
   return new Promise((resolve, _) => {
@@ -43,7 +54,6 @@ export const getSmOption: ReactEChartsProps["option"] = (
   data: {
     labels: { [key: string]: string }[];
     values: number[];
-    images?: { [key: string]: string };
   },
   hasOverflow: boolean
 ) => ({
@@ -51,7 +61,7 @@ export const getSmOption: ReactEChartsProps["option"] = (
   show: true,
   grid: {
     top: 0,
-    bottom: hasOverflow ? 20 : 0,
+    bottom: hasOverflow ? BAR_CHART_S_BOTTOM_PADDING : 0,
     right: "50%",
   },
   xAxis: {
@@ -122,51 +132,66 @@ export const getSmOption: ReactEChartsProps["option"] = (
     },
   },
 });
-//
-const getOptionImageStyles = (
-  images: { [key: string]: string },
-  label: string
-) => {
+
+const renderOptionImage = function (
+  param: any,
+  api: any,
+  maxXAxisValue: number
+) {
+  const xAxisStartPx = param.coordSys.x;
+  const size = api.size([maxXAxisValue, 1]);
+  console.log(
+    "position:",
+    size[0] + xAxisStartPx + 8,
+    size[1] * param.dataIndex
+  );
   return {
-    width: 72,
-    height: 72,
-    backgroundColor: {
-      image: images[label],
-    },
+    type: "group",
+    children: [
+      {
+        type: "image",
+        style: {
+          image: api.value(2),
+          x: 2,
+          y: 2,
+          width: 72,
+          height: 72,
+        },
+        position: [size[0] + xAxisStartPx + 8, size[1] * param.dataIndex],
+      },
+    ],
   };
 };
-interface IOptionImages {
-  [key: string]: {
-    width: number;
-    backgroundColor: {
-      image: string;
-    };
-  };
-}
+
 export const getMdOption = (
   data: {
-    labels: { [key: string]: string }[];
+    labels: { [key: string]: string };
     values: number[];
-    images?: { [key: string]: string };
+    images?: string[];
   },
   withImage: boolean,
   withImageOptions: boolean,
   hasOverflow: boolean
 ): ReactEChartsProps["option"] => {
-  const imageOptions = data.images
-    ? Object.keys(data.labels).reduce((total: IOptionImages, label: string) => {
-        const styles = getOptionImageStyles(data.images!, label);
-        total[label] = styles;
-        return total;
-      }, {})
-    : [];
-
+  const imageOptionsSeries = withImageOptions
+    ? {
+        type: "custom",
+        renderItem: (
+          params: CustomSeriesRenderItemParams,
+          api: CustomSeriesRenderItemAPI
+        ) => renderOptionImage(params, api, Math.max(...data.values)),
+        data: hasOverflow
+          ? data.images?.slice(0, 4).map((image: string) => [0, 0, image])
+          : data.images?.map((image: string) => [0, 0, image]),
+        z: 1,
+      }
+    : undefined;
   return {
     backgroundColor: "#222430",
     show: true,
     grid: {
       top: 0,
-      bottom: 28,
+      bottom: BAR_CHART_ML_BOTTOM_PADDING,
       right: "50%",
     },
     xAxis: {
@@ -190,22 +215,16 @@ export const getMdOption = (
     },
     yAxis: {
       axisLabel: {
-        margin: 8,
+        margin: withImageOptions
+          ? IMAGE_OPTIONS_X_GAP * 2 + OPTION_IMAGE_HEIGHT
+          : 8,
         formatter: (name: string, idx: number) => {
-          // return "Nsmr Nsmr Nsmr Nsmr Nsmr Nsmr Nsmr Nsmr Nsmr Nsmr Nsmr Nsmr";
           const spacing = "  ";
-          if (withImageOptions) {
-            const percents = data.values[idx];
-            const imageId = Object.keys(data.labels)[idx];
-            const label = `{${imageId}|}${spacing}{percents|${percents}%}${spacing}{name|${name}}`;
-            return label;
-          }
           const percents = data.values[idx];
           const label = `{percents|${percents}%}${spacing}{name|${name}}`;
           return label;
         },
         rich: {
-          // ...imageOptions,
           percents: {
             fontSize: "14px",
             fontFamily: "Manrope",
@@ -224,11 +243,11 @@ export const getMdOption = (
         },
         width: withImage
           ? withImageOptions
-            ? 170
-            : 180
+            ? 90
+            : 210
           : withImageOptions
-          ? 300
-          : 300,
+          ? 270
+          : 370,
         overflow: "truncate",
       },
       data: hasOverflow
@@ -248,46 +267,49 @@ export const getMdOption = (
         show: false,
       },
     },
-    series: {
-      data: data.values,
-      type: "bar",
-      barWidth: 16,
-      itemStyle: {
-        color: "#25B4C8",
+    series: [
+      {
+        data: data.values,
+        type: "bar",
+        barWidth: 16,
+        itemStyle: {
+          color: "#25B4C8",
+        },
       },
-    },
+      imageOptionsSeries as SeriesOption,
+    ],
   };
 };
+
 export const getLgOption = (
   data: {
-    labels: { [key: string]: string }[];
+    labels: { [key: string]: string };
     values: number[];
-    images?: { [key: string]: string };
+    images?: string[];
   },
   withImage: boolean,
   withImageOptions: boolean
 ): ReactEChartsProps["option"] => {
-  // console.log("data", data);
-  // console.log("withImage", withImage, withImageOptions);
-
-  const imageOptions = data.images
-    ? Object.keys(data.labels).reduce((total: IOptionImages, label: string) => {
-        const styles = getOptionImageStyles(data.images!, label);
-        total[label] = styles;
-        return total;
-      }, {})
-    : [];
-  // console.log("imageOptions", imageOptions);
+  const imageOptionsSeries = withImageOptions
+    ? {
+        type: "custom",
+        renderItem: (
+          params: CustomSeriesRenderItemParams,
+          api: CustomSeriesRenderItemAPI
+        ) => renderOptionImage(params, api, Math.max(...data.values)),
+        data: data.images?.map((image: string) => [0, 0, image]),
+        z: 1,
+      }
+    : undefined;
   return {
     backgroundColor: "#222430",
     show: true,
     grid: {
       top: 0,
-      bottom: 28,
+      bottom: BAR_CHART_ML_BOTTOM_PADDING,
       right: "50%",
     },
     xAxis: {
-      name: "",
       inverse: true,
       axisLabel: {
         show: true,
@@ -307,23 +329,17 @@ export const getLgOption = (
     },
     yAxis: {
       axisLabel: {
-        margin: 8,
+        margin: withImageOptions
+          ? IMAGE_OPTIONS_X_GAP * 2 + OPTION_IMAGE_HEIGHT
+          : 8,
         formatter: (name: string, idx: number) => {
           const spacing = "  ";
-
-          if (withImageOptions) {
-            const percents = data.values[idx];
-            const imageId = Object.keys(data.labels)[idx];
-            // console.log("imageId", data.labels);
-            const label = `{${imageId}|}${spacing}{percents|${percents}%}${spacing}{name|${name}}`;
-            return label;
-          }
           const percents = data.values[idx];
           const label = `{percents|${percents}%}${spacing}{name|${name}}`;
           return label;
         },
+        overflow: "break",
         rich: {
-          ...imageOptions,
           percents: {
             fontSize: "14px",
             fontFamily: "Manrope",
@@ -335,19 +351,18 @@ export const getLgOption = (
             color: "#6c7080",
           },
         },
-        textStyle: {
-          fontSize: 14,
-          fontWeight: 500,
-          color: "#6C7080",
-        },
+        // textStyle: {
+        //   fontSize: 14,
+        //   fontWeight: 500,
+        //   color: "#6C7080",
+        // },
         width: withImage
           ? withImageOptions
-            ? 410
+            ? 270
             : 430
           : withImageOptions
-          ? 480
-          : 570,
-        overflow: "break",
+          ? 380
+          : 400,
       },
       data: Object.values(data.labels),
       position: "right",
@@ -362,13 +377,16 @@ export const getLgOption = (
         show: false,
       },
     },
-    series: {
-      data: data.values,
-      type: "bar",
-      barWidth: 16,
-      itemStyle: {
-        color: "#25B4C8",
+    series: [
+      {
+        data: data.values,
+        type: "bar",
+        barWidth: 16,
+        itemStyle: {
+          color: "#25B4C8",
+        },
       },
-    },
+      imageOptionsSeries as SeriesOption,
+    ],
   };
 };

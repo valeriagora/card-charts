@@ -7,7 +7,7 @@ import React, {
   useRef,
   useState,
 } from "react";
-import { LargeCard, MediumCard, DndCard } from "../page";
+import { DndCard } from "../page";
 import {
   getSmOption,
   getMdOption,
@@ -45,7 +45,13 @@ const OverflowInfo = styled("div")({
   color: "#6C7080",
 });
 
-const OPTION_IMAGE_HEIGHT = 72;
+export const OPTION_IMAGE_HEIGHT = 72;
+export const IMAGE_OPTIONS_X_GAP = 8;
+export const IMAGE_OPTIONS_LINE_Y_GAP = 8;
+export const BAR_CHART_ML_BOTTOM_PADDING = 28;
+export const BAR_CHART_S_BOTTOM_PADDING = 20;
+export const BAR_CHART_S_OPTION_HEIGHT = 20;
+export const BAR_CHART_S_OVERFLOW_INFO_HEIGHT = 20;
 
 const BarChartContainer = styled("div")<{
   optionsCount: number;
@@ -59,8 +65,10 @@ const BarChartContainer = styled("div")<{
     height:
       size === CardSize.large
         ? withImageOptions
-          ? OPTION_IMAGE_HEIGHT * optionsCount + 30
-          : 40 * optionsCount
+          ? OPTION_IMAGE_HEIGHT * optionsCount +
+            IMAGE_OPTIONS_LINE_Y_GAP * (optionsCount - 1) +
+            BAR_CHART_ML_BOTTOM_PADDING
+          : optionsCount * 40
         : maxHeight,
     border: "1px solid pink",
   };
@@ -132,16 +140,10 @@ const imageUrls = [
   "https://images.unsplash.com/photo-1682687218147-9806132dc697?q=80&w=2875&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDF8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
   "https://images.unsplash.com/photo-1703615318360-788893a586d8?q=80&w=2785&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
   "https://images.unsplash.com/photo-1682687982029-edb9aecf5f89?q=80&w=2942&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDF8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-];
-const labels = [
-  "exciting",
-  "intriguing",
-  "closeEnded",
-  "boring",
-  "engaging",
-  "option1",
-  "option2",
-  "option3",
+  "https://images.unsplash.com/photo-1704192761191-757e0ccc5186?q=80&w=2944&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+  "https://images.unsplash.com/photo-1704587422648-43f456047a72?q=80&w=2787&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+  "https://images.unsplash.com/photo-1682687220795-796d3f6f7000?q=80&w=2940&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDF8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+  "https://images.unsplash.com/photo-1704419278767-09bc3a98581c?q=80&w=2875&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
 ];
 
 const urlToBase64 = async (url: string) => {
@@ -159,33 +161,30 @@ interface IBarProps {
 }
 function Bar({
   imageOptionUrls = imageUrls,
-  cardSize = CardSize.large,
+  cardSize = CardSize.medium,
 }: IBarProps) {
-  const imgs =
-    imageOptionUrls && imageOptionUrls?.length
-      ? labels.reduce((total: { [key: string]: string }, label, idx) => {
-          total[label] = imageOptionUrls[idx];
-          return total;
-        }, {})
-      : undefined;
   const [barData, setBarData] = useState<{
     labels: { [key: string]: string };
     values: number[];
-    images?: { [key: string]: string };
+    images?: string[];
   }>({
     labels: {
       exciting: "Exciting",
       intriguing:
-        "Intriguing Intriguing Intriguing Intriguing Intriguing Intriguing Intriguing Intriguing Intriguing Intriguing Intriguing",
+        "Intriguing Intriguing Intriguing Intriguing Intriguing Intriguing Intriguing Intriguing Intriguing Intriguing Intriguing IntriguingIntriguing Intriguing IntriguingIntriguingIntriguing",
       closeEnded: "Close-ended",
       boring: "Boring",
       engaging: "Engaging",
       option1: "Option 1",
       option2: "Option 2",
       option3: "Option 3",
+      option4: "Option 4",
+      option5: "Option 5",
+      option6: "Option 6",
+      option7: "Option 7",
     },
-    values: [50, 20, 5, 24, 1, 2, 3, 4],
-    images: imgs,
+    values: [50, 20, 5, 24, 1, 2, 3, 4, 5, 6, 7, 8],
+    images: cardSize === CardSize.small ? undefined : imageUrls,
   });
 
   const [imageUrl, setImageUrl] = useState("");
@@ -213,6 +212,7 @@ function Bar({
   };
 
   const onRenderEnded = () => {
+    console.log("onRenderEnded");
     // save as svg for chart with option images
     isChartDownloading && chartInstance && downloadChart(chartInstance);
   };
@@ -242,14 +242,20 @@ function Bar({
 
         const base64Urls = await getBase64Promises();
         if (base64Urls.length) {
-          const base64Images = labels.reduce(
-            (tot: { [key: string]: string }, curr: string, idx: number) => {
-              tot[curr] = base64Urls[idx];
-              return tot;
-            },
-            {}
+          // const base64Images = labels.reduce(
+          //   (tot: { [key: string]: string }, curr: string, idx: number) => {
+          //     tot[curr] = base64Urls[idx];
+          //     return tot;
+          //   },
+          //   {}
+          // );
+          const base64Images = imageUrls.map(
+            (imageUrl, idx) => base64Urls[idx]
           );
-          setBarData((prev) => ({ ...prev, images: base64Images }));
+          setBarData((prev) => ({
+            ...prev,
+            images: cardSize === CardSize.small ? undefined : base64Images,
+          }));
           setIsChartDownloading(true);
         }
         return;
@@ -257,7 +263,7 @@ function Bar({
       // save as svg without option images
       downloadChart(chartInstance);
     }
-  }, [chartInstance, withImageOptions, imageOptionUrls]);
+  }, [chartInstance, withImageOptions, imageOptionUrls, cardSize]);
   const overflows = {
     small: smHasOverflow,
     medium: mdHasOverflow,
@@ -276,7 +282,6 @@ function Bar({
     medium,
     large,
   };
-  // console.log("o", options[size]);
   return (
     <div
       style={{

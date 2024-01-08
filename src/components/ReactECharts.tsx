@@ -22,7 +22,9 @@ export interface ReactEChartsProps {
 export function ReactECharts({
   option,
   style,
-  settings,
+  settings = {
+    notMerge: true,
+  },
   loading = false,
   containerRef,
   onChartInit,
@@ -68,6 +70,7 @@ export function ReactECharts({
   useEffect(() => {
     // Update chart
     if (chartRef.current !== null) {
+      console.log("UPDATE CHART", option);
       const chart = getInstanceByDom(chartRef.current);
       chart?.setOption(option, settings);
       onRenderEnded instanceof Function && onRenderEnded();
@@ -91,7 +94,7 @@ export function ReactECharts({
         style={{
           width: "100%",
           height: "100%",
-          // border: "1px solid slateblue",
+          // border: "1px solid crimson",
           // borderRadius: 16,
           // overflow: "hidden",
           ...style,

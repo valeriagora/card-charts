@@ -25,9 +25,10 @@ export const Image = ({ url }) => {
         transform: "translateY(-60px)",
         backgroundImage: `url(${url})`,
         backgroundSize: "contain",
-        backgroundPosition: "center center",
+        backgroundPosition: "right center",
         backgroundRepeat: "no-repeat",
-        backgroundColor: "#1A1A25",
+        // backgroundColor: "#1A1A25",
+        // border: "1px solid #ddd",
         width: 120,
         height: 120,
       }}
