@@ -79,6 +79,7 @@ export const getSmOption: ReactEChartsProps["option"] = (
     },
   },
   yAxis: {
+    inverse: true,
     axisLabel: {
       margin: 8,
       formatter: (name: string, idx: number) => {
@@ -123,14 +124,16 @@ export const getSmOption: ReactEChartsProps["option"] = (
       show: false,
     },
   },
-  series: {
-    data: hasOverflow ? data.values.slice(0, 5) : data.values,
-    type: "bar",
-    barWidth: 16,
-    itemStyle: {
-      color: "#25B4C8",
+  series: [
+    {
+      data: hasOverflow ? data.values.slice(0, 5) : data.values,
+      type: "bar",
+      barWidth: 16,
+      itemStyle: {
+        color: "#25B4C8",
+      },
     },
-  },
+  ],
 });
 
 const renderOptionImage = function (
@@ -140,11 +143,10 @@ const renderOptionImage = function (
 ) {
   const xAxisStartPx = param.coordSys.x;
   const size = api.size([maxXAxisValue, 1]);
-  console.log(
-    "position:",
-    size[0] + xAxisStartPx + 8,
-    size[1] * param.dataIndex
-  );
+  // console.log("param", param);
+  // console.log("api", api);
+  console.log("maxXAxisValue", maxXAxisValue);
+  console.log("position Y", size[1], param.dataIndex);
   return {
     type: "group",
     children: [
@@ -173,6 +175,7 @@ export const getMdOption = (
   withImageOptions: boolean,
   hasOverflow: boolean
 ): ReactEChartsProps["option"] => {
+  // console.log("md hasOverflow", hasOverflow);
   const imageOptionsSeries = withImageOptions
     ? {
         type: "custom",
@@ -214,6 +217,7 @@ export const getMdOption = (
       },
     },
     yAxis: {
+      inverse: true,
       axisLabel: {
         margin: withImageOptions
           ? IMAGE_OPTIONS_X_GAP * 2 + OPTION_IMAGE_HEIGHT
@@ -328,6 +332,7 @@ export const getLgOption = (
       },
     },
     yAxis: {
+      inverse: true,
       axisLabel: {
         margin: withImageOptions
           ? IMAGE_OPTIONS_X_GAP * 2 + OPTION_IMAGE_HEIGHT
