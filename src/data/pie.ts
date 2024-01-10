@@ -80,7 +80,8 @@ const pieSeries = {
     color: "#6C7080",
   },
 };
-export const smOption: ReactEChartsProps["option"] = (data) => ({
+// eslint-desable
+export const smOption = (data: any) => ({
   tooltip: pieTooltip,
   grid: {
     ...pieGrid,
@@ -103,10 +104,7 @@ export const smOption: ReactEChartsProps["option"] = (data) => ({
 });
 //
 
-export const getMdOption: ReactEChartsProps["option"] = (
-  data: any[],
-  withImage: boolean
-) => ({
+export const getMdOption = (data: any[], withImage: boolean) => ({
   tooltip: pieTooltip,
   series: {
     ...pieSeries,
@@ -121,21 +119,18 @@ export const getMdOption: ReactEChartsProps["option"] = (
   legend: {
     formatter: pieLegendFormatter(
       data,
-      pieLegendMaxSymbolsCount.md[withImage ? 0 : 1]
+      pieLegendMaxSymbolsCount.medium[withImage ? 0 : 1]
     ),
     textStyle: {
       ...pieLegendTextStyle,
-      width: pieLegendWidths.md[withImage ? 0 : 1],
+      width: pieLegendWidths.medium[withImage ? 0 : 1],
     },
     ...pieLegend,
     pageIconSize: 16,
     left: "50%",
   },
 });
-export const getLgOption: ReactEChartsProps["option"] = (
-  data: any[],
-  withImage: boolean
-) => ({
+export const getLgOption = (data: any[], withImage: boolean) => ({
   tooltip: pieTooltip,
   series: {
     ...pieSeries,
@@ -148,16 +143,16 @@ export const getLgOption: ReactEChartsProps["option"] = (
     left: "50%",
   },
   legend: {
-    pageTextStyle: {
-      fontSize: 1,
-    },
+    // pageTextStyle: {
+    //   fontSize: 1,
+    // },
     formatter: pieLegendFormatter(
       data,
-      pieLegendMaxSymbolsCount.lg[withImage ? 0 : 1]
+      pieLegendMaxSymbolsCount.large[withImage ? 0 : 1]
     ),
     textStyle: {
       ...pieLegendTextStyle,
-      width: pieLegendWidths.lg[withImage ? 0 : 1],
+      width: pieLegendWidths.large[withImage ? 0 : 1],
     },
     ...pieLegend,
     left: "50%",

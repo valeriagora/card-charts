@@ -10,8 +10,8 @@ import {
   BAR_CHART_S_BOTTOM_PADDING,
   OPTION_IMAGE_HEIGHT,
   IMAGE_OPTIONS_X_GAP,
-} from "../app/bar/page";
-import { CardSize } from "../app/bar/page";
+} from "../app/bar/constants";
+import { CardSize } from "../app/bar/types";
 
 export async function blobToBase64(blob: Blob): Promise<string> {
   return new Promise((resolve, _) => {
@@ -51,13 +51,13 @@ export const getBase64Image = (url: string): Promise<string> => {
   });
 };
 
-export const getSmOption: ReactEChartsProps["option"] = (
+export const getSmOption = (
   data: {
-    labels: { [key: string]: string }[];
+    labels: { [key: string]: string };
     values: number[];
   },
   hasOverflow: boolean
-) => ({
+): ReactEChartsProps["option"] => ({
   backgroundColor: "#222430",
   show: true,
   grid: {
@@ -101,11 +101,11 @@ export const getSmOption: ReactEChartsProps["option"] = (
           color: "#6c7080",
         },
       },
-      textStyle: {
-        fontSize: 14,
-        fontWeight: 500,
-        color: "#6C7080",
-      },
+      // textStyle: {
+      //   fontSize: 14,
+      //   fontWeight: 500,
+      //   color: "#6C7080",
+      // },
       width: 130,
       overflow: "truncate",
     },
@@ -167,7 +167,13 @@ const M_CONTAINER_WIDTH = 656 - ML_CARD_HORIZONTAL_PADDING * 2;
 const GRID_BOTTOM_PADDING = 16;
 const T2B_TEXT_RIGHT_PADDING = 10;
 
-const renderT2B = function (params, api, values, size, withImage = false) {
+const renderT2B = function (
+  params: any,
+  api: any,
+  values: any,
+  size: any,
+  withImage = false
+) {
   const t2bPercents = values[0] + values[1];
   let b2bPercents = values[values.length - 1] + values[values.length - 2];
   let containerWidth =
@@ -274,7 +280,7 @@ export const getMdOption = (
     showT2B && !withImage
       ? {
           type: "custom",
-          renderItem: (params, api) =>
+          renderItem: (params: any, api: any) =>
             renderT2B(params, api, data.values, CardSize.medium),
           data: [[]],
           z: -1,
@@ -395,7 +401,7 @@ export const getLgOption = (
   const t2bSeries = showT2B
     ? {
         type: "custom",
-        renderItem: (params, api) =>
+        renderItem: (params: any, api: any) =>
           renderT2B(params, api, data.values, CardSize.large, withImage),
         data: [[]],
         z: -1,

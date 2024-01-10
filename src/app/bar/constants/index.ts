@@ -1,0 +1,7 @@
+export const OPTION_IMAGE_HEIGHT = 72;
+export const IMAGE_OPTIONS_X_GAP = 8;
+export const IMAGE_OPTIONS_LINE_Y_GAP = 8;
+export const BAR_CHART_ML_BOTTOM_PADDING = 18;
+export const BAR_CHART_S_BOTTOM_PADDING = 20;
+export const BAR_CHART_S_OPTION_HEIGHT = 20;
+export const BAR_CHART_S_OVERFLOW_INFO_HEIGHT = 20;

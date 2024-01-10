@@ -2,8 +2,11 @@
 import { ReactECharts } from "@/components/ReactECharts";
 import { Button } from "@mui/material";
 import React, { useState } from "react";
-import { MediumCard, LargeCard } from "../page";
+import { MediumCard } from "../../components/MediumCard";
+import { LargeCard } from "../../components/LargeCard";
+// import { SmallCard } from "../../components/MediumCard";
 import { smOption, getMdOption, getLgOption } from "@/data/pie";
+import { url } from "@/data/constants";
 const pieData = [
   {
     value: 10,
@@ -28,9 +31,7 @@ const pieData = [
   { value: 8, name: "Option 12" },
   { value: 2, name: "Option 13" },
 ];
-export const url =
-  "https://images.unsplash.com/photo-1682695796795-cc287af78a2b?q=80&w=2940&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDF8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D";
-// "https://images.unsplash.com/photo-1702068213563-2d29f10639ec?q=80&w=2048&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D";
+
 function Pie() {
   const [imageUrl, setImageUrl] = useState("");
 
@@ -48,15 +49,15 @@ function Pie() {
       >
         Toggle image
       </Button>
-      <SmallCard>
-        <ReactECharts option={smOption(pieData)} />
-      </SmallCard>
-      <MediumCard imageUrl={imageUrl}>
+      {/* <SmallCard> */}
+      {/* <ReactECharts option={smOption(pieData)} /> */}
+      {/* </SmallCard> */}
+      {/* <MediumCard imageUrl={imageUrl}>
         <ReactECharts option={getMdOption(pieData, withImage)} />
-      </MediumCard>
-      <LargeCard data={pieData} imageUrl={imageUrl}>
+      </MediumCard> */}
+      {/* <LargeCard data={pieData} imageUrl={imageUrl}>
         <ReactECharts option={getLgOption(pieData, withImage)} />
-      </LargeCard>
+      </LargeCard> */}
     </>
   );
 }
