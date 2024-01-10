@@ -38,7 +38,6 @@ export function ReactECharts({
     if (chartRef.current !== null) {
       chart = init(chartRef.current, null, { renderer: "svg" });
       onChartInit instanceof Function && onChartInit(chart);
-      // setChart(chart);
     }
 
     // Add chart resize listener
@@ -49,20 +48,13 @@ export function ReactECharts({
 
     const ref = containerRef?.current;
     const observer = new ResizeObserver(([{ target }]) => {
-      // const boundingClientRect = target.getBoundingClientRect();
-      // console.log(target, boundingClientRect);
       chart?.resize();
     });
     if (ref) {
       observer.observe(ref);
     }
-    //
-    // window.addEventListener("resize", resizeChart);
-
-    // Return cleanup function
     return () => {
       chart?.dispose();
-      // window.removeEventListener("resize", resizeChart);
       ref && observer.unobserve(ref);
     };
   }, [containerRef]);
@@ -70,7 +62,6 @@ export function ReactECharts({
   useEffect(() => {
     // Update chart
     if (chartRef.current !== null) {
-      // console.log("UPDATE CHART", optsion);
       const chart = getInstanceByDom(chartRef.current);
       chart?.clear();
       chart?.setOption(option, settings);

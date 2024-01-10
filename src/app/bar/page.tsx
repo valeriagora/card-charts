@@ -4,6 +4,7 @@ import React, {
   forwardRef,
   ReactNode,
   useCallback,
+  useEffect,
   useRef,
   useState,
 } from "react";
@@ -48,7 +49,7 @@ const OverflowInfo = styled("div")({
 export const OPTION_IMAGE_HEIGHT = 72;
 export const IMAGE_OPTIONS_X_GAP = 8;
 export const IMAGE_OPTIONS_LINE_Y_GAP = 8;
-export const BAR_CHART_ML_BOTTOM_PADDING = 28;
+export const BAR_CHART_ML_BOTTOM_PADDING = 18.5;
 export const BAR_CHART_S_BOTTOM_PADDING = 20;
 export const BAR_CHART_S_OPTION_HEIGHT = 20;
 export const BAR_CHART_S_OVERFLOW_INFO_HEIGHT = 20;
@@ -68,9 +69,9 @@ const BarChartContainer = styled("div")<{
           ? OPTION_IMAGE_HEIGHT * optionsCount +
             IMAGE_OPTIONS_LINE_Y_GAP * (optionsCount - 1) +
             BAR_CHART_ML_BOTTOM_PADDING
-          : optionsCount * 40
+          : optionsCount * 60 + 28
         : maxHeight,
-    border: "1px solid pink",
+    // border: "1px solid pink",
   };
 });
 
@@ -108,6 +109,8 @@ const BarContainer = forwardRef(function Container(
   },
   ref
 ) {
+  console.log("hasOverflow", hasOverflow);
+
   // needed to set the fixed height of chart container and show overflow text
   return (
     <BarChartContainer
@@ -137,13 +140,13 @@ const imageUrls = [
   "https://images.unsplash.com/photo-1702893576128-21feb60299d1?q=80&w=2940&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
   "https://images.unsplash.com/photo-1703028408829-ba45aa14b782?q=80&w=2787&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
   "https://images.unsplash.com/photo-1519925610903-381054cc2a1c?q=80&w=2940&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-  // "https://images.unsplash.com/photo-1682687218147-9806132dc697?q=80&w=2875&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDF8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-  // "https://images.unsplash.com/photo-1703615318360-788893a586d8?q=80&w=2785&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-  // "https://images.unsplash.com/photo-1682687982029-edb9aecf5f89?q=80&w=2942&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDF8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-  // "https://images.unsplash.com/photo-1704192761191-757e0ccc5186?q=80&w=2944&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-  // "https://images.unsplash.com/photo-1704587422648-43f456047a72?q=80&w=2787&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-  // "https://images.unsplash.com/photo-1682687220795-796d3f6f7000?q=80&w=2940&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDF8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-  // "https://images.unsplash.com/photo-1704419278767-09bc3a98581c?q=80&w=2875&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+  "https://images.unsplash.com/photo-1682687218147-9806132dc697?q=80&w=2875&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDF8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+  "https://images.unsplash.com/photo-1703615318360-788893a586d8?q=80&w=2785&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+  "https://images.unsplash.com/photo-1682687982029-edb9aecf5f89?q=80&w=2942&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDF8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+  "https://images.unsplash.com/photo-1704192761191-757e0ccc5186?q=80&w=2944&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+  "https://images.unsplash.com/photo-1704587422648-43f456047a72?q=80&w=2787&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+  "https://images.unsplash.com/photo-1682687220795-796d3f6f7000?q=80&w=2940&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDF8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+  "https://images.unsplash.com/photo-1704419278767-09bc3a98581c?q=80&w=2875&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
 ];
 
 const urlToBase64 = async (url: string) => {
@@ -156,37 +159,42 @@ export enum CardSize {
   large = "large",
 }
 interface IBarProps {
+  labels: { [key: string]: string };
+  values: number[];
   imageOptionUrls?: string[];
   cardSize: CardSize;
 }
+const barLabels = {
+  exciting:
+    "Exciting Exciting Exciting Exciting Exciting Exciting Exciting Exciting Exciting Exciting",
+  intriguing:
+    "Intriguing Intriguing Intriguing Intriguing Intriguing Intriguing Intriguing Intriguing Intriguing Intriguing Intriguing IntriguingIntriguing Intriguing IntriguingIntriguingIntriguing",
+  closeEnded: "Close-ended",
+  boring: "Boring",
+  engaging: "Engaging",
+  option1: "Option 1",
+  option2: "Option 2",
+  option3: "Option 3",
+  option4: "Option 4",
+  option5: "Option 5",
+  option6: "Option 6",
+  option7: "Option 7",
+};
+const barValues = [50, 20, 5, 24, 1, 2, 3, 4, 5, 6, 7, 8];
 function Bar({
+  labels = barLabels,
+  values = barValues,
+  // imageOptionUrls = undefined,
   imageOptionUrls = imageUrls,
-  cardSize = CardSize.large,
+  cardSize = CardSize.medium,
 }: IBarProps) {
   const [barData, setBarData] = useState<{
     labels: { [key: string]: string };
     values: number[];
     images?: string[];
   }>({
-    labels: {
-      exciting: "Exciting",
-      intriguing:
-        "Intriguing Intriguing Intriguing Intriguing Intriguing Intriguing Intriguing Intriguing Intriguing Intriguing Intriguing IntriguingIntriguing Intriguing IntriguingIntriguingIntriguing",
-      closeEnded: "Close-ended",
-      boring: "Boring",
-      engaging: "Engaging",
-      // option1: "Option 1",
-      // option2: "Option 2",
-      // option3: "Option 3",
-      // option4: "Option 4",
-      // option5: "Option 5",
-      // option6: "Option 6",
-      // option7: "Option 7",
-    },
-    values: [
-      50, 20, 5, 24, 1,
-      // , 1, 2, 3, 4, 5, 6, 7, 8
-    ],
+    labels,
+    values,
     images: cardSize === CardSize.small ? undefined : imageUrls,
   });
 
@@ -194,15 +202,41 @@ function Bar({
 
   const withImage = !!imageUrl;
   const withImageOptions = !!(imageOptionUrls && imageOptionUrls.length);
-  const smHasOverflow = barData.values.length > 5;
+  const smHasOverflow = values.length > 5;
   const mdHasOverflow = withImageOptions
-    ? barData.values.length > 4
-    : barData.values.length > 11;
+    ? values.length > 4
+    : values.length > 11;
 
   const [chartInstance, setChartInstance] = useState<ECharts | null>(null);
   const [size, setSize] = useState<CardSize>(cardSize);
   const [isChartDownloading, setIsChartDownloading] = useState(false);
   const containerRef = useRef<HTMLDivElement | null>(null);
+
+  useEffect(() => {
+    if (size === CardSize.large) {
+      setBarData({
+        values,
+        labels,
+        images: imageUrls,
+      });
+    }
+    if (size === CardSize.medium && mdHasOverflow) {
+      setBarData({
+        values: withImageOptions ? values.slice(0, 4) : values.slice(0, 11),
+        labels: withImageOptions
+          ? Object.fromEntries(Object.entries(labels).slice(0, 4))
+          : Object.fromEntries(Object.entries(labels).slice(0, 11)),
+        images: imageUrls,
+      });
+    }
+    if (size === CardSize.small && smHasOverflow) {
+      setBarData({
+        values: values.slice(0, 5),
+        labels: Object.fromEntries(Object.entries(labels).slice(0, 5)),
+        images: undefined,
+      });
+    }
+  }, [size, smHasOverflow, mdHasOverflow, withImageOptions, values, labels]);
 
   const toggleImg = () => {
     // if (size !== CardSize.small) {
@@ -215,7 +249,6 @@ function Bar({
   };
 
   const onRenderEnded = () => {
-    console.log("onRenderEnded");
     // save as svg for chart with option images
     isChartDownloading && chartInstance && downloadChart(chartInstance);
   };
@@ -245,13 +278,6 @@ function Bar({
 
         const base64Urls = await getBase64Promises();
         if (base64Urls.length) {
-          // const base64Images = labels.reduce(
-          //   (tot: { [key: string]: string }, curr: string, idx: number) => {
-          //     tot[curr] = base64Urls[idx];
-          //     return tot;
-          //   },
-          //   {}
-          // );
           const base64Images = imageUrls.map(
             (imageUrl, idx) => base64Urls[idx]
           );
@@ -338,7 +364,8 @@ function Bar({
         <BarContainer
           ref={containerRef}
           size={size}
-          optionsCount={barData.values.length}
+          optionsCount={values.length}
+          // optionsCount={barData.values.length}
           hasOverflow={overflows[size]}
           withImageOptions={withImageOptions}
         >

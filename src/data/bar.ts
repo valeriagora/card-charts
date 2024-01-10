@@ -108,9 +108,7 @@ export const getSmOption: ReactEChartsProps["option"] = (
       width: 130,
       overflow: "truncate",
     },
-    data: hasOverflow
-      ? Object.values(data.labels).slice(0, 5)
-      : Object.values(data.labels),
+    data: Object.values(data.labels),
     position: "right",
     type: "category",
     axisLine: {
@@ -126,7 +124,7 @@ export const getSmOption: ReactEChartsProps["option"] = (
   },
   series: [
     {
-      data: hasOverflow ? data.values.slice(0, 5) : data.values,
+      data: data.values,
       type: "bar",
       barWidth: 16,
       itemStyle: {
@@ -143,10 +141,6 @@ const renderOptionImage = function (
 ) {
   const xAxisStartPx = param.coordSys.x;
   const size = api.size([maxXAxisValue, 1]);
-  // console.log("param", param);
-  // console.log("api", api);
-  console.log("maxXAxisValue", maxXAxisValue);
-  console.log("position Y", size[1], param.dataIndex);
   return {
     type: "group",
     children: [
@@ -175,7 +169,6 @@ export const getMdOption = (
   withImageOptions: boolean,
   hasOverflow: boolean
 ): ReactEChartsProps["option"] => {
-  // console.log("md hasOverflow", hasOverflow);
   const imageOptionsSeries = withImageOptions
     ? {
         type: "custom",
@@ -201,6 +194,7 @@ export const getMdOption = (
       name: "",
       inverse: true,
       axisLabel: {
+        margin: 2,
         show: true,
         fontFamily: "Manrope",
         color: "#6C7080",
@@ -240,25 +234,16 @@ export const getMdOption = (
             color: "#6c7080",
           },
         },
-        textStyle: {
-          fontSize: 14,
-          fontWeight: 500,
-          color: "#6C7080",
-        },
         width: withImage
           ? withImageOptions
             ? 90
             : 210
           : withImageOptions
-          ? 270
+          ? 250
           : 370,
         overflow: "truncate",
       },
-      data: hasOverflow
-        ? withImageOptions
-          ? Object.values(data.labels).slice(0, 4)
-          : Object.values(data.labels).slice(0, 11)
-        : Object.values(data.labels),
+      data: Object.values(data.labels),
       position: "right",
       type: "category",
       axisLine: {
@@ -316,6 +301,7 @@ export const getLgOption = (
     xAxis: {
       inverse: true,
       axisLabel: {
+        margin: 2,
         show: true,
         fontFamily: "Manrope",
         color: "#6C7080",
@@ -356,15 +342,10 @@ export const getLgOption = (
             color: "#6c7080",
           },
         },
-        // textStyle: {
-        //   fontSize: 14,
-        //   fontWeight: 500,
-        //   color: "#6C7080",
-        // },
         width: withImage
           ? withImageOptions
-            ? 270
-            : 430
+            ? 260
+            : 340
           : withImageOptions
           ? 380
           : 400,

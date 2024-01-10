@@ -22,15 +22,13 @@ export const Image = ({ url }) => {
         position: "absolute",
         right: 0,
         top: "50%",
+        width: 120,
+        height: 120,
         transform: "translateY(-60px)",
         backgroundImage: `url(${url})`,
         backgroundSize: "contain",
         backgroundPosition: "right center",
         backgroundRepeat: "no-repeat",
-        // backgroundColor: "#1A1A25",
-        // border: "1px solid #ddd",
-        width: 120,
-        height: 120,
       }}
     />
   );
@@ -55,7 +53,6 @@ const CardContainer = styled("div")<{ size: CardSize }>(({ size }) => ({
   display: "flex",
   flexDirection: "column",
   justifyContent: "space-between",
-  //
   overflow: "hidden",
 }));
 const SmToMdChart = styled("div")<{ size: "sm" | "md" }>(({ size }) => ({
@@ -76,7 +73,7 @@ export const DndCard = ({ title, children, size, imageUrl }: any) => {
         </h3>
         <SmToMdChart size={size}>
           {children}
-          {imageUrl && size !== "sm" && <Image url={imageUrl} />}
+          {imageUrl && size !== CardSize.small && <Image url={imageUrl} />}
         </SmToMdChart>
       </CardContainer>
     </>
