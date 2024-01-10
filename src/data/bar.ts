@@ -11,6 +11,7 @@ import {
   OPTION_IMAGE_HEIGHT,
   IMAGE_OPTIONS_X_GAP,
 } from "../app/bar/page";
+import { CardSize } from "../app/bar/page";
 
 export async function blobToBase64(blob: Blob): Promise<string> {
   return new Promise((resolve, _) => {
@@ -159,6 +160,92 @@ const renderOptionImage = function (
   };
 };
 
+const ML_CARD_HORIZONTAL_PADDING = 20;
+const L_ROW_MAX_HEIGHT = 60;
+const L_CONTAINER_WIDTH = 992 - ML_CARD_HORIZONTAL_PADDING * 2;
+const M_CONTAINER_WIDTH = 656 - ML_CARD_HORIZONTAL_PADDING * 2;
+const GRID_BOTTOM_PADDING = 16;
+const T2B_TEXT_RIGHT_PADDING = 10;
+
+const renderT2B = function (params, api, values, size, withImage = false) {
+  const t2bPercents = values[0] + values[1];
+  let b2bPercents = values[values.length - 1] + values[values.length - 2];
+  let containerWidth =
+    size === CardSize.large ? L_CONTAINER_WIDTH : M_CONTAINER_WIDTH;
+  const optionHeight =
+    size === CardSize.large
+      ? L_ROW_MAX_HEIGHT
+      : (344 - GRID_BOTTOM_PADDING) / values.length;
+  const containerHeight = optionHeight * 2;
+  const textWidth = 60;
+  const iconHeight = 8;
+  const fontSize = 14;
+  if (withImage && size === CardSize.large) {
+    const imageWidth = 120;
+    const imageLeftMargin = 4;
+    containerWidth -= imageWidth - imageLeftMargin;
+  }
+  const b2bYDistance = size === "large" ? values.length - 2 : values.length - 2;
+  const b2bTextYDistance = values.length - 1;
+  const showTop2Box = t2bPercents >= b2bPercents;
+  const children = [
+    {
+      type: "rect",
+      shape: {
+        x: 0,
+        y: showTop2Box ? 0 : optionHeight * b2bYDistance,
+        width: containerWidth,
+        height: containerHeight,
+        r: 2,
+      },
+      style: {
+        fill: "#1A1A25",
+      },
+    },
+    {
+      type: "rect",
+      shape: {
+        x: containerWidth - textWidth - T2B_TEXT_RIGHT_PADDING - iconHeight - 4,
+        y: showTop2Box
+          ? optionHeight - iconHeight / 2
+          : optionHeight * b2bTextYDistance - iconHeight / 2,
+        width: iconHeight,
+        height: iconHeight,
+        r: 1,
+      },
+      style: {
+        fill: "#25B4C8",
+      },
+    },
+    {
+      type: "text",
+      style: {
+        text: `${showTop2Box ? "T2B" : "B2B"} ${
+          showTop2Box ? t2bPercents : b2bPercents
+        }%`,
+        textFont: api.font({
+          fontSize,
+          fontWeight: 500,
+          fontFamily: "Manrope, sans-serif",
+        }),
+        textAlign: "center",
+        textVerticalAlign: "bottom",
+        fill: "#fff",
+      },
+      position: [
+        containerWidth - textWidth / 2 - T2B_TEXT_RIGHT_PADDING,
+        showTop2Box
+          ? optionHeight + fontSize / 2
+          : optionHeight * b2bTextYDistance + fontSize / 2,
+      ],
+    },
+  ];
+
+  return {
+    type: "group",
+    children,
+  };
+};
 export const getMdOption = (
   data: {
     labels: { [key: string]: string };
@@ -167,7 +254,8 @@ export const getMdOption = (
   },
   withImage: boolean,
   withImageOptions: boolean,
-  hasOverflow: boolean
+  hasOverflow: boolean,
+  showT2B: boolean
 ): ReactEChartsProps["option"] => {
   const imageOptionsSeries = withImageOptions
     ? {
@@ -182,6 +270,16 @@ export const getMdOption = (
         z: 1,
       }
     : undefined;
+  const t2bSeries =
+    showT2B && !withImage
+      ? {
+          type: "custom",
+          renderItem: (params, api) =>
+            renderT2B(params, api, data.values, CardSize.medium),
+          data: [[]],
+          z: -1,
+        }
+      : undefined;
   return {
     backgroundColor: "#222430",
     show: true,
@@ -199,8 +297,8 @@ export const getMdOption = (
         fontFamily: "Manrope",
         color: "#6C7080",
         fontSize: 12,
-        lineHeight: 20,
-        fontWeight: 500,
+        lineHeight: 16,
+        fontWeight: 400,
       },
       splitLine: {
         show: true,
@@ -238,6 +336,8 @@ export const getMdOption = (
           ? withImageOptions
             ? 90
             : 210
+          : showT2B
+          ? 250
           : withImageOptions
           ? 250
           : 370,
@@ -266,6 +366,7 @@ export const getMdOption = (
         },
       },
       imageOptionsSeries as SeriesOption,
+      t2bSeries as SeriesOption,
     ],
   };
 };
@@ -277,7 +378,8 @@ export const getLgOption = (
     images?: string[];
   },
   withImage: boolean,
-  withImageOptions: boolean
+  withImageOptions: boolean,
+  showT2B: boolean
 ): ReactEChartsProps["option"] => {
   const imageOptionsSeries = withImageOptions
     ? {
@@ -288,6 +390,15 @@ export const getLgOption = (
         ) => renderOptionImage(params, api, Math.max(...data.values)),
         data: data.images?.map((image: string) => [0, 0, image]),
         z: 1,
+      }
+    : undefined;
+  const t2bSeries = showT2B
+    ? {
+        type: "custom",
+        renderItem: (params, api) =>
+          renderT2B(params, api, data.values, CardSize.large, withImage),
+        data: [[]],
+        z: -1,
       }
     : undefined;
   return {
@@ -306,8 +417,8 @@ export const getLgOption = (
         fontFamily: "Manrope",
         color: "#6C7080",
         fontSize: 12,
-        lineHeight: 20,
-        fontWeight: 500,
+        lineHeight: 16,
+        fontWeight: 400,
       },
       splitLine: {
         show: true,
@@ -343,9 +454,13 @@ export const getLgOption = (
           },
         },
         width: withImage
-          ? withImageOptions
+          ? showT2B
+            ? 270
+            : withImageOptions
             ? 260
             : 340
+          : showT2B
+          ? 360
           : withImageOptions
           ? 380
           : 400,
@@ -373,6 +488,7 @@ export const getLgOption = (
         },
       },
       imageOptionsSeries as SeriesOption,
+      t2bSeries as SeriesOption,
     ],
   };
 };

@@ -49,7 +49,7 @@ const OverflowInfo = styled("div")({
 export const OPTION_IMAGE_HEIGHT = 72;
 export const IMAGE_OPTIONS_X_GAP = 8;
 export const IMAGE_OPTIONS_LINE_Y_GAP = 8;
-export const BAR_CHART_ML_BOTTOM_PADDING = 18.5;
+export const BAR_CHART_ML_BOTTOM_PADDING = 18;
 export const BAR_CHART_S_BOTTOM_PADDING = 20;
 export const BAR_CHART_S_OPTION_HEIGHT = 20;
 export const BAR_CHART_S_OVERFLOW_INFO_HEIGHT = 20;
@@ -168,7 +168,7 @@ const barLabels = {
   exciting:
     "Exciting Exciting Exciting Exciting Exciting Exciting Exciting Exciting Exciting Exciting",
   intriguing:
-    "Intriguing Intriguing Intriguing Intriguing Intriguing Intriguing Intriguing Intriguing Intriguing Intriguing Intriguing IntriguingIntriguing Intriguing IntriguingIntriguingIntriguing",
+    "Intriguing Intriguing Intriguing Intriguing Intriguing Intriguing Intriguing Intriguing IntriguingIntriguingIntriguing",
   closeEnded: "Close-ended",
   boring: "Boring",
   engaging: "Engaging",
@@ -184,9 +184,9 @@ const barValues = [50, 20, 5, 24, 1, 2, 3, 4, 5, 6, 7, 8];
 function Bar({
   labels = barLabels,
   values = barValues,
-  // imageOptionUrls = undefined,
-  imageOptionUrls = imageUrls,
-  cardSize = CardSize.medium,
+  imageOptionUrls = undefined,
+  // imageOptionUrls = imageUrls,
+  cardSize = CardSize.large,
 }: IBarProps) {
   const [barData, setBarData] = useState<{
     labels: { [key: string]: string };
@@ -199,6 +199,7 @@ function Bar({
   });
 
   const [imageUrl, setImageUrl] = useState("");
+  const [showT2B, setShowT2B] = useState(false);
 
   const withImage = !!imageUrl;
   const withImageOptions = !!(imageOptionUrls && imageOptionUrls.length);
@@ -239,9 +240,10 @@ function Bar({
   }, [size, smHasOverflow, mdHasOverflow, withImageOptions, values, labels]);
 
   const toggleImg = () => {
-    // if (size !== CardSize.small) {
     setImageUrl(imageUrl ? "" : url);
-    // }
+  };
+  const toggleT2B = () => {
+    setShowT2B(!showT2B);
   };
 
   const handleSizeChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -265,6 +267,7 @@ function Bar({
     anchorElement.click();
     setIsChartDownloading(false);
   };
+
   const saveAsImage = useCallback(async () => {
     if (chartInstance) {
       if (withImageOptions) {
@@ -303,9 +306,10 @@ function Bar({
     barData,
     withImage,
     withImageOptions,
-    overflows[size]
+    overflows[size],
+    showT2B
   );
-  const large = getLgOption(barData, withImage, withImageOptions);
+  const large = getLgOption(barData, withImage, withImageOptions, showT2B);
   const options = {
     small,
     medium,
@@ -320,6 +324,16 @@ function Bar({
         border: "2px solid #ddd",
       }}
     >
+      <Button
+        sx={{ marginBottom: 4, display: "block" }}
+        variant="contained"
+        onClick={toggleT2B}
+        disabled={
+          size === CardSize.small || (size === CardSize.medium && withImage)
+        }
+      >
+        Toggle T2B/B2B
+      </Button>
       <Button
         sx={{ marginBottom: 4, display: "block" }}
         variant="contained"

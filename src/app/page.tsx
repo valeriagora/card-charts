@@ -61,7 +61,6 @@ const SmToMdChart = styled("div")<{ size: "sm" | "md" }>(({ size }) => ({
   height: "100%",
   display: "flex",
   alignItems: "center",
-  border: "1px solid slateblue",
 }));
 
 export const DndCard = ({ title, children, size, imageUrl }: any) => {

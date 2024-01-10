@@ -17,14 +17,10 @@
   justify-content: space-between;
 }
 .smChart {
-  /* position: relative;
-  overflow: hidden; */
-  /*  */
   width: 280px;
   height: 120px;
   display: flex;
   align-items: center;
-  /* border: 1px solid slateblue; */
 }
 .mdChart {
   position: relative;
