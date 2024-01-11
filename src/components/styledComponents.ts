@@ -22,11 +22,13 @@ export const CardContainer = styled("div")<{ size: CardSize }>(({ size }) => ({
   flexDirection: "column",
   justifyContent: "space-between",
   overflow: "hidden",
+  border: "1px solid crimson",
 }));
-export const SmToMdChart = styled("div")<{ size: "sm" | "md" }>(({ size }) => ({
+export const SmToMdChart = styled("div")(() => ({
   position: "relative",
   width: "100%",
   height: "100%",
   display: "flex",
   alignItems: "center",
+  border: "1px solid slateblue",
 }));

@@ -1,12 +1,19 @@
 "use client";
 import { ReactECharts } from "@/components/ReactECharts";
-import { Button } from "@mui/material";
-import React, { useState } from "react";
-import { MediumCard } from "../../components/MediumCard";
-import { LargeCard } from "../../components/LargeCard";
-// import { SmallCard } from "../../components/MediumCard";
+import {
+  Button,
+  FormControlLabel,
+  Radio,
+  FormControl,
+  RadioGroup,
+  FormLabel,
+  styled,
+} from "@mui/material";
+import React, { useRef, useState } from "react";
 import { smOption, getMdOption, getLgOption } from "@/data/pie";
 import { url } from "@/data/constants";
+import { DndCard } from "@/components/DndCard";
+import { CardSize } from "../bar/types";
 const pieData = [
   {
     value: 10,
@@ -31,33 +38,88 @@ const pieData = [
   { value: 8, name: "Option 12" },
   { value: 2, name: "Option 13" },
 ];
+const MIN_L_CHART_HEIGHT = 188;
+const PieChartContainer = styled("div")<{
+  size: CardSize;
+  height: number;
+}>(({ size, height }) => {
+  return {
+    position: "relative",
+    width: "100%",
+    height:
+      size === CardSize.large
+        ? height > MIN_L_CHART_HEIGHT
+          ? height
+          : MIN_L_CHART_HEIGHT
+        : "100%",
+  };
+});
 
-function Pie() {
+function Pie({ cardSize = CardSize.medium }) {
   const [imageUrl, setImageUrl] = useState("");
+  const containerRef = useRef<HTMLDivElement | null>(null);
 
+  const [size, setSize] = useState(cardSize);
   const toggleImg = () => {
     setImageUrl(imageUrl ? "" : url);
   };
-
+  const handleSizeChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setSize(event.target.value as CardSize);
+  };
   const withImage = !!imageUrl;
+  const small = smOption(pieData);
+  const medium = getMdOption(pieData, withImage);
+  const large = getLgOption(pieData, withImage);
+  const options = {
+    small,
+    medium,
+    large,
+  };
+
   return (
     <>
       <Button
         sx={{ marginBottom: 4, display: "block" }}
         variant="contained"
         onClick={toggleImg}
+        disabled={size === CardSize.small}
       >
         Toggle image
       </Button>
-      {/* <SmallCard> */}
-      {/* <ReactECharts option={smOption(pieData)} /> */}
-      {/* </SmallCard> */}
-      {/* <MediumCard imageUrl={imageUrl}>
-        <ReactECharts option={getMdOption(pieData, withImage)} />
-      </MediumCard> */}
-      {/* <LargeCard data={pieData} imageUrl={imageUrl}>
-        <ReactECharts option={getLgOption(pieData, withImage)} />
-      </LargeCard> */}
+      <FormControl>
+        <FormLabel id="radio-buttons-group-label">Card size</FormLabel>
+        <RadioGroup
+          aria-labelledby="radio-buttons-group-label"
+          value={size}
+          onChange={handleSizeChange}
+          name="radio-buttons-group"
+        >
+          <FormControlLabel
+            value={CardSize.small}
+            control={<Radio />}
+            label="Small"
+          />
+          <FormControlLabel
+            value={CardSize.medium}
+            control={<Radio />}
+            label="Medium"
+          />
+          <FormControlLabel
+            value={CardSize.large}
+            control={<Radio />}
+            label="Large"
+          />
+        </RadioGroup>
+      </FormControl>
+      <DndCard size={size} imageUrl={imageUrl}>
+        <PieChartContainer
+          size={size}
+          ref={containerRef}
+          height={pieData.length * 24}
+        >
+          <ReactECharts containerRef={containerRef} option={options[size]} />
+        </PieChartContainer>
+      </DndCard>
     </>
   );
 }

@@ -9,7 +9,7 @@ import React, {
   useRef,
   useState,
 } from "react";
-import { DndCard } from "../../../components/DndCard";
+import { DndCard } from "@/components/DndCard";
 import {
   getSmOption,
   getMdOption,
@@ -108,8 +108,6 @@ const BarContainer = forwardRef(function Container(
   },
   ref
 ) {
-  console.log("hasOverflow", hasOverflow);
-
   // needed to set the fixed height of chart container and show overflow text
   return (
     <BarChartContainer
@@ -194,7 +192,15 @@ function BarChart({ labels, values, imageOptionUrls, cardSize }: IBarProps) {
         images: undefined,
       });
     }
-  }, [size, smHasOverflow, mdHasOverflow, withImageOptions, values, labels]);
+  }, [
+    size,
+    smHasOverflow,
+    mdHasOverflow,
+    withImageOptions,
+    values,
+    labels,
+    imageOptionUrls,
+  ]);
 
   const toggleImg = () => {
     setImageUrl(imageUrl ? "" : url);

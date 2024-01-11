@@ -26,7 +26,8 @@ const barLabels = {
   closeEnded: "Close-ended",
   boring: "Boring",
   engaging: "Engaging",
-  option1: "Option 1",
+  option1:
+    "Option 1 Option 1 Option 1 Option 1 Option 1 Option 1 Option 1 Option 1 Option 1 Option 1 Option 1",
   option2: "Option 2",
   option3: "Option 3",
   option4: "Option 4",
