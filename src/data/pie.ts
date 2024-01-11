@@ -1,4 +1,5 @@
 import { ReactEChartsProps } from "@/components/ReactECharts";
+import { SeriesOption, LegendComponentOption } from "echarts";
 
 const pieLegendWidths = {
   small: 148,
@@ -28,9 +29,9 @@ const pieLegendFormatter =
     return name.length < maxSymbols ? label : overflowed;
   };
 const pieTooltip = {
-  trigger: "item",
+  trigger: "item" as "item" | "none" | "axis",
 };
-const pieLegend = {
+const pieLegend: LegendComponentOption = {
   type: "scroll",
   pageIconColor: "#C8CAD0",
   pageIconInactiveColor: "#6C7080",
@@ -70,7 +71,7 @@ const pieGrid = {
   top: 0,
   bottom: 0,
 };
-const pieSeries = {
+const pieSeries: SeriesOption = {
   type: "pie",
   color: pieColors,
   label: {
@@ -81,7 +82,7 @@ const pieSeries = {
   },
 };
 // eslint-desable
-export const smOption = (data: any) => ({
+export const smOption = (data: any): ReactEChartsProps["option"] => ({
   tooltip: pieTooltip,
   grid: {
     ...pieGrid,
@@ -98,13 +99,16 @@ export const smOption = (data: any) => ({
     ...pieLegend,
     left: 124,
     textStyle: {
-      ...pieLegendTextStyle,
+      ...(pieLegendTextStyle as any),
     },
   },
 });
 //
 
-export const getMdOption = (data: any[], withImage: boolean) => ({
+export const getMdOption = (
+  data: any[],
+  withImage: boolean
+): ReactEChartsProps["option"] => ({
   tooltip: pieTooltip,
   series: {
     ...pieSeries,
@@ -122,7 +126,7 @@ export const getMdOption = (data: any[], withImage: boolean) => ({
       pieLegendMaxSymbolsCount.medium[withImage ? 0 : 1]
     ),
     textStyle: {
-      ...pieLegendTextStyle,
+      ...(pieLegendTextStyle as any),
       width: pieLegendWidths.medium[withImage ? 0 : 1],
     },
     ...pieLegend,
@@ -130,7 +134,10 @@ export const getMdOption = (data: any[], withImage: boolean) => ({
     left: "50%",
   },
 });
-export const getLgOption = (data: any[], withImage: boolean) => ({
+export const getLgOption = (
+  data: any[],
+  withImage: boolean
+): ReactEChartsProps["option"] => ({
   tooltip: pieTooltip,
   series: {
     ...pieSeries,
@@ -143,15 +150,12 @@ export const getLgOption = (data: any[], withImage: boolean) => ({
     left: "50%",
   },
   legend: {
-    // pageTextStyle: {
-    //   fontSize: 1,
-    // },
     formatter: pieLegendFormatter(
       data,
       pieLegendMaxSymbolsCount.large[withImage ? 0 : 1]
     ),
     textStyle: {
-      ...pieLegendTextStyle,
+      ...(pieLegendTextStyle as any),
       width: pieLegendWidths.large[withImage ? 0 : 1],
     },
     ...pieLegend,

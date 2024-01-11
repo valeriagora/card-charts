@@ -9,7 +9,7 @@ export const DndCard = ({ title, children, size, imageUrl }: any) => {
         <h3 className={styles.title}>
           Which words would you use to describe the TV promo?
         </h3>
-        <SmToMdChart size={size}>
+        <SmToMdChart>
           {children}
           {imageUrl && size !== CardSize.small && <Image url={imageUrl} />}
         </SmToMdChart>
