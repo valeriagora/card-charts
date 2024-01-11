@@ -3,7 +3,7 @@ import { styled } from "@mui/material";
 const cardWidths = {
   small: 320,
   medium: 656,
-  large: "100%",
+  large: 992,
 };
 const cardHeights = {
   small: 200,

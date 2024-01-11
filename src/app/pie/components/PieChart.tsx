@@ -29,7 +29,10 @@ const pieData = [
   { value: 2, name: "Option 2" },
   { value: 3, name: "Option 3" },
   { value: 5, name: "Option 4" },
-  { value: 3, name: "Option 5 Engine Search Engine Search Engine Search" },
+  {
+    value: 3,
+    name: "Option 5 Engine Search Engine Search Engine Search Search Search Search Search",
+  },
   { value: 2, name: "Option 6" },
   { value: 2, name: "Option 7" },
   { value: 2, name: "Option 8" },

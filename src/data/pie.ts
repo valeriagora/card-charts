@@ -1,10 +1,11 @@
+import { CardSize } from "@/app/bar/types";
 import { ReactEChartsProps } from "@/components/ReactECharts";
 import { SeriesOption, LegendComponentOption } from "echarts";
 
 const pieLegendWidths = {
-  small: 148,
+  small: 100,
   medium: [152, 300],
-  large: [340, 440],
+  large: [280, 440],
 };
 const pieLegendMaxSymbolsCount = {
   small: 11,
@@ -19,15 +20,11 @@ const pieColors = [
   "#F9DE82",
   "#39519B",
 ];
-const pieLegendFormatter =
-  (data: any[], maxSymbols: number) => (name: string) => {
-    const percents = data.find((item) => item.name === name)?.value;
-    const label = `{value|${percents}%} {name|${name}}`;
-    const overflowed = `{value|${percents}%} {name|${
-      name.slice(0, maxSymbols - 1) + "..."
-    }}`;
-    return name.length < maxSymbols ? label : overflowed;
-  };
+const pieLegendFormatter = (data: any[]) => (name: string) => {
+  const percents = data.find((item) => item.name === name)?.value;
+  const label = `{value|${percents}%} {name|${name}}`;
+  return label;
+};
 const pieTooltip = {
   trigger: "item" as "item" | "none" | "axis",
 };
@@ -58,7 +55,7 @@ const pieLegend: LegendComponentOption = {
 };
 const pieLegendTextStyle = {
   width: pieLegendWidths.small,
-  overflow: "break",
+  overflow: "truncate",
   rich: {
     value: {
       fontFamily: "Manrope",
@@ -102,11 +99,12 @@ export const smOption = (data: any): ReactEChartsProps["option"] => ({
     data,
   },
   legend: {
-    formatter: pieLegendFormatter(data, pieLegendMaxSymbolsCount.small),
+    formatter: pieLegendFormatter(data),
     ...pieLegend,
     left: "50%",
     textStyle: {
       ...(pieLegendTextStyle as any),
+      width: pieLegendWidths[CardSize.small],
     },
   },
 });
@@ -128,10 +126,7 @@ export const getMdOption = (
     left: "50%",
   },
   legend: {
-    formatter: pieLegendFormatter(
-      data,
-      pieLegendMaxSymbolsCount.medium[withImage ? 0 : 1]
-    ),
+    formatter: pieLegendFormatter(data),
     textStyle: {
       ...(pieLegendTextStyle as any),
       width: pieLegendWidths.medium[withImage ? 0 : 1],
@@ -156,16 +151,14 @@ export const getLgOption = (
     left: "50%",
   },
   legend: {
-    formatter: pieLegendFormatter(
-      data,
-      pieLegendMaxSymbolsCount.large[withImage ? 0 : 1]
-    ),
+    formatter: pieLegendFormatter(data),
     textStyle: {
       ...(pieLegendTextStyle as any),
+      overflow: "break",
       width: pieLegendWidths.large[withImage ? 0 : 1],
     },
     ...pieLegend,
     left: "50%",
-    pageIconSize: 0,
+    padding: 0,
   },
 });
