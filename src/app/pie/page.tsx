@@ -5,7 +5,7 @@ import { CardSize } from "../bar/types";
 import PieChart from "./components/PieChart";
 
 function Pie() {
-  <PieChart cardSize={CardSize.medium} />;
+  return <PieChart cardSize={CardSize.medium} />;
 }
 
 export default Pie;

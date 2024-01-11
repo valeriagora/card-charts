@@ -22,7 +22,6 @@ export const CardContainer = styled("div")<{ size: CardSize }>(({ size }) => ({
   flexDirection: "column",
   justifyContent: "space-between",
   overflow: "hidden",
-  border: "1px solid crimson",
 }));
 export const SmToMdChart = styled("div")(() => ({
   position: "relative",
@@ -30,5 +29,4 @@ export const SmToMdChart = styled("div")(() => ({
   height: "100%",
   display: "flex",
   alignItems: "center",
-  border: "1px solid slateblue",
 }));

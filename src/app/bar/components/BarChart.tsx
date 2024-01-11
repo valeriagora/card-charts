@@ -70,7 +70,6 @@ const BarChartContainer = styled("div")<{
             BAR_CHART_ML_BOTTOM_PADDING
           : optionsCount * 60 + 28
         : maxHeight,
-    // border: "1px solid pink",
   };
 });
 

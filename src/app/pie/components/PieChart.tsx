@@ -14,6 +14,7 @@ import { smOption, getMdOption, getLgOption } from "@/data/pie";
 import { url } from "@/data/constants";
 import { DndCard } from "@/components/DndCard";
 import { CardSize } from "../../bar/types";
+
 const pieData = [
   {
     value: 10,

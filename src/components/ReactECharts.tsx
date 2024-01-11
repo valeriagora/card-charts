@@ -80,14 +80,10 @@ export function ReactECharts({
   return (
     <>
       <div
-        // id="capture"
         ref={chartRef}
         style={{
           width: "100%",
           height: "100%",
-          // border: "1px solid crimson",
-          // borderRadius: 16,
-          // overflow: "hidden",
           ...style,
         }}
       />
