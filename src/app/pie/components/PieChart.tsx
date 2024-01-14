@@ -9,12 +9,27 @@ import {
   FormLabel,
   styled,
 } from "@mui/material";
-import React, { useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { smOption, getMdOption, getLgOption } from "@/data/pie";
 import { url } from "@/data/constants";
 import { DndCard } from "@/components/DndCard";
 import { CardSize } from "../../bar/types";
+import { ECharts } from "echarts";
 
+const imageOptions = [
+  "https://images.unsplash.com/photo-1702744473287-4cc284e97206?q=80&w=2864&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+  "https://images.unsplash.com/photo-1682686580391-615b1f28e5ee?q=80&w=2940&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDF8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+  "https://images.unsplash.com/photo-1702893576128-21feb60299d1?q=80&w=2940&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+  "https://images.unsplash.com/photo-1703028408829-ba45aa14b782?q=80&w=2787&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+  "https://images.unsplash.com/photo-1519925610903-381054cc2a1c?q=80&w=2940&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+  "https://images.unsplash.com/photo-1682687218147-9806132dc697?q=80&w=2875&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDF8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+  "https://images.unsplash.com/photo-1703615318360-788893a586d8?q=80&w=2785&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+  "https://images.unsplash.com/photo-1682687982029-edb9aecf5f89?q=80&w=2942&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDF8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+  "https://images.unsplash.com/photo-1704192761191-757e0ccc5186?q=80&w=2944&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+  "https://images.unsplash.com/photo-1704587422648-43f456047a72?q=80&w=2787&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+  "https://images.unsplash.com/photo-1682687220795-796d3f6f7000?q=80&w=2940&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDF8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+  "https://images.unsplash.com/photo-1704419278767-09bc3a98581c?q=80&w=2875&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+];
 const pieData = [
   {
     value: 10,
@@ -59,7 +74,14 @@ const PieChartContainer = styled("div")<{
   };
 });
 
-function PieChart({ cardSize = CardSize.medium }) {
+function PieChart({
+  cardSize = CardSize.medium,
+  imageOptionUrls = imageOptions,
+}) {
+  const [chartInstance, setChartInstance] = useState<ECharts | null>(null);
+  const onChartInit = (chartInstance: ECharts) => {
+    setChartInstance(chartInstance);
+  };
   const [imageUrl, setImageUrl] = useState("");
   const containerRef = useRef<HTMLDivElement | null>(null);
 
@@ -70,9 +92,18 @@ function PieChart({ cardSize = CardSize.medium }) {
   const handleSizeChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setSize(event.target.value as CardSize);
   };
+  useEffect(() => {
+    if (chartInstance) {
+      // console.log("chart instance", chartInstance.on);
+      chartInstance.on("click", function (params) {
+        console.log("legend event", params);
+      });
+    }
+  }, [chartInstance]);
+
   const withImage = !!imageUrl;
   const small = smOption(pieData);
-  const medium = getMdOption(pieData, withImage);
+  const medium = getMdOption(pieData, withImage, imageOptionUrls);
   const large = getLgOption(pieData, withImage);
   const options = {
     small,
@@ -121,7 +152,11 @@ function PieChart({ cardSize = CardSize.medium }) {
           ref={containerRef}
           height={pieData.length * 24}
         >
-          <ReactECharts containerRef={containerRef} option={options[size]} />
+          <ReactECharts
+            onChartInit={onChartInit}
+            containerRef={containerRef}
+            option={options[size]}
+          />
         </PieChartContainer>
       </DndCard>
     </>

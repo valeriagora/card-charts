@@ -1,6 +1,18 @@
 import { CardSize } from "@/app/bar/types";
 import { ReactEChartsProps } from "@/components/ReactECharts";
-import { SeriesOption, LegendComponentOption } from "echarts";
+import {
+  SeriesOption,
+  LegendComponentOption,
+  CustomSeriesRenderItemAPI,
+  CustomSeriesRenderItemParams,
+} from "echarts";
+import { url } from "inspector";
+import { getBase64Image } from "./bar";
+
+const urlToBase64 = async (url: string) => {
+  let result = await getBase64Image(url);
+  return result;
+};
 
 const pieLegendWidths = {
   small: 100,
@@ -42,10 +54,14 @@ const pieLegend: LegendComponentOption = {
   pageIconInactiveColor: "#6C7080",
   pageIconSize: 10,
   icon: "circle",
+  // itemWidth: 72,
+  // icon: "image://",
   top: "center",
   orient: "vertical",
   inactiveColor: "#6C7080",
-  itemGap: 8,
+  // itemGap: 55, // 8
+  itemGap: 10,
+  // itemHeight: 300,
   pageButtonGap: 2,
   pageTextStyle: {
     fontFamily: "Manrope",
@@ -55,7 +71,7 @@ const pieLegend: LegendComponentOption = {
 };
 const pieLegendTextStyle = {
   width: pieLegendWidths.small,
-  overflow: "truncate",
+  overflow: "break",
   rich: {
     value: {
       fontFamily: "Manrope",
@@ -101,6 +117,7 @@ export const smOption = (data: any): ReactEChartsProps["option"] => ({
   legend: {
     formatter: pieLegendFormatter(data),
     ...pieLegend,
+    // icon:urlToBase64(),
     left: "50%",
     textStyle: {
       ...(pieLegendTextStyle as any),
@@ -109,32 +126,105 @@ export const smOption = (data: any): ReactEChartsProps["option"] => ({
   },
 });
 //
-
+const renderOptionImage = function (
+  param: any,
+  api: any,
+  maxXAxisValue: number
+) {
+  const xAxisStartPx = param.coordSys.x;
+  const size = api.size([maxXAxisValue, 0.2]);
+  console.log("max", size[1]);
+  return {
+    type: "group",
+    children: [
+      {
+        type: "image",
+        style: {
+          image: api.value(2),
+          x: 2,
+          y: 2,
+          width: 50,
+          height: 50,
+        },
+        position: [240, size[1] * param.dataIndex], //0,70,140,210,280
+        // position: [size[0] , size[1] * param.dataIndex],
+      },
+    ],
+  };
+};
+//
 export const getMdOption = (
   data: any[],
-  withImage: boolean
-): ReactEChartsProps["option"] => ({
-  tooltip: pieTooltip,
-  series: {
-    ...pieSeries,
-    center: ["25%", "50%"],
-    radius: [52, 92],
-    data,
-  },
-  grid: {
-    ...pieGrid,
-    left: "50%",
-  },
-  legend: {
-    formatter: pieLegendFormatter(data),
-    textStyle: {
-      ...(pieLegendTextStyle as any),
-      width: pieLegendWidths.medium[withImage ? 0 : 1],
+  withImage: boolean,
+  imageOptionUrls?: string[]
+): ReactEChartsProps["option"] => {
+  const values = data.map(({ value }) => value);
+  const imageOptionsSeries = imageOptionUrls?.length
+    ? {
+        type: "custom",
+        renderItem: (
+          params: CustomSeriesRenderItemParams,
+          api: CustomSeriesRenderItemAPI
+        ) => renderOptionImage(params, api, Math.max(...values)),
+        data: imageOptionUrls?.map((image: string) => [0, 0, image]),
+        z: 1,
+      }
+    : undefined;
+  return {
+    tooltip: pieTooltip,
+    series: [
+      {
+        ...pieSeries,
+        center: ["25%", "50%"],
+        radius: [52, 92],
+        data,
+      },
+      imageOptionsSeries as SeriesOption,
+    ],
+    grid: {
+      ...pieGrid,
+      left: "50%",
     },
-    ...pieLegend,
-    left: "50%",
-  },
-});
+    xAxis: {
+      splitLine: {
+        show: true,
+      },
+      // axis:{
+      //   show:true,
+      // },
+      // splitLine:{
+      //   show:true,
+      // },
+    },
+    yAxis: {
+      // data: [1, 2, 3, 4],
+      // type: "value",
+      splitLine: {
+        show: true,
+      },
+    },
+    toolbox: {
+      feature: {
+        saveAsImage: {
+          show: true,
+        },
+      },
+    },
+    legend: {
+      formatter: pieLegendFormatter(data),
+      textStyle: {
+        ...(pieLegendTextStyle as any),
+        width: pieLegendWidths.medium[withImage ? 0 : 1],
+        backgroundColor: {
+          image:
+            "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACgAAAAoCAYAAACM/rhtAAAAAXNSR0IArs4c6QAAAhNJREFUWIXtmTFuwjAUhn8bSyAxtKJTBi6RqR7aC+QAXAD2ovYYRWFPL8AB0gO0Q5hyiDJkomJBKlLAHUgilybYJqFm6LeZWI/Pfs/JgxBk9IPPO6A1BBEeBG5gA4Kl2IlXQkSwGPXe9x8B6AerZwCPVqSqmSxG109kv3P0zbZNObt7CrSGtjWqaQ0piPBsa1RChEetHQgdBG6obQcV/4J1uXhBdq7AY7eDsdsuxlGSYhpvECVpcX2epMW4luDM62IQrrXlZl4X3PkZmjsM3GOIkrS4NgiPywEaKeYOA3cYZl5XS27sdn7JHcYDAD/e4DaLXUvwNgvAHYaP4ZUyoJxWnXmqFCsF5wcBZl63NIUAlPIyfryBH38p5ykjlq1QrqdpvKmcd1xQLaclCACDcF1ag7moKSaLUaZ47Hbw4LaNd6gplMufJ6l24Z8D5Q5GSQo/q7OmmBrE03rUHZ7kujRag3nAQbhupA5NY/x5s2CSXsBAUH6GnoovNQu6GO1gnTTvD5vezVnGSDCvxVNETVObc1IN6nQhMnV2XutbuMOKrsbkpq3bEBxDKcgdhge3bXxAmpADANIPVkJnYi4qj2WiJMU82Wq18WcRLIM77OxNRK0b9V90OBf/s/NfsC4UBEvbEpUQLCkECW17VCF24pUC2xfbIlUQIgKa/Zs+sS1TwmQx6r2TfHQpryH2Jbd9yV9DfAMVJOAskYZKhAAAAABJRU5ErkJggg==",
+        },
+      },
+      ...pieLegend,
+      left: "50%",
+    },
+  };
+};
 export const getLgOption = (
   data: any[],
   withImage: boolean
