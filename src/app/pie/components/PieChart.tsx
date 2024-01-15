@@ -55,10 +55,6 @@ const pieData = [
   { value: 2, name: "Option 7", imageKey: "image10" },
   { value: 2, name: "Option 8", imageKey: "image11" },
   { value: 2, name: "Option 9", imageKey: "image12" },
-  // { value: 2, name: "Option 10" },
-  // { value: 2, name: "Option 11" },
-  // { value: 8, name: "Option 12" },
-  // { value: 2, name: "Option 13" },
 ];
 const MIN_L_CHART_HEIGHT = 188;
 const PieChartContainer = styled("div")<{
@@ -156,7 +152,7 @@ any) {
         <PieChartContainer
           size={size}
           ref={containerRef}
-          height={pieData.length * 24}
+          height={pieData.length * 60}
           // height={
           //   withImageOptions
           //     ? pieData.length * PIE_L_OPTION_WITH_IMAGE_HEIGHT
