@@ -34,28 +34,31 @@ const pieData = [
   {
     value: 10,
     name: "Search Engine Search Engine Search Engine Search Engine e Search Engine Search Engine Search Engine e Search Engine Search Engine Search Engine",
+    imageKey: "image1",
   },
   {
     value: 20,
     name: "Search Engine",
+    imageKey: "image2",
   },
-  { value: 25, name: "Other" },
-  { value: 15, name: "Option 1" },
-  { value: 2, name: "Option 2" },
-  { value: 3, name: "Option 3" },
-  { value: 5, name: "Option 4" },
+  { value: 25, name: "Other", imageKey: "image3" },
+  { value: 15, name: "Option 1", imageKey: "image4" },
+  { value: 2, name: "Option 2", imageKey: "image5" },
+  { value: 3, name: "Option 3", imageKey: "image6" },
+  { value: 5, name: "Option 4", imageKey: "image7" },
   {
     value: 3,
     name: "Option 5 Engine Search Engine Search Engine Search Search Search Search Search",
+    imageKey: "image8",
   },
-  { value: 2, name: "Option 6" },
-  { value: 2, name: "Option 7" },
-  { value: 2, name: "Option 8" },
-  { value: 2, name: "Option 9" },
-  { value: 2, name: "Option 10" },
-  { value: 2, name: "Option 11" },
-  { value: 8, name: "Option 12" },
-  { value: 2, name: "Option 13" },
+  { value: 2, name: "Option 6", imageKey: "image9" },
+  { value: 2, name: "Option 7", imageKey: "image10" },
+  { value: 2, name: "Option 8", imageKey: "image11" },
+  { value: 2, name: "Option 9", imageKey: "image12" },
+  // { value: 2, name: "Option 10" },
+  // { value: 2, name: "Option 11" },
+  // { value: 8, name: "Option 12" },
+  // { value: 2, name: "Option 13" },
 ];
 const MIN_L_CHART_HEIGHT = 188;
 const PieChartContainer = styled("div")<{
@@ -73,11 +76,14 @@ const PieChartContainer = styled("div")<{
         : "100%",
   };
 });
-
+export const PIE_L_OPTION_HEIGHT = 20 * 3 + 8;
+export const PIE_L_OPTION_WITH_IMAGE_HEIGHT = 72 + 8;
 function PieChart({
-  cardSize = CardSize.medium,
+  cardSize = CardSize.large,
   imageOptionUrls = imageOptions,
-}) {
+}: // imageOptionUrls = undefined,
+any) {
+  const withImageOptions = imageOptionUrls ? !!imageOptionUrls?.length : false;
   const [chartInstance, setChartInstance] = useState<ECharts | null>(null);
   const onChartInit = (chartInstance: ECharts) => {
     setChartInstance(chartInstance);
@@ -151,6 +157,11 @@ function PieChart({
           size={size}
           ref={containerRef}
           height={pieData.length * 24}
+          // height={
+          //   withImageOptions
+          //     ? pieData.length * PIE_L_OPTION_WITH_IMAGE_HEIGHT
+          //     : pieData.length * PIE_L_OPTION_HEIGHT
+          // }
         >
           <ReactECharts
             onChartInit={onChartInit}

@@ -16,7 +16,7 @@ const urlToBase64 = async (url: string) => {
 
 const pieLegendWidths = {
   small: 100,
-  medium: [152, 300],
+  medium: [152, 290],
   large: [280, 440],
 };
 const pieLegendMaxSymbolsCount = {
@@ -61,17 +61,22 @@ const pieLegend: LegendComponentOption = {
   inactiveColor: "#6C7080",
   // itemGap: 55, // 8
   itemGap: 10,
-  // itemHeight: 300,
+  itemHeight: 12,
+  // itemHeight: 50,
   pageButtonGap: 2,
   pageTextStyle: {
     fontFamily: "Manrope",
     fontSize: 14,
     color: "#C8CAD0",
   },
+  // textStyle: {
+  //   backgroundColor:
+  //     "https://images.unsplash.com/photo-1704972841788-86fac20fc87e?q=80&w=2942&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+  // },
 };
 const pieLegendTextStyle = {
   width: pieLegendWidths.small,
-  overflow: "break",
+  overflow: "truncate",
   rich: {
     value: {
       fontFamily: "Manrope",
@@ -153,23 +158,30 @@ const renderOptionImage = function (
   };
 };
 //
+const getMdImageOptionStyles = (url: string) => {
+  return {
+    height: 72,
+    width: 72,
+    backgroundColor: {
+      image: url,
+      // "https://images.unsplash.com/photo-1682685797439-a05dd915cee9?q=80&w=2787&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDF8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+    },
+  };
+};
+// image options rich text + formatter
 export const getMdOption = (
   data: any[],
   withImage: boolean,
   imageOptionUrls?: string[]
 ): ReactEChartsProps["option"] => {
-  const values = data.map(({ value }) => value);
-  const imageOptionsSeries = imageOptionUrls?.length
-    ? {
-        type: "custom",
-        renderItem: (
-          params: CustomSeriesRenderItemParams,
-          api: CustomSeriesRenderItemAPI
-        ) => renderOptionImage(params, api, Math.max(...values)),
-        data: imageOptionUrls?.map((image: string) => [0, 0, image]),
-        z: 1,
-      }
-    : undefined;
+  const imageOptions = imageOptionUrls
+    ? imageOptionUrls.reduce((total: any, url: string, idx: number) => {
+        const styles = getMdImageOptionStyles(url);
+        const imageKey = data[idx].imageKey;
+        total[imageKey] = styles;
+        return total;
+      }, {})
+    : [];
   return {
     tooltip: pieTooltip,
     series: [
@@ -179,76 +191,95 @@ export const getMdOption = (
         radius: [52, 92],
         data,
       },
-      imageOptionsSeries as SeriesOption,
+      // imageOptionsSeries as SeriesOption,
     ],
     grid: {
       ...pieGrid,
       left: "50%",
     },
-    xAxis: {
-      splitLine: {
-        show: true,
+    // toolbox: {
+    //   feature: {
+    //     saveAsImage: {
+    //       show: true,
+    //     },
+    //   },
+    // },
+    legend: {
+      // formatter: pieLegendFormatter(data),
+      formatter: (name: string) => {
+        const percents = data.find((item) => item.name === name)?.value;
+        const imageKey = data.find((item) => item.name === name).imageKey;
+
+        const label = `{${imageKey}|}   {value|${percents}%} {name|${name}}`;
+        return label;
       },
-      // axis:{
-      //   show:true,
-      // },
-      // splitLine:{
-      //   show:true,
-      // },
-    },
-    yAxis: {
-      // data: [1, 2, 3, 4],
-      // type: "value",
-      splitLine: {
-        show: true,
-      },
-    },
-    toolbox: {
-      feature: {
-        saveAsImage: {
-          show: true,
+      // formatter: pieLegendFormatter(data),
+      ...pieLegend,
+      left: "50%",
+      textStyle: {
+        ...(pieLegendTextStyle as any),
+        rich: {
+          value: {
+            fontFamily: "Manrope",
+            color: "#fff",
+            fontSize: 14,
+          },
+          name: {
+            fontFamily: "Manrope",
+            color: "#6C7080",
+            fontSize: 14,
+          },
+          ...imageOptions,
         },
+        width: pieLegendWidths.medium[withImage ? 0 : 1],
       },
+    },
+  };
+};
+
+// image options custom series
+export const getLgOption = (
+  data: any[],
+  withImage: boolean,
+  imageOptionUrls?: string[]
+): ReactEChartsProps["option"] => {
+  // const imageOptionsSeries = imageOptionUrls?.length
+  //   ? {
+  //       type: "custom",
+  //       renderItem: (
+  //         params: CustomSeriesRenderItemParams,
+  //         api: CustomSeriesRenderItemAPI
+  //       ) => renderOptionImage(params, api, Math.max(...values)),
+  //       data: imageOptionUrls?.map((image: string) => [0, 0, image]),
+  //       z: 1,
+  //     }
+  //   : undefined;
+  return {
+    tooltip: pieTooltip,
+    series: {
+      ...pieSeries,
+      center: ["25%", "50%"],
+      radius: [51, 91],
+      data,
+    },
+    grid: {
+      ...pieGrid,
+      left: "50%",
     },
     legend: {
       formatter: pieLegendFormatter(data),
       textStyle: {
         ...(pieLegendTextStyle as any),
-        width: pieLegendWidths.medium[withImage ? 0 : 1],
-        backgroundColor: {
-          image:
-            "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACgAAAAoCAYAAACM/rhtAAAAAXNSR0IArs4c6QAAAhNJREFUWIXtmTFuwjAUhn8bSyAxtKJTBi6RqR7aC+QAXAD2ovYYRWFPL8AB0gO0Q5hyiDJkomJBKlLAHUgilybYJqFm6LeZWI/Pfs/JgxBk9IPPO6A1BBEeBG5gA4Kl2IlXQkSwGPXe9x8B6AerZwCPVqSqmSxG109kv3P0zbZNObt7CrSGtjWqaQ0piPBsa1RChEetHQgdBG6obQcV/4J1uXhBdq7AY7eDsdsuxlGSYhpvECVpcX2epMW4luDM62IQrrXlZl4X3PkZmjsM3GOIkrS4NgiPywEaKeYOA3cYZl5XS27sdn7JHcYDAD/e4DaLXUvwNgvAHYaP4ZUyoJxWnXmqFCsF5wcBZl63NIUAlPIyfryBH38p5ykjlq1QrqdpvKmcd1xQLaclCACDcF1ag7moKSaLUaZ47Hbw4LaNd6gplMufJ6l24Z8D5Q5GSQo/q7OmmBrE03rUHZ7kujRag3nAQbhupA5NY/x5s2CSXsBAUH6GnoovNQu6GO1gnTTvD5vezVnGSDCvxVNETVObc1IN6nQhMnV2XutbuMOKrsbkpq3bEBxDKcgdhge3bXxAmpADANIPVkJnYi4qj2WiJMU82Wq18WcRLIM77OxNRK0b9V90OBf/s/NfsC4UBEvbEpUQLCkECW17VCF24pUC2xfbIlUQIgKa/Zs+sS1TwmQx6r2TfHQpryH2Jbd9yV9DfAMVJOAskYZKhAAAAABJRU5ErkJggg==",
-        },
+        overflow: "break",
+        width: pieLegendWidths.large[withImage ? 0 : 1],
       },
       ...pieLegend,
+      height: 700,
+      // bottom: 0,
+      // top: 0,
+      type: "plain",
       left: "50%",
+      padding: 0,
     },
   };
 };
-export const getLgOption = (
-  data: any[],
-  withImage: boolean
-): ReactEChartsProps["option"] => ({
-  tooltip: pieTooltip,
-  series: {
-    ...pieSeries,
-    center: ["25%", "50%"],
-    radius: [51, 91],
-    data,
-  },
-  grid: {
-    ...pieGrid,
-    left: "50%",
-  },
-  legend: {
-    formatter: pieLegendFormatter(data),
-    textStyle: {
-      ...(pieLegendTextStyle as any),
-      overflow: "break",
-      width: pieLegendWidths.large[withImage ? 0 : 1],
-    },
-    ...pieLegend,
-    left: "50%",
-    padding: 0,
-  },
-});
