@@ -16,8 +16,8 @@ import { url } from "@/data/constants";
 import { DndCard } from "@/components/DndCard";
 import { CardSize } from "../../bar/types";
 import { ECharts } from "echarts";
-import { getSvgBlob } from "@/utils";
-
+import { getBase64Image, getSvgBlob } from "@/utils";
+import { throttle } from "lodash";
 const imageOptions = [
   "https://images.unsplash.com/photo-1702744473287-4cc284e97206?q=80&w=2864&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
   "https://images.unsplash.com/photo-1682686580391-615b1f28e5ee?q=80&w=2940&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDF8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
@@ -39,7 +39,7 @@ const imageOptions = [
 interface PieData {
   value: number;
   name: string;
-  image?: {
+  image: {
     key: string;
     value: string;
   };
@@ -146,14 +146,15 @@ function PieChart({
 any) {
   const withImageOptions = imageOptionUrls ? !!imageOptionUrls?.length : false;
   const [chartInstance, setChartInstance] = useState<ECharts | null>(null);
-  const onChartInit = (chartInstance: ECharts) => {
+  const onChartInit = useCallback((chartInstance: ECharts) => {
     setChartInstance(chartInstance);
-  };
+  }, []);
   const [pieChartData, setPieChartData] = useState<PieData[]>(pieData);
   const [questionImage, setQuestionImage] = useState("");
-  const [isChartDownloading, setIsChartDownloading] = useState(false);
   const [imageUrl, setImageUrl] = useState("");
   const containerRef = useRef<HTMLDivElement | null>(null);
+  const [downloadQueue, setDownloadQueue] = useState<string[]>([]);
+  const [areBase64ImagesReady, setBase64ImagesReady] = useState(false);
 
   const [size, setSize] = useState(cardSize);
   const toggleImg = () => {
@@ -170,56 +171,61 @@ any) {
     anchorElement.download = `chart.svg`;
     document.body.appendChild(anchorElement);
     anchorElement.click();
-    setIsChartDownloading(false);
   };
-
+  const urlToBase64 = async (url: string) => {
+    let result = await getBase64Image(url);
+    return result;
+  };
   const saveAsImage = useCallback(async () => {
-    if (chartInstance) {
-      if (withImageOptions) {
-        // upload base64 images
-        const base64Promises: Promise<string>[] = [];
-        for (const url of imageOptionUrls) {
-          base64Promises.push(urlToBase64(url));
-        }
-        const getBase64Promises = async () =>
-          await Promise.all(base64Promises).then((values) => values);
-
-        const base64Urls = await getBase64Promises();
-        if (base64Urls.length) {
-          const base64Images = imageOptionUrls.map(
-            (imageUrl, idx) => base64Urls[idx]
-          );
-          setPieChartData((prev) => ({
-            ...prev,
-            images: cardSize === CardSize.small ? undefined : base64Images,
-          }));
-          setIsChartDownloading(true);
-        }
-        return;
+    if (withImageOptions) {
+      // upload base64 images
+      const base64Promises: Promise<string>[] = [];
+      for (const url of imageOptionUrls) {
+        base64Promises.push(urlToBase64(url));
       }
+      const getBase64Promises = async () =>
+        await Promise.all(base64Promises).then((values) => values);
+      const base64Urls = await getBase64Promises();
+      if (base64Urls.length) {
+        setPieChartData((prev) => {
+          const newData = prev.map((item, idx) => ({
+            ...item,
+            image: {
+              key: item.image?.key,
+              value: base64Urls[idx],
+            },
+          }));
+          return newData;
+        });
+        console.log("pie chart data set");
+        setDownloadQueue([...downloadQueue, "download"]);
+      }
+      return;
       // save as svg without option images
-      downloadChart(chartInstance);
+      // downloadChart(chartInstance);
     }
-  }, [chartInstance, withImageOptions, imageOptionUrls, cardSize]);
-
-  // const onRenderEnded = useCallback(
-  //   (chartInstance: ECharts) => {
-  //     // option is actual when it has 2 series objects, custom legend & pie data
-  //     const isActualOption =
-  //       (chartInstance.getOption() as any).series.length === 2;
-  //     // save as svg for chart with option images
-  //     isChartDownloading &&
-  //       isActualOption &&
-  //       pieLegendData[0][3].startsWith("data:image") &&
-  //       downloadChart(chartInstance);
-  //   },
-  //   [isChartDownloading, pieLegendData]
-  // );
+  }, [withImageOptions, imageOptionUrls, downloadQueue]);
+  const onRenderEnded = useCallback(() => {
+    const areBase64ImagesReady = pieChartData.every((item) =>
+      item.image.value.startsWith("data:image")
+    );
+    setBase64ImagesReady(!!areBase64ImagesReady);
+    // option is actual when it has 2 series objects, custom legend & pie data
+  }, [pieChartData]);
+  useEffect(() => {
+    if (downloadQueue.length && areBase64ImagesReady && chartInstance) {
+      setTimeout(() => {
+        downloadChart(chartInstance);
+        setDownloadQueue((prev) => prev.slice(0, -1));
+      }, 0);
+    }
+  }, [downloadQueue, areBase64ImagesReady, chartInstance]);
 
   const withImage = !!imageUrl;
-  const small = smOption(pieData);
-  const medium = getMdOption(pieData, withImage, imageOptionUrls);
-  const large = getLgOption(pieData, withImage, imageOptionUrls);
+  const small = smOption(pieChartData);
+  const medium = getMdOption(pieChartData, withImage);
+  // console.log("MEDIUM OPTION", medium);
+  const large = getLgOption(pieChartData, withImage, imageOptionUrls);
   const options = {
     small,
     medium,
@@ -236,6 +242,13 @@ any) {
         disabled={size === CardSize.small}
       >
         Toggle image
+      </Button>
+      <Button
+        sx={{ marginBottom: 4, display: "block" }}
+        variant="contained"
+        onClick={saveAsImage}
+      >
+        Export as svg
       </Button>
       <FormControl>
         <FormLabel id="radio-buttons-group-label">Card size</FormLabel>
@@ -276,7 +289,7 @@ any) {
         >
           <ReactECharts
             onChartInit={onChartInit}
-            // onRenderEnded={onRenderEnded}
+            onRenderEnded={onRenderEnded}
             containerRef={containerRef}
             option={options[size]}
           />

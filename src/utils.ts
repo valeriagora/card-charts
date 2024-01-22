@@ -1,3 +1,5 @@
+import { ECharts } from "echarts";
+
 export async function blobToBase64(blob: Blob): Promise<string> {
   return new Promise((resolve, _) => {
     const reader = new FileReader();

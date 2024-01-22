@@ -64,8 +64,8 @@ const BarChartContainer = styled("div")<{
       size === CardSize.large
         ? withImageOptions
           ? OPTION_IMAGE_HEIGHT * optionsCount +
-          IMAGE_OPTIONS_LINE_Y_GAP * (optionsCount - 1) +
-          BAR_CHART_ML_BOTTOM_PADDING
+            IMAGE_OPTIONS_LINE_Y_GAP * (optionsCount - 1) +
+            BAR_CHART_ML_BOTTOM_PADDING
           : optionsCount * 60 + 28
         : maxHeight,
   };
@@ -119,7 +119,7 @@ const BarContainer = forwardRef(function Container(
           {withImageOptions && size !== CardSize.large
             ? barOptionsOverflow[size].withImgOptions
             : barOptionsOverflow[size as CardSize.small | CardSize.medium]
-              .simple}{" "}
+                .simple}{" "}
           / {optionsCount} options{" "}
           <Image width={16} height={16} src={"/info.svg"} alt="info" />
         </OverflowInfo>
@@ -162,14 +162,11 @@ function BarChart({ labels, values, imageOptionUrls, cardSize }: IBarProps) {
 
   const [chartInstance, setChartInstance] = useState<ECharts | null>(null);
   const [size, setSize] = useState<CardSize>(cardSize);
-  // const [isChartDownloading, setIsChartDownloading] = useState(false);
-  const isChartDownloading = useRef(false);
   const containerRef = useRef<HTMLDivElement | null>(null);
   const [downloadQueue, setDownloadQueue] = useState<string[]>([]);
   const [areBase64ImagesReady, setBase64ImagesReady] = useState(false);
 
   useEffect(() => {
-    // console.log("effect", labels, values);
     if (size === CardSize.large) {
       setBarData({
         values,
@@ -214,45 +211,24 @@ function BarChart({ labels, values, imageOptionUrls, cardSize }: IBarProps) {
     setSize(event.target.value as CardSize);
   };
 
-  const onRenderEnded = (chartInstance: ECharts) => {
-    const option: any = chartInstance.getOption();
-    const isActualOption = !!(
-      option.series.length === 2 &&
-      option.yAxis &&
-      option.yAxis[0].data
-    );
+  const onRenderEnded = () => {
     const areBase64ImagesReady =
       barData.images &&
       barData.images.every((imgUrl) => imgUrl.startsWith("data:image"));
-    console.log(
-      "on render ended bar",
-      isChartDownloading.current,
-      isActualOption,
-      areBase64ImagesReady
-    );
-
+    // base 64 images are ready & component re-rendered
     setBase64ImagesReady(!!areBase64ImagesReady);
-    // save as svg for chart with option images
   };
 
-
-
   const downloadChart = async (chartInstance: ECharts) => {
-    console.log("downloadChart");
-    // isChartDownloading.current = false;
     const url = await getSvgBlob(chartInstance);
     const anchorElement = document.createElement("a");
     anchorElement.href = url;
     anchorElement.download = `chart.svg`;
     document.body.appendChild(anchorElement);
-    // anchorElement.click();
-    console.log("svg downloaded");
-    // setIsChartDownloading(false);
-    isChartDownloading.current = false;
+    anchorElement.click();
   };
 
   const saveAsImage = useCallback(async () => {
-    console.log("saveAsImage");
     if (withImageOptions) {
       // upload base64 images
       const base64Promises: Promise<string>[] = [];
@@ -263,23 +239,17 @@ function BarChart({ labels, values, imageOptionUrls, cardSize }: IBarProps) {
         await Promise.all(base64Promises).then((values) => values);
       const base64Urls = await getBase64Promises();
       if (base64Urls.length) {
-        const base64Images = imageOptionUrls.map(
-          (imageUrl, idx) => base64Urls[idx]
-        );
         setBarData((prev) => ({
           ...prev,
-          images: cardSize === CardSize.small ? undefined : base64Images,
+          images: cardSize === CardSize.small ? undefined : base64Urls,
         }));
-        // isChartDownloading.current = true;
-        // setIsChartDownloading(true);
-        setDownloadQueue([...downloadQueue, 'download']);
-
+        setDownloadQueue([...downloadQueue, "download"]);
       }
       return;
       // save as svg without option images
       // downloadChart(chartInstance);
     }
-  }, [withImageOptions, imageOptionUrls, cardSize]);
+  }, [withImageOptions, imageOptionUrls, cardSize, downloadQueue]);
   const overflows = useMemo(() => {
     const smHasOverflow = values.length > 5;
     const mdHasOverflow = withImageOptions
@@ -320,19 +290,15 @@ function BarChart({ labels, values, imageOptionUrls, cardSize }: IBarProps) {
   );
 
   useEffect(() => {
-    console.log("downloadQueue effect", downloadQueue, areBase64ImagesReady, chartInstance);
     if (downloadQueue.length && areBase64ImagesReady && chartInstance) {
-      console.log("downloadQueue", downloadQueue);
       downloadChart(chartInstance);
-      setDownloadQueue([]); // TODO: Remove single element from array
+      setDownloadQueue((prev) => prev.slice(0, -1));
     }
   }, [downloadQueue, areBase64ImagesReady, chartInstance]);
 
   const onChartInit = useCallback((chartInstance: ECharts) => {
-    console.log("onChartInit");
     setChartInstance(chartInstance);
   }, []);
-  // console.log("bar data", barData);
   return (
     <div
       style={{
