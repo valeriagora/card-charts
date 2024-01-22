@@ -4,6 +4,7 @@ import React, {
   forwardRef,
   LegacyRef,
   ReactNode,
+  use,
   useCallback,
   useEffect,
   useMemo,
@@ -63,8 +64,8 @@ const BarChartContainer = styled("div")<{
       size === CardSize.large
         ? withImageOptions
           ? OPTION_IMAGE_HEIGHT * optionsCount +
-            IMAGE_OPTIONS_LINE_Y_GAP * (optionsCount - 1) +
-            BAR_CHART_ML_BOTTOM_PADDING
+          IMAGE_OPTIONS_LINE_Y_GAP * (optionsCount - 1) +
+          BAR_CHART_ML_BOTTOM_PADDING
           : optionsCount * 60 + 28
         : maxHeight,
   };
@@ -118,7 +119,7 @@ const BarContainer = forwardRef(function Container(
           {withImageOptions && size !== CardSize.large
             ? barOptionsOverflow[size].withImgOptions
             : barOptionsOverflow[size as CardSize.small | CardSize.medium]
-                .simple}{" "}
+              .simple}{" "}
           / {optionsCount} options{" "}
           <Image width={16} height={16} src={"/info.svg"} alt="info" />
         </OverflowInfo>
@@ -159,11 +160,13 @@ function BarChart({ labels, values, imageOptionUrls, cardSize }: IBarProps) {
     ? values.length > 4
     : values.length > 11;
 
-  // const [chartInstance, setChartInstance] = useState<ECharts | null>(null);
+  const [chartInstance, setChartInstance] = useState<ECharts | null>(null);
   const [size, setSize] = useState<CardSize>(cardSize);
   // const [isChartDownloading, setIsChartDownloading] = useState(false);
   const isChartDownloading = useRef(false);
   const containerRef = useRef<HTMLDivElement | null>(null);
+  const [downloadQueue, setDownloadQueue] = useState<string[]>([]);
+  const [areBase64ImagesReady, setBase64ImagesReady] = useState(false);
 
   useEffect(() => {
     // console.log("effect", labels, values);
@@ -227,13 +230,12 @@ function BarChart({ labels, values, imageOptionUrls, cardSize }: IBarProps) {
       isActualOption,
       areBase64ImagesReady
     );
+
+    setBase64ImagesReady(!!areBase64ImagesReady);
     // save as svg for chart with option images
-    if (!isChartDownloading.current && isActualOption && areBase64ImagesReady) {
-      isChartDownloading.current = true;
-      downloadChart(chartInstance);
-      // isChartDownloading.current = false;
-    }
   };
+
+
 
   const downloadChart = async (chartInstance: ECharts) => {
     console.log("downloadChart");
@@ -270,6 +272,8 @@ function BarChart({ labels, values, imageOptionUrls, cardSize }: IBarProps) {
         }));
         // isChartDownloading.current = true;
         // setIsChartDownloading(true);
+        setDownloadQueue([...downloadQueue, 'download']);
+
       }
       return;
       // save as svg without option images
@@ -314,6 +318,20 @@ function BarChart({ labels, values, imageOptionUrls, cardSize }: IBarProps) {
     }),
     [small, medium, large]
   );
+
+  useEffect(() => {
+    console.log("downloadQueue effect", downloadQueue, areBase64ImagesReady, chartInstance);
+    if (downloadQueue.length && areBase64ImagesReady && chartInstance) {
+      console.log("downloadQueue", downloadQueue);
+      downloadChart(chartInstance);
+      setDownloadQueue([]); // TODO: Remove single element from array
+    }
+  }, [downloadQueue, areBase64ImagesReady, chartInstance]);
+
+  const onChartInit = useCallback((chartInstance: ECharts) => {
+    console.log("onChartInit");
+    setChartInstance(chartInstance);
+  }, []);
   // console.log("bar data", barData);
   return (
     <div
@@ -386,7 +404,7 @@ function BarChart({ labels, values, imageOptionUrls, cardSize }: IBarProps) {
           <ReactECharts
             containerRef={containerRef}
             option={options[size]}
-            // onChartInit={onChartInit}
+            onChartInit={onChartInit}
             onRenderEnded={onRenderEnded}
           />
         </BarContainer>

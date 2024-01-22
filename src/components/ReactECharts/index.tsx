@@ -43,7 +43,7 @@ const ReactECharts = function ReactECharts({
   },
   loading = false,
   containerRef,
-  // onChartInit,
+  onChartInit,
   onRenderEnded,
 }: ReactEChartsProps): JSX.Element {
   const chartInstance = useRef<ECharts | null>(null);
@@ -69,7 +69,7 @@ const ReactECharts = function ReactECharts({
     if (chartRef.current !== null) {
       chart = init(chartRef.current, null, { renderer: "svg" });
       chartInstance.current = chart;
-      // onChartInit instanceof Function && onChartInit(chart);
+      onChartInit instanceof Function && onChartInit(chart);
     }
 
     const ref = containerRef?.current;
@@ -85,7 +85,7 @@ const ReactECharts = function ReactECharts({
       // chart?.off("finished", onFinished);
       ref && observer.unobserve(ref);
     };
-  }, [containerRef, onFinished]);
+  }, [containerRef]);
   useEffect(() => {
     // console.log("register finished callback");
     chartInstance.current?.on("finished", onFinished);
@@ -107,6 +107,8 @@ const ReactECharts = function ReactECharts({
       // onRenderEnded instanceof Function && onRenderEnded(chart);
     }
   }, [option, settings, prevOption]); // Whenever theme changes we need to add option and setting due to it being deleted in cleanup function
+
+
 
   useEffect(() => {
     // Update chart
