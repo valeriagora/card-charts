@@ -6,17 +6,14 @@ import React, {
   ReactNode,
   useCallback,
   useEffect,
+  useMemo,
   useRef,
   useState,
 } from "react";
+import { throttle } from "lodash";
 import { DndCard } from "@/components/DndCard";
-import {
-  getSmOption,
-  getMdOption,
-  getLgOption,
-  getBase64Image,
-  getSvgBlob,
-} from "@/data/bar";
+import { getBase64Image, getSvgBlob } from "@/utils";
+import { getSmOption, getMdOption, getLgOption } from "@/data/bar";
 import { url } from "../../../data/constants";
 import { Button } from "@mui/material";
 import { styled } from "@mui/material";
@@ -162,12 +159,14 @@ function BarChart({ labels, values, imageOptionUrls, cardSize }: IBarProps) {
     ? values.length > 4
     : values.length > 11;
 
-  const [chartInstance, setChartInstance] = useState<ECharts | null>(null);
+  // const [chartInstance, setChartInstance] = useState<ECharts | null>(null);
   const [size, setSize] = useState<CardSize>(cardSize);
-  const [isChartDownloading, setIsChartDownloading] = useState(false);
+  // const [isChartDownloading, setIsChartDownloading] = useState(false);
+  const isChartDownloading = useRef(false);
   const containerRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
+    // console.log("effect", labels, values);
     if (size === CardSize.large) {
       setBarData({
         values,
@@ -212,71 +211,110 @@ function BarChart({ labels, values, imageOptionUrls, cardSize }: IBarProps) {
     setSize(event.target.value as CardSize);
   };
 
-  const onRenderEnded = () => {
+  const onRenderEnded = (chartInstance: ECharts) => {
+    const option: any = chartInstance.getOption();
+    const isActualOption = !!(
+      option.series.length === 2 &&
+      option.yAxis &&
+      option.yAxis[0].data
+    );
+    const areBase64ImagesReady =
+      barData.images &&
+      barData.images.every((imgUrl) => imgUrl.startsWith("data:image"));
+    console.log(
+      "on render ended bar",
+      isChartDownloading.current,
+      isActualOption,
+      areBase64ImagesReady
+    );
     // save as svg for chart with option images
-    isChartDownloading && chartInstance && downloadChart(chartInstance);
+    if (!isChartDownloading.current && isActualOption && areBase64ImagesReady) {
+      isChartDownloading.current = true;
+      downloadChart(chartInstance);
+      // isChartDownloading.current = false;
+    }
   };
 
-  const onChartInit = (chartInstance: ECharts) => {
-    setChartInstance(chartInstance);
-  };
   const downloadChart = async (chartInstance: ECharts) => {
+    console.log("downloadChart");
+    // isChartDownloading.current = false;
     const url = await getSvgBlob(chartInstance);
     const anchorElement = document.createElement("a");
     anchorElement.href = url;
     anchorElement.download = `chart.svg`;
     document.body.appendChild(anchorElement);
-    anchorElement.click();
-    setIsChartDownloading(false);
+    // anchorElement.click();
+    console.log("svg downloaded");
+    // setIsChartDownloading(false);
+    isChartDownloading.current = false;
   };
 
   const saveAsImage = useCallback(async () => {
-    if (chartInstance) {
-      if (withImageOptions) {
-        // upload base64 images
-        const base64Promises: Promise<string>[] = [];
-        for (const url of imageOptionUrls) {
-          base64Promises.push(urlToBase64(url));
-        }
-        const getBase64Promises = async () =>
-          await Promise.all(base64Promises).then((values) => values);
-
-        const base64Urls = await getBase64Promises();
-        if (base64Urls.length) {
-          const base64Images = imageOptionUrls.map(
-            (imageUrl, idx) => base64Urls[idx]
-          );
-          setBarData((prev) => ({
-            ...prev,
-            images: cardSize === CardSize.small ? undefined : base64Images,
-          }));
-          setIsChartDownloading(true);
-        }
-        return;
+    console.log("saveAsImage");
+    if (withImageOptions) {
+      // upload base64 images
+      const base64Promises: Promise<string>[] = [];
+      for (const url of imageOptionUrls) {
+        base64Promises.push(urlToBase64(url));
       }
+      const getBase64Promises = async () =>
+        await Promise.all(base64Promises).then((values) => values);
+      const base64Urls = await getBase64Promises();
+      if (base64Urls.length) {
+        const base64Images = imageOptionUrls.map(
+          (imageUrl, idx) => base64Urls[idx]
+        );
+        setBarData((prev) => ({
+          ...prev,
+          images: cardSize === CardSize.small ? undefined : base64Images,
+        }));
+        // isChartDownloading.current = true;
+        // setIsChartDownloading(true);
+      }
+      return;
       // save as svg without option images
-      downloadChart(chartInstance);
+      // downloadChart(chartInstance);
     }
-  }, [chartInstance, withImageOptions, imageOptionUrls, cardSize]);
-  const overflows = {
-    small: smHasOverflow,
-    medium: mdHasOverflow,
-    large: false,
-  };
-  const small = getSmOption(barData, overflows[size]);
-  const medium = getMdOption(
-    barData,
-    withImage,
-    withImageOptions,
-    overflows[size],
-    showT2B
+  }, [withImageOptions, imageOptionUrls, cardSize]);
+  const overflows = useMemo(() => {
+    const smHasOverflow = values.length > 5;
+    const mdHasOverflow = withImageOptions
+      ? values.length > 4
+      : values.length > 11;
+    return {
+      small: smHasOverflow,
+      medium: mdHasOverflow,
+      large: false,
+    };
+  }, [values.length, withImageOptions]);
+  const small = useMemo(
+    () => getSmOption(barData, overflows[size]),
+    [barData, overflows, size]
   );
-  const large = getLgOption(barData, withImage, withImageOptions, showT2B);
-  const options = {
-    small,
-    medium,
-    large,
-  };
+  const medium = useMemo(
+    () =>
+      getMdOption(
+        barData,
+        withImage,
+        withImageOptions,
+        overflows[size],
+        showT2B
+      ),
+    [barData, overflows, size, withImage, withImageOptions, showT2B]
+  );
+  const large = useMemo(
+    () => getLgOption(barData, withImage, withImageOptions, showT2B),
+    [barData, withImage, withImageOptions, showT2B]
+  );
+  const options = useMemo(
+    () => ({
+      small,
+      medium,
+      large,
+    }),
+    [small, medium, large]
+  );
+  // console.log("bar data", barData);
   return (
     <div
       style={{
@@ -348,7 +386,7 @@ function BarChart({ labels, values, imageOptionUrls, cardSize }: IBarProps) {
           <ReactECharts
             containerRef={containerRef}
             option={options[size]}
-            onChartInit={onChartInit}
+            // onChartInit={onChartInit}
             onRenderEnded={onRenderEnded}
           />
         </BarContainer>

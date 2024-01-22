@@ -38,12 +38,14 @@ const barLabels = {
 const barValues = [50, 20, 5, 24, 1, 2, 3, 4, 5, 6, 7, 8];
 function Bar() {
   return (
-    <BarChart
-      labels={barLabels}
-      values={barValues}
-      imageOptionUrls={undefined}
-      cardSize={CardSize.medium}
-    />
+    <div>
+      <BarChart
+        labels={barLabels}
+        values={barValues}
+        imageOptionUrls={imageUrls}
+        cardSize={CardSize.medium}
+      />
+    </div>
   );
 }
 

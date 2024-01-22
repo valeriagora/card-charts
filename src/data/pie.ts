@@ -7,7 +7,7 @@ import {
   CustomSeriesRenderItemParams,
 } from "echarts";
 import { url } from "inspector";
-import { getBase64Image } from "./bar";
+import { getBase64Image } from "@/utils";
 
 const urlToBase64 = async (url: string) => {
   let result = await getBase64Image(url);
@@ -19,12 +19,7 @@ const pieLegendWidths = {
   medium: [152, 290],
   large: [280, 440],
 };
-const pieLegendMaxSymbolsCount = {
-  small: 11,
-  medium: [15, 30],
-  large: [40, 55],
-};
-const pieColors = [
+export const pieColors = [
   "#FF877C",
   "#25B4C8",
   "#D88ADA",
@@ -54,26 +49,17 @@ const pieLegend: LegendComponentOption = {
   pageIconInactiveColor: "#6C7080",
   pageIconSize: 10,
   icon: "circle",
-  // itemWidth: 72,
-  // icon: "image://",
   top: "center",
   orient: "vertical",
   inactiveColor: "#6C7080",
-  // itemGap: 55, // 8
   itemGap: 10,
   itemHeight: 12,
-  // itemHeight: 50,
-  pageButtonGap: 2,
+  pageButtonGap: 10,
   pageTextStyle: {
     fontFamily: "Manrope",
     fontSize: 14,
     color: "#C8CAD0",
   },
-  // textStyle: {
-  //   backgroundColor:
-  //     "https://images.unsplash.com/photo-1704972841788-86fac20fc87e?q=80&w=2942&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-  // },
-  // height: 700,
 };
 const pieLegendTextStyle = {
   width: pieLegendWidths.small,
@@ -123,7 +109,6 @@ export const smOption = (data: any): ReactEChartsProps["option"] => ({
   legend: {
     formatter: pieLegendFormatter(data),
     ...pieLegend,
-    // icon:urlToBase64(),
     left: "50%",
     textStyle: {
       ...(pieLegendTextStyle as any),
@@ -131,33 +116,6 @@ export const smOption = (data: any): ReactEChartsProps["option"] => ({
     },
   },
 });
-//
-const renderOptionImage = function (
-  param: any,
-  api: any,
-  maxXAxisValue: number
-) {
-  const xAxisStartPx = param.coordSys.x;
-  const size = api.size([maxXAxisValue, 0.2]);
-  console.log("max", size[1]);
-  return {
-    type: "group",
-    children: [
-      {
-        type: "image",
-        style: {
-          image: api.value(2),
-          x: 2,
-          y: 2,
-          width: 50,
-          height: 50,
-        },
-        position: [240, size[1] * param.dataIndex], //0,70,140,210,280
-        // position: [size[0] , size[1] * param.dataIndex],
-      },
-    ],
-  };
-};
 //
 const getMdImageOptionStyles = (url: string) => {
   return {
@@ -172,17 +130,27 @@ const getMdImageOptionStyles = (url: string) => {
 // image options rich text + formatter
 export const getMdOption = (
   data: any[],
-  withImage: boolean,
-  imageOptionUrls?: string[]
+  withImage: boolean
+  // imageOptionUrls?: string[]
 ): ReactEChartsProps["option"] => {
-  const imageOptions = imageOptionUrls
-    ? imageOptionUrls.reduce((total: any, url: string, idx: number) => {
-        const styles = getMdImageOptionStyles(url);
-        const imageKey = data[idx].imageKey;
-        total[imageKey] = styles;
-        return total;
-      }, {})
+  const withImageOptions = data.every((item) => item.image);
+  const imageOptions = withImageOptions
+    ? data.reduce(
+        (
+          total: any,
+          current: { image: { key: string; value: string } },
+          idx: number
+        ) => {
+          const { image } = current;
+          const styles = getMdImageOptionStyles(image.value);
+          const imageKey = data[idx].image.key;
+          total[imageKey] = styles;
+          return total;
+        },
+        {}
+      )
     : [];
+
   return {
     tooltip: pieTooltip,
     series: [
@@ -198,23 +166,13 @@ export const getMdOption = (
       ...pieGrid,
       left: "50%",
     },
-    // toolbox: {
-    //   feature: {
-    //     saveAsImage: {
-    //       show: true,
-    //     },
-    //   },
-    // },
     legend: {
-      // formatter: pieLegendFormatter(data),
       formatter: (name: string) => {
         const percents = data.find((item) => item.name === name)?.value;
-        const imageKey = data.find((item) => item.name === name).imageKey;
-
+        const imageKey = data.find((item) => item.name === name).image.key;
         const label = `{${imageKey}|}   {value|${percents}%} {name|${name}}`;
         return label;
       },
-      // formatter: pieLegendFormatter(data),
       ...pieLegend,
       left: "50%",
       textStyle: {
@@ -257,6 +215,17 @@ export const getLgOption = (
   //   : undefined;
   return {
     tooltip: pieTooltip,
+    toolbox: {
+      show: true,
+      // z: 2,
+      left: 200,
+      // orient: "vertical",
+      feature: {
+        saveAsImage: {
+          show: true,
+        },
+      },
+    },
     series: {
       ...pieSeries,
       center: ["25%", "50%"],
@@ -273,11 +242,12 @@ export const getLgOption = (
         ...(pieLegendTextStyle as any),
         overflow: "break",
         width: pieLegendWidths.large[withImage ? 0 : 1],
+        //
+        height: 20,
+        lineHeight: 20,
       },
       ...pieLegend,
-      height: 700,
-      // bottom: 0,
-      // top: 0,
+      // height: 700,
       type: "plain",
       left: "50%",
       padding: 0,
