@@ -5,9 +5,14 @@ import {
   LegendComponentOption,
   CustomSeriesRenderItemAPI,
   CustomSeriesRenderItemParams,
+  graphic,
 } from "echarts";
 import { url } from "inspector";
 import { getBase64Image } from "@/utils";
+import {
+  IMAGE_OPTION_BG_RADIUS,
+  RECTANGLE_WITH_RADIUS_CUSTOM_SHAPE,
+} from "@/app/pie/constants";
 
 const urlToBase64 = async (url: string) => {
   let result = await getBase64Image(url);
@@ -126,10 +131,53 @@ const getMdImageOptionStyles = (url: string) => {
     },
   };
 };
-// image options rich text + formatter
+const RectangleWithRadius = graphic.extendShape({
+  buildPath: function (ctx, shape) {
+    const { x, y, height } = shape;
+    ctx.beginPath();
+    ctx.moveTo(x + IMAGE_OPTION_BG_RADIUS, y);
+    ctx.lineTo(x + height - IMAGE_OPTION_BG_RADIUS, y);
+    ctx.quadraticCurveTo(x + height, y, x + height, y + IMAGE_OPTION_BG_RADIUS);
+    ctx.lineTo(x + height, y + height - IMAGE_OPTION_BG_RADIUS);
+    ctx.quadraticCurveTo(
+      x + height,
+      y + height,
+      x + height - IMAGE_OPTION_BG_RADIUS,
+      y + height
+    );
+    ctx.lineTo(x + IMAGE_OPTION_BG_RADIUS, y + height);
+    ctx.quadraticCurveTo(x, y + height, x, y + height - IMAGE_OPTION_BG_RADIUS);
+    ctx.lineTo(x, y + IMAGE_OPTION_BG_RADIUS);
+    ctx.quadraticCurveTo(x, y, x + IMAGE_OPTION_BG_RADIUS, y);
+    ctx.closePath();
+  },
+});
+graphic.registerShape(RECTANGLE_WITH_RADIUS_CUSTOM_SHAPE, RectangleWithRadius);
+const renderLegendItem = (
+  param: CustomSeriesRenderItemParams,
+  api: CustomSeriesRenderItemAPI
+) => {
+  const xAxisStartPx = param.coordSys.x;
+  const [_, ySizePx] = api.size([1, 1]) as number[];
+  // console.log("y size px", ySizePx);
+  return {
+    type: RECTANGLE_WITH_RADIUS_CUSTOM_SHAPE,
+    shape: {
+      width: 72,
+      height: 72,
+      x: xAxisStartPx + 12 + 12,
+      y: ySizePx * param.dataIndex,
+    },
+    style: {
+      fill: "#1a1a25",
+    },
+  };
+};
+// image options rich text + formatter + custom series backgrounds
 export const getMdOption = (
   data: any[],
-  withImage: boolean
+  withImage: boolean,
+  pieLegendData: Array<Array<number>>
   // imageOptionUrls?: string[]
 ): ReactEChartsProps["option"] => {
   const withImageOptions = data.every((item) => item.image);
@@ -149,10 +197,46 @@ export const getMdOption = (
         {}
       )
     : [];
+  const imageOptionsBgs = {
+    type: "custom",
+    renderItem: (
+      param: CustomSeriesRenderItemParams,
+      api: CustomSeriesRenderItemAPI
+    ) => renderLegendItem(param, api),
+    data: pieLegendData,
+  };
 
   return {
     backgroundColor: "#222430",
     tooltip: pieTooltip,
+    xAxis: {
+      splitLine: {
+        show: true,
+      },
+      axisLabel: {
+        show: true,
+      },
+      axisLine: {
+        show: true,
+      },
+      axisTick: {
+        show: true,
+      },
+    },
+    yAxis: {
+      splitLine: {
+        show: true,
+      },
+      axisLabel: {
+        show: true,
+      },
+      axisLine: {
+        show: true,
+      },
+      axisTick: {
+        show: true,
+      },
+    },
     series: [
       {
         ...pieSeries,
@@ -160,20 +244,24 @@ export const getMdOption = (
         radius: [52, 92],
         data,
       },
+      imageOptionsBgs,
       // imageOptionsSeries as SeriesOption,
     ],
     grid: {
       ...pieGrid,
       left: "50%",
+      bottom: 19,
     },
     legend: {
       formatter: (name: string) => {
         const percents = data.find((item) => item.name === name)?.value;
         const imageKey = data.find((item) => item.name === name).image.key;
-        const label = `{${imageKey}|}   {value|${percents}%} {name|${name}}`;
+        const spacing = "   ";
+        const label = `{${imageKey}|}${spacing}{value|${percents}%} {name|${name}}`;
         return label;
       },
       ...pieLegend,
+      padding: 0,
       left: "50%",
       textStyle: {
         ...(pieLegendTextStyle as any),

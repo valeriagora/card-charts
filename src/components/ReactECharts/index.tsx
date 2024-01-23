@@ -23,6 +23,7 @@ export interface ReactEChartsProps {
   containerRef: RefObject<HTMLDivElement | null>;
   onChartInit?: (chartInstance: ECharts) => void;
   onRenderEnded?: (chartInstance: ECharts) => void;
+  onLegendScroll?: (scrollDataIndex: number) => void;
 }
 
 const ReactECharts = function ReactECharts({
@@ -35,6 +36,7 @@ const ReactECharts = function ReactECharts({
   containerRef,
   onChartInit,
   onRenderEnded,
+  onLegendScroll,
 }: ReactEChartsProps): JSX.Element {
   const chartInstance = useRef<ECharts | null>(null);
   const chartRef = useRef<HTMLDivElement | null>(null);
@@ -66,10 +68,24 @@ const ReactECharts = function ReactECharts({
       ref && observer.unobserve(ref);
     };
   }, [containerRef, onChartInit]);
+  const handleLegendScroll = useCallback(
+    (event: {
+      type: "legendscroll";
+      scrollDataIndex: number;
+      legendId: string;
+    }) => {
+      const scrollDataIndex = event.scrollDataIndex;
+      console.log("handleLegendScroll", scrollDataIndex);
+      onLegendScroll instanceof Function && onLegendScroll(scrollDataIndex);
+    },
+    [onLegendScroll]
+  );
   useEffect(() => {
     chartInstance.current?.on("finished", onFinished);
+    chartInstance.current?.on("legendscroll", handleLegendScroll as any);
     return () => {
       chartInstance.current?.off("finished", onFinished);
+      chartInstance.current?.off("legendscroll", handleLegendScroll);
     };
   }, [onFinished]);
 

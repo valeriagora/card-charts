@@ -17,7 +17,7 @@ import { DndCard } from "@/components/DndCard";
 import { CardSize } from "../../bar/types";
 import { ECharts } from "echarts";
 import { getBase64Image, getSvgBlob } from "@/utils";
-import { throttle } from "lodash";
+
 const imageOptions = [
   "https://images.unsplash.com/photo-1702744473287-4cc284e97206?q=80&w=2864&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
   "https://images.unsplash.com/photo-1682686580391-615b1f28e5ee?q=80&w=2940&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDF8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
@@ -94,6 +94,9 @@ const pieData: PieData[] = [
     value: imageOptions[idx],
   },
 }));
+const customSeriesData: number[][] = Array(4)
+  .fill(null)
+  .map((v) => [0, 4, 0]);
 const L_LEGEND_MAX_SYMBOLS_COUNT = 52;
 const L_LEGEND_WITH_IMAGE_MAX_SYMBOLS_COUNT = 35;
 function chunk(str: string, size: number) {
@@ -139,7 +142,7 @@ export const PIE_L_OPTION_HEIGHT = 20 * 3 + 8;
 export const PIE_L_OPTION_WITH_IMAGE_HEIGHT = 72 + 8;
 
 // M WithOptions
-function PieChart({
+function PieChartWithImageOptions({
   cardSize = CardSize.large,
   imageOptionUrls = imageOptions,
 }: // imageOptionUrls = undefined,
@@ -150,6 +153,9 @@ any) {
     setChartInstance(chartInstance);
   }, []);
   const [pieChartData, setPieChartData] = useState<PieData[]>(pieData);
+  const [pieLegendData, setPieLegendData] = useState(customSeriesData);
+  console.log("legend data", pieLegendData);
+
   const [questionImage, setQuestionImage] = useState("");
   const [imageUrl, setImageUrl] = useState("");
   const containerRef = useRef<HTMLDivElement | null>(null);
@@ -162,6 +168,15 @@ any) {
   };
   const handleSizeChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setSize(event.target.value as CardSize);
+  };
+  console.log("items len", pieChartData.length);
+  const onLegendScroll = (scrollDataIndex: number) => {
+    console.log("scroll idx", scrollDataIndex);
+    const itemsPerPage = 3;
+    const pagesCount = Math.round(pieChartData.length / itemsPerPage); //
+    console.log("pages count", pagesCount);
+    const isLastPage = scrollDataIndex === itemsPerPage * (pagesCount - 1);
+    console.log("is last page", isLastPage);
   };
 
   const downloadChart = async (chartInstance: ECharts) => {
@@ -223,7 +238,7 @@ any) {
 
   const withImage = !!imageUrl;
   const small = smOption(pieChartData);
-  const medium = getMdOption(pieChartData, withImage);
+  const medium = getMdOption(pieChartData, withImage, pieLegendData);
   // console.log("MEDIUM OPTION", medium);
   const large = getLgOption(pieChartData, withImage, imageOptionUrls);
   const options = {
@@ -290,6 +305,7 @@ any) {
           <ReactECharts
             onChartInit={onChartInit}
             onRenderEnded={onRenderEnded}
+            onLegendScroll={onLegendScroll}
             containerRef={containerRef}
             option={options[size]}
           />
@@ -368,4 +384,4 @@ any) {
 //   );
 // };
 
-export default PieChart;
+export default PieChartWithImageOptions;
