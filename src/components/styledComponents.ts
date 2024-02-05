@@ -30,3 +30,16 @@ export const SmToMdChart = styled("div")(() => ({
   display: "flex",
   alignItems: "center",
 }));
+export const OverflowInfo = styled("div")({
+  position: "absolute",
+  bottom: 0,
+  right: 0,
+  display: "flex",
+  alignItems: "center",
+  gap: 4,
+  fontWeight: 500,
+  fontSize: 12,
+  lineHeight: "20px",
+  fontFamily: '"Manrope", sans-serif',
+  color: "#6C7080",
+});

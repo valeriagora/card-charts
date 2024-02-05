@@ -31,25 +31,13 @@ import {
   BAR_CHART_ML_BOTTOM_PADDING,
 } from "../constants";
 import { CardSize } from "../types";
+import { OverflowInfo } from "@/components/styledComponents";
 
 const barContainerHeights = {
   small: 120, // 124
   medium: 336, // 328, 344
   large: "auto",
 };
-const OverflowInfo = styled("div")({
-  position: "absolute",
-  bottom: 0,
-  right: 0,
-  display: "flex",
-  alignItems: "center",
-  gap: 4,
-  fontWeight: 500,
-  fontSize: 12,
-  lineHeight: "20px",
-  fontFamily: '"Manrope", sans-serif',
-  color: "#6C7080",
-});
 
 const BarChartContainer = styled("div")<{
   optionsCount: number;

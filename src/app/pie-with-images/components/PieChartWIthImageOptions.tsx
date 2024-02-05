@@ -9,7 +9,15 @@ import {
   FormLabel,
   styled,
 } from "@mui/material";
-import React, { useCallback, useEffect, useRef, useState } from "react";
+import React, {
+  forwardRef,
+  LegacyRef,
+  ReactNode,
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+} from "react";
 import { getSmOption, getMdOption, getLgOption } from "@/data/pie";
 import { chartBoxDimensions, url } from "@/constants";
 import { DndCard } from "@/components/DndCard";
@@ -23,6 +31,8 @@ import {
   OPTION_IMAGE_SIDE,
   TEXT_LINE_HEIGHT,
 } from "@/constants/pie";
+import { OverflowInfo } from "@/components/styledComponents";
+import Image from "next/image";
 
 // const imageOptions = [
 //   "https://images.unsplash.com/photo-1702744473287-4cc284e97206?q=80&w=2864&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
@@ -107,6 +117,36 @@ const customSeriesData: PieLegend = pieData.map(({ value, name }, idx) => [
   images[idx],
 ]);
 const MIN_L_CHART_HEIGHT = 188;
+interface IPieContainerProps {
+  size: CardSize;
+  height: number;
+  hasOverflow: boolean;
+  optionsCount: number;
+  children: ReactNode;
+}
+const PieContainer = forwardRef(function Container(
+  { size, height, hasOverflow, optionsCount, children }: IPieContainerProps,
+  ref
+) {
+  return (
+    <PieChartContainer
+      size={size}
+      height={height}
+      ref={ref as LegacyRef<HTMLDivElement>}
+    >
+      {children}
+      {hasOverflow && (
+        <OverflowInfo>
+          {size !== CardSize.large &&
+            pieOptionsOverflow[size as CardSize.small | CardSize.medium]
+              .withImgOptions}
+          / {optionsCount} options{" "}
+          <Image width={16} height={16} src={"/info.svg"} alt="info" />
+        </OverflowInfo>
+      )}
+    </PieChartContainer>
+  );
+});
 const PieChartContainer = styled("div")<{
   size: CardSize;
   height?: number;
@@ -127,7 +167,33 @@ const PieChartContainer = styled("div")<{
 });
 export const PIE_L_OPTION_HEIGHT = 20 * 3 + 8;
 export const PIE_L_OPTION_WITH_IMAGE_HEIGHT = 72 + 8;
-
+interface IPieOptionsOverflow {
+  small: {
+    default: number;
+    withImgOptions: number;
+  };
+  medium: {
+    default: number;
+    withImgOptions: number;
+  };
+}
+const pieOptionsOverflow: IPieOptionsOverflow = {
+  small: { default: 5, withImgOptions: 4 },
+  medium: {
+    default: 11,
+    withImgOptions: 4,
+  },
+};
+const hasOptionsOverflow = (
+  size: CardSize,
+  length: number,
+  withImageOptions: boolean = false
+) => {
+  if (size === CardSize.large) return false;
+  return withImageOptions
+    ? length > pieOptionsOverflow[size].withImgOptions
+    : length > pieOptionsOverflow[size].default;
+};
 function PieChartWithImageOptions({
   cardSize = CardSize.small,
   questionImage = url,
@@ -186,7 +252,7 @@ any) {
     const url = await getSvgBlob(chartInstance);
     const anchorElement = document.createElement("a");
     anchorElement.href = url;
-    anchorElement.download = `chart.svg`;
+    anchorElement.download = `pie-chart-${size}.svg`;
     document.body.appendChild(anchorElement);
     anchorElement.click();
   };
@@ -280,6 +346,7 @@ any) {
     medium,
     large,
   };
+
   return (
     <>
       <Button
@@ -323,10 +390,12 @@ any) {
         </RadioGroup>
       </FormControl>
       <DndCard size={size}>
-        <PieChartContainer
+        <PieContainer
           size={size}
           ref={containerRef}
           height={size === CardSize.large ? lContainerHeight : undefined}
+          optionsCount={pieChartData.length}
+          hasOverflow={hasOptionsOverflow(size, pieChartData.length, true)}
         >
           <ReactECharts
             onChartInit={onChartInit}
@@ -334,7 +403,7 @@ any) {
             containerRef={containerRef}
             option={options[size]}
           />
-        </PieChartContainer>
+        </PieContainer>
       </DndCard>
     </>
   );
