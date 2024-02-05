@@ -1,4 +1,5 @@
 import { ECharts } from "echarts";
+import { pieColors } from "./constants";
 
 export async function blobToBase64(blob: Blob): Promise<string> {
   return new Promise((resolve, _) => {
@@ -37,3 +38,28 @@ export const getBase64Image = (url: string): Promise<string> => {
     img.onerror = (error) => reject(error);
   });
 };
+export const getLegendIconColor = (colors: string[], index: number) => {
+  const remainder = index % colors.length;
+  return pieColors[remainder];
+};
+export function truncate(text: string, symbolsCount: number) {
+  if (text.length <= symbolsCount) return text;
+  return text.slice(0, symbolsCount) + "...";
+}
+export function breakWord(string: string, symbolsCount: number) {
+  const splittedBySpacing = string.split(" ");
+  const spacing = " ";
+  return splittedBySpacing.reduce(
+    (total, current, idx) => {
+      let lastElem = total[total.length - 1];
+      const nextLength = lastElem.length + ` ${current}`.length;
+      if (nextLength <= symbolsCount) {
+        total[total.length - 1] += `${idx ? spacing : ""}${current}`;
+      } else {
+        total.push(`${current}`);
+      }
+      return total;
+    },
+    [""]
+  );
+}

@@ -15,7 +15,7 @@ import { throttle } from "lodash";
 import { DndCard } from "@/components/DndCard";
 import { getBase64Image, getSvgBlob } from "@/utils";
 import { getSmOption, getMdOption, getLgOption } from "@/data/bar";
-import { url } from "../../../data/constants";
+import { url } from "../../../constants";
 import { Button } from "@mui/material";
 import { styled } from "@mui/material";
 import { ECharts } from "echarts";
@@ -33,8 +33,8 @@ import {
 import { CardSize } from "../types";
 
 const barContainerHeights = {
-  small: 120,
-  medium: 344,
+  small: 120, // 124
+  medium: 336, // 328, 344
   large: "auto",
 };
 const OverflowInfo = styled("div")({

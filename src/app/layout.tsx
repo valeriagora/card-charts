@@ -16,8 +16,14 @@ export const Navbar = () => {
       <Link href={"/pie"}>
         <Button>Pie charts</Button>
       </Link>{" "}
+      <Link href={"/pie-with-images"}>
+        <Button>Pie charts with image options</Button>
+      </Link>{" "}
       <Link href={"/bar"}>
         <Button color="secondary">Bar charts</Button>
+      </Link>
+      <Link href={"/bar-with-images"}>
+        <Button color="secondary">Bar charts with image options</Button>
       </Link>
     </>
   );

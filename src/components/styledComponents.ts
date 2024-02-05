@@ -12,7 +12,7 @@ const cardHeights = {
 };
 
 export const CardContainer = styled("div")<{ size: CardSize }>(({ size }) => ({
-  padding: "12px 20px",
+  padding: "12px 20px 20px 20px",
   width: cardWidths[size],
   height: cardHeights[size],
   background: " #222430",
