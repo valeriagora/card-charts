@@ -15,31 +15,33 @@ import { chartBoxDimensions, url } from "@/constants";
 import { DndCard } from "@/components/DndCard";
 import { CardSize } from "../../bar/types";
 import { ECharts } from "echarts";
-import { breakWord, getBase64Image, getSvgBlob } from "@/utils";
+import { breakWord, getBase64Image, getSvgBlob, isBase64Image } from "@/utils";
 import {
+  L_LEGEND_MAX_SYMBOLS_COUNT,
+  L_LEGEND_WITH_IMAGE_MAX_SYMBOLS_COUNT,
   OPTION_IMAGE_MARGIN_BOTTOM,
   OPTION_IMAGE_SIDE,
   TEXT_LINE_HEIGHT,
-} from "../constants";
+} from "@/constants/pie";
 
-const imageOptions = [
-  "https://images.unsplash.com/photo-1702744473287-4cc284e97206?q=80&w=2864&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-  "https://images.unsplash.com/photo-1682686580391-615b1f28e5ee?q=80&w=2940&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDF8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-  "https://images.unsplash.com/photo-1702893576128-21feb60299d1?q=80&w=2940&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-  "https://images.unsplash.com/photo-1703028408829-ba45aa14b782?q=80&w=2787&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-  "https://images.unsplash.com/photo-1519925610903-381054cc2a1c?q=80&w=2940&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-  "https://images.unsplash.com/photo-1682687218147-9806132dc697?q=80&w=2875&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDF8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-  "https://images.unsplash.com/photo-1703615318360-788893a586d8?q=80&w=2785&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-  "https://images.unsplash.com/photo-1682687982029-edb9aecf5f89?q=80&w=2942&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDF8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-  "https://images.unsplash.com/photo-1704192761191-757e0ccc5186?q=80&w=2944&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-  "https://images.unsplash.com/photo-1704587422648-43f456047a72?q=80&w=2787&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-  "https://images.unsplash.com/photo-1682687220795-796d3f6f7000?q=80&w=2940&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDF8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-  "https://images.unsplash.com/photo-1704419278767-09bc3a98581c?q=80&w=2875&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-  "https://plus.unsplash.com/premium_photo-1697695568731-5b351d7aca4b?q=80&w=2787&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-  "https://images.unsplash.com/photo-1682685797140-c17807f8f217?q=80&w=2940&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDF8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-  "https://images.unsplash.com/photo-1682685797857-97de838c192e?q=80&w=2787&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDF8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-  "https://plus.unsplash.com/premium_photo-1663045856607-60692e1e5ec6?q=80&w=2938&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-];
+// const imageOptions = [
+//   "https://images.unsplash.com/photo-1702744473287-4cc284e97206?q=80&w=2864&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+//   "https://images.unsplash.com/photo-1682686580391-615b1f28e5ee?q=80&w=2940&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDF8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+//   "https://images.unsplash.com/photo-1702893576128-21feb60299d1?q=80&w=2940&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+//   "https://images.unsplash.com/photo-1703028408829-ba45aa14b782?q=80&w=2787&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+//   "https://images.unsplash.com/photo-1519925610903-381054cc2a1c?q=80&w=2940&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+//   "https://images.unsplash.com/photo-1682687218147-9806132dc697?q=80&w=2875&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDF8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+//   "https://images.unsplash.com/photo-1703615318360-788893a586d8?q=80&w=2785&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+//   "https://images.unsplash.com/photo-1682687982029-edb9aecf5f89?q=80&w=2942&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDF8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+//   "https://images.unsplash.com/photo-1704192761191-757e0ccc5186?q=80&w=2944&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+//   "https://images.unsplash.com/photo-1704587422648-43f456047a72?q=80&w=2787&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+//   "https://images.unsplash.com/photo-1682687220795-796d3f6f7000?q=80&w=2940&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDF8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+//   "https://images.unsplash.com/photo-1704419278767-09bc3a98581c?q=80&w=2875&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+//   "https://plus.unsplash.com/premium_photo-1697695568731-5b351d7aca4b?q=80&w=2787&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+//   "https://images.unsplash.com/photo-1682685797140-c17807f8f217?q=80&w=2940&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDF8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+//   "https://images.unsplash.com/photo-1682685797857-97de838c192e?q=80&w=2787&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDF8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+//   "https://plus.unsplash.com/premium_photo-1663045856607-60692e1e5ec6?q=80&w=2938&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+// ];
 interface PieData {
   value: number;
   name: string;
@@ -104,26 +106,6 @@ const customSeriesData: PieLegend = pieData.map(({ value, name }, idx) => [
   name,
   images[idx],
 ]);
-const L_LEGEND_MAX_SYMBOLS_COUNT = 52;
-const L_LEGEND_WITH_IMAGE_MAX_SYMBOLS_COUNT = 35;
-function chunk(str: string, size: number) {
-  return str.match(new RegExp(".{1," + size + "}", "g"));
-}
-const LEGEND_OPTION_ITEM_GAP = 10;
-const getContainerHeight = (withQuestionImage: boolean) =>
-  pieData.reduce((tot, curr, idx) => {
-    const chunks = chunk(
-      curr.name,
-      withQuestionImage
-        ? L_LEGEND_WITH_IMAGE_MAX_SYMBOLS_COUNT
-        : L_LEGEND_MAX_SYMBOLS_COUNT
-    );
-    tot += chunks.length;
-    return tot;
-  }, 0) *
-    20 +
-  LEGEND_OPTION_ITEM_GAP * pieData.length;
-
 const MIN_L_CHART_HEIGHT = 188;
 const PieChartContainer = styled("div")<{
   size: CardSize;
@@ -148,8 +130,9 @@ export const PIE_L_OPTION_WITH_IMAGE_HEIGHT = 72 + 8;
 
 function PieChartWithImageOptions({
   cardSize = CardSize.small,
-  imageOptionUrls = imageOptions,
-}: // imageOptionUrls = undefined,
+  questionImage = url,
+}: // imageOptionUrls = imageOptions,
+// imageOptionUrls = undefined,
 any) {
   const [chartInstance, setChartInstance] = useState<ECharts | null>(null);
   const onChartInit = useCallback((chartInstance: ECharts) => {
@@ -157,8 +140,8 @@ any) {
   }, []);
   const [pieChartData, setPieChartData] = useState<PieData[]>(pieData);
   const [pieLegendData, setPieLegendData] = useState(customSeriesData);
-  const [questionImage, setQuestionImage] = useState("");
   const [questionImageUrl, setQuestionImageUrl] = useState("");
+  const [isQuestionImageReady, setIsQuestionImageReady] = useState(false);
   const containerRef = useRef<HTMLDivElement | null>(null);
   const [downloadQueue, setDownloadQueue] = useState<string[]>([]);
   const [areBase64ImagesReady, setBase64ImagesReady] = useState(false);
@@ -194,12 +177,11 @@ any) {
       : largeContainerHeight;
   const [size, setSize] = useState(cardSize);
   const toggleImg = () => {
-    setQuestionImage(questionImage ? "" : url);
+    setQuestionImageUrl(questionImageUrl ? "" : questionImage);
   };
   const handleSizeChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setSize(event.target.value as CardSize);
   };
-
   const downloadChart = async (chartInstance: ECharts) => {
     const url = await getSvgBlob(chartInstance);
     const anchorElement = document.createElement("a");
@@ -213,52 +195,76 @@ any) {
     return result;
   };
   const saveAsImage = useCallback(async () => {
-    // upload base64 images
-    const base64Promises: Promise<string>[] = [];
-    for (const url of imageOptionUrls) {
-      base64Promises.push(urlToBase64(url));
+    if (size !== CardSize.small && !areBase64ImagesReady) {
+      const base64Promises: Promise<string>[] = [];
+      const optionImageUrls = pieLegendData.map((item) => item[3]);
+      for (const url of optionImageUrls) {
+        base64Promises.push(urlToBase64(url));
+      }
+      const getBase64Promises = async () =>
+        await Promise.all(base64Promises).then((values) => values);
+      const base64Urls = await getBase64Promises();
+      if (base64Urls.length) {
+        setPieLegendData((prev: any) => {
+          const newData = prev.map((item: PieLegend, idx: number) => [
+            ...item.slice(0, 3),
+            base64Urls[idx],
+          ]);
+          return newData;
+        });
+        setDownloadQueue([...downloadQueue, "download"]);
+      }
+      return;
     }
-    const getBase64Promises = async () =>
-      await Promise.all(base64Promises).then((values) => values);
-    const base64Urls = await getBase64Promises();
-    if (base64Urls.length) {
-      setPieChartData((prev) => {
-        const newData = prev.map((item, idx) => ({
-          ...item,
-          image: {
-            key: item.image?.key,
-            value: base64Urls[idx],
-          },
-        }));
-        return newData;
-      });
-      console.log("pie chart data set");
+    const isQuestionImageReady = questionImageUrl
+      ? isBase64Image(questionImageUrl)
+      : true;
+    if (size !== CardSize.small && !isQuestionImageReady) {
+      const base64 = urlToBase64(questionImageUrl);
+      const base64QImg = await Promise.resolve(base64);
+      base64QImg && setQuestionImageUrl(base64QImg);
       setDownloadQueue([...downloadQueue, "download"]);
+
+      return;
     }
-    // return;
-    // save as svg without option images
-    // downloadChart(chartInstance);
-  }, [imageOptionUrls, downloadQueue]);
+    chartInstance && downloadChart(chartInstance);
+  }, [
+    downloadQueue,
+    chartInstance,
+    size,
+    questionImageUrl,
+    areBase64ImagesReady,
+    isQuestionImageReady,
+  ]);
   const onRenderEnded = useCallback(() => {
-    // console.log("i", item);
-    // const areBase64ImagesReady = pieChartData.every((item) =>
-    //   item.image.value.startsWith("data:image")
-    // );
     const areBase64ImagesReady = pieLegendData.every((legendItem) =>
-      legendItem[2].startsWith("data:image")
+      isBase64Image(legendItem[3])
     );
+    const isQuestionImageReady = questionImageUrl
+      ? isBase64Image(questionImageUrl)
+      : true;
+
+    setIsQuestionImageReady(isQuestionImageReady);
     setBase64ImagesReady(!!areBase64ImagesReady);
-    // option is actual when it has 2 series objects, custom legend & pie data
-  }, [pieChartData]);
+  }, [pieLegendData, questionImageUrl]);
   useEffect(() => {
-    if (downloadQueue.length && areBase64ImagesReady && chartInstance) {
+    if (
+      downloadQueue.length &&
+      areBase64ImagesReady &&
+      chartInstance &&
+      isQuestionImageReady
+    ) {
       setTimeout(() => {
         downloadChart(chartInstance);
         setDownloadQueue((prev) => prev.slice(0, -1));
-      }, 0);
+      }, 1000);
     }
-  }, [downloadQueue, areBase64ImagesReady, chartInstance]);
-  const withImage = !!questionImageUrl;
+  }, [
+    downloadQueue,
+    areBase64ImagesReady,
+    isQuestionImageReady,
+    chartInstance,
+  ]);
   const small = getSmOption(pieChartData, pieLegendData);
   const medium = getMdOption(pieChartData, pieLegendData, questionImageUrl);
   const large = getLgOption(
@@ -274,8 +280,6 @@ any) {
     medium,
     large,
   };
-  const containerHeight = getContainerHeight(withImage);
-
   return (
     <>
       <Button
@@ -318,7 +322,7 @@ any) {
           />
         </RadioGroup>
       </FormControl>
-      <DndCard size={size} imageUrl={questionImage}>
+      <DndCard size={size}>
         <PieChartContainer
           size={size}
           ref={containerRef}

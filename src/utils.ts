@@ -63,3 +63,4 @@ export function breakWord(string: string, symbolsCount: number) {
     [""]
   );
 }
+export const isBase64Image = (img: string) => img.startsWith("data:image");

@@ -6,7 +6,7 @@ export const CIRCLE_ICON_MARGIN_RIGHT = 4;
 export const CIRCLE_ICON_S_MARGIN_LEFT = 4;
 export const CIRCLE_ICON_RADIUS = 6;
 // break word for L charts
-export const L_LEGEND_MAX_SYMBOLS_COUNT = 50;
+export const L_LEGEND_MAX_SYMBOLS_COUNT = 48;
 export const L_LEGEND_WITH_IMAGE_MAX_SYMBOLS_COUNT = 33;
 // truncate for M charts
 export const M_LEGEND_MAX_SYMBOLS_COUNT = 22;

@@ -11,12 +11,16 @@ import {
   colors,
 } from "@mui/material";
 import React, { useCallback, useEffect, useRef, useState } from "react";
-import { getSmOption, getMdOption, getLgOption, pieColors } from "@/data/pie";
+import { getSmOption, getMdOption, getLgOption } from "@/data/pie";
 import { url } from "@/constants";
 import { DndCard } from "@/components/DndCard";
 import { CardSize } from "../../bar/types";
 import { ECharts } from "echarts";
 import { getBase64Image, getSvgBlob } from "@/utils";
+import {
+  L_LEGEND_MAX_SYMBOLS_COUNT,
+  L_LEGEND_WITH_IMAGE_MAX_SYMBOLS_COUNT,
+} from "@/constants/pie";
 
 const imageOptions = [
   "https://images.unsplash.com/photo-1702744473287-4cc284e97206?q=80&w=2864&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
@@ -97,8 +101,6 @@ const pieData: PieData[] = [
 const customSeriesData: number[][] = Array(4)
   .fill(null)
   .map((v) => [0, 4, 0]);
-const L_LEGEND_MAX_SYMBOLS_COUNT = 52;
-const L_LEGEND_WITH_IMAGE_MAX_SYMBOLS_COUNT = 35;
 function chunk(str: string, size: number) {
   return str.match(new RegExp(".{1," + size + "}", "g"));
 }
@@ -154,7 +156,6 @@ any) {
   }, []);
   const [pieChartData, setPieChartData] = useState<PieData[]>(pieData);
   const [pieLegendData, setPieLegendData] = useState(customSeriesData);
-  console.log("legend data", pieLegendData);
 
   const [questionImage, setQuestionImage] = useState("");
   const [imageUrl, setImageUrl] = useState("");
@@ -168,15 +169,6 @@ any) {
   };
   const handleSizeChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setSize(event.target.value as CardSize);
-  };
-  console.log("items len", pieChartData.length);
-  const onLegendScroll = (scrollDataIndex: number) => {
-    console.log("scroll idx", scrollDataIndex);
-    const itemsPerPage = 3;
-    const pagesCount = Math.round(pieChartData.length / itemsPerPage); //
-    console.log("pages count", pagesCount);
-    const isLastPage = scrollDataIndex === itemsPerPage * (pagesCount - 1);
-    console.log("is last page", isLastPage);
   };
 
   const downloadChart = async (chartInstance: ECharts) => {
@@ -212,7 +204,6 @@ any) {
           }));
           return newData;
         });
-        console.log("pie chart data set");
         setDownloadQueue([...downloadQueue, "download"]);
       }
       return;
@@ -235,8 +226,6 @@ any) {
       }, 0);
     }
   }, [downloadQueue, areBase64ImagesReady, chartInstance]);
-  console.log("chart data", pieChartData);
-  console.log("legend data", pieLegendData);
   const withImage = !!imageUrl;
   const small = getSmOption(pieChartData, pieLegendData);
   const medium = getMdOption(pieChartData, withImage, pieLegendData);
@@ -305,83 +294,13 @@ any) {
           <ReactECharts
             onChartInit={onChartInit}
             onRenderEnded={onRenderEnded}
-            onLegendScroll={onLegendScroll}
             containerRef={containerRef}
             option={options[size]}
           />
-          {/* {size === CardSize.large && (
-            <LargeLegend
-              data={pieData}
-              withImageOptions={withImageOptions}
-              imageOptionUrls={imageOptionUrls}
-            />
-          )} */}
         </PieChartContainer>
       </DndCard>
     </>
   );
 }
-
-// const Flex = styled("div")(({ withImageOptions }) => ({
-//   display: "flex",
-//   gap: 4,
-//   alignItems: "center",
-//   minHeight: withImageOptions ? 72 : 60,
-// }));
-// const Icon = styled("div")(({ color }) => ({
-//   width: 12,
-//   height: 12,
-//   minWidth: 12,
-//   borderRadius: "50%",
-//   background: color,
-// }));
-// const Percents = styled("div")({
-//   color: "#fff",
-// });
-// const OptionText = styled("div")({
-//   fontFamily: "Manrope",
-//   fontSize: 14,
-//   fontWeight: 500,
-//   lineHeight: "20px",
-//   color: "#c8cad0",
-//   height: "100%",
-//   width: "100%",
-//   margin: 0,
-// });
-// const Image = styled("img")({
-//   width: 72,
-//   minWidth: 72,
-//   height: 72,
-//   objectFit: "contain",
-//   boxSizing: "border-box",
-//   border: "1px solid #ddd",
-// });
-// const LargeLegend = ({ data, withImageOptions, imageOptionUrls }: any) => {
-//   return (
-//     <div
-//       style={{
-//         display: "flex",
-//         flexDirection: "column",
-//         position: "absolute",
-//         top: 0,
-//         right: 0,
-//         width: "50%",
-//       }}
-//     >
-//       {data.map(({ value, name }, idx) => {
-//         const remainder = idx % pieColors.length;
-//         const color = pieColors[remainder];
-//         const imageUrl = imageOptionUrls[idx];
-//         return (
-//           <Flex key={name} withImageOptions={withImageOptions}>
-//             {withImageOptions && <Image src={imageUrl} />}
-//             <Icon color={color} /> <Percents>{value}%</Percents>
-//             <OptionText>{name}</OptionText>
-//           </Flex>
-//         );
-//       })}
-//     </div>
-//   );
-// };
 
 export default PieChartWithImageOptions;

@@ -1,7 +1,6 @@
 import { CardSize } from "@/app/bar/types";
 import { ReactEChartsProps } from "@/components/ReactECharts";
 import {
-  LegendComponentOption,
   CustomSeriesRenderItemAPI,
   CustomSeriesRenderItemParams,
   graphic,
@@ -10,7 +9,7 @@ import { getBase64Image } from "@/utils";
 import {
   IMAGE_OPTION_BG_RADIUS,
   RECTANGLE_WITH_RADIUS_CUSTOM_SHAPE,
-} from "@/app/pie/constants";
+} from "@/constants/pie";
 import { pieColors } from "../constants";
 import {
   renderLgLegendItem,
@@ -173,7 +172,6 @@ const renderLegendItem = (
 ) => {
   const xAxisStartPx = param.coordSys.x;
   const [_, ySizePx] = api.size([1, 1]) as number[];
-  // console.log("y size px", ySizePx);
   return {
     type: RECTANGLE_WITH_RADIUS_CUSTOM_SHAPE,
     shape: {
