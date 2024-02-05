@@ -9,7 +9,7 @@ import { getBase64Image } from "@/utils";
 import {
   IMAGE_OPTION_BG_RADIUS,
   RECTANGLE_WITH_RADIUS_CUSTOM_SHAPE,
-} from "@/constants/pie";
+} from "@/app/pie-with-images/constants";
 import { pieColors } from "../constants";
 import {
   renderLgLegendItem,

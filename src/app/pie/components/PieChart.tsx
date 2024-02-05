@@ -20,7 +20,7 @@ import { getBase64Image, getSvgBlob } from "@/utils";
 import {
   L_LEGEND_MAX_SYMBOLS_COUNT,
   L_LEGEND_WITH_IMAGE_MAX_SYMBOLS_COUNT,
-} from "@/constants/pie";
+} from "@/app/pie-with-images/constants";
 
 const imageOptions = [
   "https://images.unsplash.com/photo-1702744473287-4cc284e97206?q=80&w=2864&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",

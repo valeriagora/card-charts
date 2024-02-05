@@ -30,7 +30,7 @@ import {
   OPTION_IMAGE_MARGIN_BOTTOM,
   OPTION_IMAGE_SIDE,
   TEXT_LINE_HEIGHT,
-} from "@/constants/pie";
+} from "@/app/pie-with-images/constants";
 import { OverflowInfo } from "@/components/styledComponents";
 import Image from "next/image";
 
@@ -57,47 +57,40 @@ interface PieData {
   name: string;
 }
 
+// const pieData: PieData[] = [
+
+//   { value: 2, name: "Option 11" },
+//   { value: 2, name: "Option 12" },
+//   {
+//     value: 2,
+//     name: "Option 7 Option 5 Search Engine Search Search Search Search Search Option 5 Option 7 Option 5 Search Engine Option 7 Option 5 Search Engine Option 7 Option 5 Search Engine Option 7 Option 5 Search Engine",
+//   },
+//   { value: 1, name: "Option 13" },
+//   { value: 3, name: "Option 14" },
+//   { value: 4, name: "Option 15" },
+//   { value: 5, name: "Option 16" },
+// ];
 const pieData: PieData[] = [
-  // {
-  //   value: 10,
-  //   name: "Search Engine Search Engine Search Engine Search Engine e Search Engine Search Engine Search Engine Engine Search Engine  Engine Search Engine",
-  // },
-  // {
-  //   value: 20,
-  //   name: "Search Engine",
-  // },
-  // {
-  //   value: 25,
-  //   name: "Other",
-  // },
-  // {
-  //   value: 15,
-  //   name: "Option 1",
-  // },
-  // {
-  //   value: 2,
-  //   name: "Option 2",
-  // },
-  // { value: 3, name: "Option 3" },
-  // { value: 5, name: "Option 4" },
-  // {
-  //   value: 3,
-  //   name: "Option 5 Search Engine Search Search Search Search Search Option 5 Search Engine Search Search Search Search Search Option 5 Search Engine Search Search Search Search Search",
-  // },
-  // {
-  //   value: 2,
-  //   name: "Option 6 Option 5 Search Engine Search Search Search Search Search Option 5 Search Engine Search Search Search Search Search Option 5 Search Engine Search Search Search Search Search",
-  // },
+  {
+    value: 25,
+    name: "Other Search Engine Search Engine Search Search Engine Search Engine Search Engine Search Engine  ",
+  },
+  {
+    value: 15,
+    name: "Option 1 Option 1 Test test test test test test Test test test test test test Test test test test test test Test test test test test test Test test test test test test",
+  },
   {
     value: 2,
-    name: "Option 7 Option 5 Search Engine Search Search Search Search Search Option 5 Search Engine Search Search Search Search Search Option 5 Search Engine Search Search Search",
+    name: "Option 2  Test test test test test test Option 2 Option 2 Option 2 Option 2Option 2 Option 2 Option 2 Option 2 Option 2 Option 2 Option 2 Option 2 Option 2 Option 2 Option 2 Option 2 Option 2 Option 2 Option 2 Option 2",
   },
-  { value: 2, name: "Option 11" },
-  { value: 2, name: "Option 12" },
-  { value: 1, name: "Option 13" },
-  { value: 3, name: "Option 14" },
-  { value: 4, name: "Option 15" },
-  { value: 5, name: "Option 16" },
+  {
+    value: 3,
+    name: "Option 3",
+  },
+  {
+    value: 5,
+    name: "Option 4 Test test test test test test  Test test test test test test  Test test test test test test  Test test test test test test  Test test test test test test",
+  },
 ];
 
 const images = [
@@ -106,8 +99,8 @@ const images = [
   "https://images.unsplash.com/photo-1682685797857-97de838c192e?q=80&w=2787&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDF8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
   "https://images.unsplash.com/photo-1682695796497-31a44224d6d6?q=80&w=2940&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDF8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
   "https://images.unsplash.com/photo-1704107116952-978a5712566c?q=80&w=2938&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-  "https://plus.unsplash.com/premium_photo-1663946448065-967d72d58b4f?q=80&w=2875&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-  "https://images.unsplash.com/photo-1705179573286-495f1b4fabaf?q=80&w=2787&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+  // "https://plus.unsplash.com/premium_photo-1663946448065-967d72d58b4f?q=80&w=2875&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+  // "https://images.unsplash.com/photo-1705179573286-495f1b4fabaf?q=80&w=2787&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
 ];
 type PieLegend = [number, number, string, string][];
 const customSeriesData: PieLegend = pieData.map(({ value, name }, idx) => [
@@ -211,8 +204,7 @@ any) {
   const containerRef = useRef<HTMLDivElement | null>(null);
   const [downloadQueue, setDownloadQueue] = useState<string[]>([]);
   const [areBase64ImagesReady, setBase64ImagesReady] = useState(false);
-
-  const optionsWithImagesLines = pieData.reduce(
+  const optionsWithImagesLines = pieChartData.reduce(
     (total: number[], current: any) => {
       const { value, name } = current;
       const linesCount = breakWord(
