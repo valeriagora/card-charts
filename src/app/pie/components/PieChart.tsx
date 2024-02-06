@@ -41,8 +41,38 @@ import {
   url,
 } from "@/constants";
 import { OverflowInfo } from "@/components/styledComponents";
-import Image from "next/image";
+import { default as NextImage } from "next/image";
 import { PieData } from "@/types";
+
+export function resizeImageBase64(base64Str: string, maxWidth: number): Promise<string> {
+  return new Promise((resolve, reject) => {
+    // Create an Image object
+    const img = new Image();
+    img.onload = () => {
+      // Get the aspect ratio
+      const scaleFactor = maxWidth / img.width;
+      const scaledHeight = img.height * scaleFactor;
+
+      // Create a canvas and set the new dimensions
+      const canvas = document.createElement('canvas');
+      canvas.width = maxWidth;
+      canvas.height = scaledHeight;
+
+      // Draw the scaled image on the canvas
+      const ctx = canvas.getContext('2d');
+      ctx.drawImage(img, 0, 0, maxWidth, scaledHeight);
+
+      // Convert the canvas to a Base64 string and resolve the promise
+      resolve(canvas.toDataURL());
+    };
+    img.onerror = reject;
+
+    // Set the source of the image to the input Base64 string
+    img.src = base64Str;
+  });
+}
+
+
 const pieData: PieData[] = [
   {
     value: 25,
@@ -124,7 +154,7 @@ const PieContainer = forwardRef(function Container(
             pieOptionsOverflow[size as CardSize.small | CardSize.medium]
               .default}
           / {optionsCount} options{" "}
-          <Image width={16} height={16} src={"/info.svg"} alt="info" />
+          <NextImage width={16} height={16} src={"/info.svg"} alt="info" />
         </OverflowInfo>
       )}
     </PieChartContainer>
@@ -210,6 +240,7 @@ function PieChartWithImageOptions({
     setSize(event.target.value as CardSize);
   };
   const downloadChart = async (chartInstance: ECharts) => {
+    console.log("downloadChart");
     const url = await getSvgBlob(chartInstance);
     const anchorElement = document.createElement("a");
     anchorElement.href = url;
@@ -222,15 +253,16 @@ function PieChartWithImageOptions({
     return result;
   };
   const saveAsImage = useCallback(async () => {
+    console.log("saveAsImage");
     if (size !== CardSize.small && !areBase64ImagesReady) {
       const base64Promises: Promise<string>[] = [];
       const optionImageUrls = pieLegendData.map((item) => item[3]);
       for (const url of optionImageUrls) {
-        base64Promises.push(urlToBase64(url));
+        base64Promises.push(urlToBase64(url).then((base64) => resizeImageBase64(base64, 50)));
       }
       const getBase64Promises = async () =>
         await Promise.all(base64Promises).then((values) => values);
-      const base64Urls = await getBase64Promises();
+      const base64Urls = (await getBase64Promises());
       if (base64Urls.length) {
         setPieLegendData((prev: any) => {
           const newData = prev.map((item: PieLegend, idx: number) => [

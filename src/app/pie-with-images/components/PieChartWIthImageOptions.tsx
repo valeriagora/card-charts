@@ -45,6 +45,7 @@ import {
 import { OverflowInfo } from "@/components/styledComponents";
 import Image from "next/image";
 import { PieData } from "@/types";
+import { resizeImageBase64 } from "@/app/pie/components/PieChart";
 
 const pieData: PieData[] = [
   {
@@ -200,21 +201,25 @@ function PieChart({ cardSize = CardSize.small, questionImage = url }: any) {
     anchorElement.download = `pie-chart-${size}.svg`;
     document.body.appendChild(anchorElement);
     anchorElement.click();
+    console.log(anchorElement);
+    console.log("clicked");
   };
   const urlToBase64 = async (url: string) => {
     let result = await getBase64Image(url);
     return result;
   };
   const saveAsImage = useCallback(async () => {
+    console.log("saveAsImage");
     if (size !== CardSize.small && !areBase64ImagesReady) {
       const base64Promises: Promise<string>[] = [];
       const optionImageUrls = pieLegendData.map((item) => item[3]);
       for (const url of optionImageUrls) {
-        base64Promises.push(urlToBase64(url));
+        base64Promises.push(urlToBase64(url).then((base64) => resizeImageBase64(base64, 50)));
       }
       const getBase64Promises = async () =>
         await Promise.all(base64Promises).then((values) => values);
       const base64Urls = await getBase64Promises();
+      console.log("base64Urls", base64Urls);
       if (base64Urls.length) {
         setPieLegendData((prev: any) => {
           const newData = prev.map((item: PieLegend, idx: number) => [
@@ -266,6 +271,7 @@ function PieChart({ cardSize = CardSize.small, questionImage = url }: any) {
       isQuestionImageReady
     ) {
       setTimeout(() => {
+        console.log("downloadChart useEffect");
         downloadChart(chartInstance);
         setDownloadQueue((prev) => prev.slice(0, -1));
       }, 1000);
