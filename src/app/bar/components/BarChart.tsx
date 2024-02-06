@@ -11,7 +11,6 @@ import React, {
   useRef,
   useState,
 } from "react";
-import { throttle } from "lodash";
 import { DndCard } from "@/components/DndCard";
 import { getBase64Image, getSvgBlob } from "@/utils";
 import { getSmOption, getMdOption, getLgOption } from "@/options/bar";
@@ -25,14 +24,17 @@ import RadioGroup from "@mui/material/RadioGroup";
 import FormControlLabel from "@mui/material/FormControlLabel";
 import FormControl from "@mui/material/FormControl";
 import FormLabel from "@mui/material/FormLabel";
-import {
-  OPTION_IMAGE_HEIGHT,
-  IMAGE_OPTIONS_LINE_Y_GAP,
-  BAR_CHART_ML_BOTTOM_PADDING,
-} from "@/constants";
+// import {
+//   OPTION_IMAGE_HEIGHT,
+//   IMAGE_OPTIONS_LINE_Y_GAP,
+//   BAR_CHART_ML_BOTTOM_PADDING,
+// } from "@/constants";
 import { CardSize } from "@/types";
 import { OverflowInfo } from "@/components/styledComponents";
 
+const OPTION_IMAGE_HEIGHT = 72;
+const IMAGE_OPTIONS_LINE_Y_GAP = 8;
+const BAR_CHART_ML_BOTTOM_PADDING = 28;
 const barContainerHeights = {
   small: 120, // 124
   medium: 336, // 328, 344

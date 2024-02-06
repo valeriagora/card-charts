@@ -1,4 +1,4 @@
-export interface IPieOptionsOverflow {
+export interface IChartOptionsOverflow {
   small: {
     default: number;
     withImgOptions: number;
@@ -17,3 +17,5 @@ export enum CardSize {
   medium = "medium",
   large = "large",
 }
+export type CustomLegend = [number, number, string][];
+export type CustomLegendWithImage = [number, number, string, string][];

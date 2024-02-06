@@ -1,6 +1,5 @@
 import { ReactEChartsProps } from "@/components/ReactECharts";
 import {
-  ECharts,
   CustomSeriesRenderItemParams,
   SeriesOption,
   CustomSeriesRenderItemAPI,
@@ -11,7 +10,7 @@ import {
   OPTION_IMAGE_HEIGHT,
   IMAGE_OPTIONS_X_GAP,
 } from "../app/bar/constants";
-import { CardSize } from "@/types";
+import { CardSize, CustomLegend } from "@/types";
 
 export const getSmOption = (
   data: {

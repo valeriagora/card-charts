@@ -1,4 +1,4 @@
-import { IPieOptionsOverflow } from "@/types";
+import { IChartOptionsOverflow } from "@/types";
 
 export const url =
   "https://images.unsplash.com/photo-1682695796795-cc287af78a2b?q=80&w=2940&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDF8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D";
@@ -53,7 +53,7 @@ export const RECTANGLE_WITH_RADIUS_CUSTOM_SHAPE =
   "RECTANGLE_WITH_RADIUS_CUSTOM_SHAPE";
 export const MIN_L_CHART_HEIGHT = 188;
 export const CHART_HORIZONTAL_GAP = 8;
-export const pieOptionsOverflow: IPieOptionsOverflow = {
+export const chartOptionsOverflow: IChartOptionsOverflow = {
   small: { default: 4, withImgOptions: 4 },
   medium: {
     default: 11,

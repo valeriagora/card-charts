@@ -1,3 +1,4 @@
+import { chartBoxDimensions, MIN_L_CHART_HEIGHT } from "@/constants";
 import { CardSize } from "@/types";
 import { styled } from "@mui/material";
 const cardWidths = {
@@ -37,9 +38,30 @@ export const OverflowInfo = styled("div")({
   display: "flex",
   alignItems: "center",
   gap: 4,
-  fontWeight: 500,
+  fontWeight: 400,
   fontSize: 12,
-  lineHeight: "20px",
+  lineHeight: "16px",
   fontFamily: '"Manrope", sans-serif',
   color: "#6C7080",
+});
+export const ChartContainerStyled = styled("div")<{
+  size: CardSize;
+  height?: number;
+}>(({ size, height }) => {
+  const width: number = chartBoxDimensions[size].width;
+  return {
+    position: "relative",
+    width,
+    height:
+      size === CardSize.large && height
+        ? height > MIN_L_CHART_HEIGHT
+          ? height
+          : MIN_L_CHART_HEIGHT
+        : chartBoxDimensions[size].height,
+    border: "1px solid slateblue",
+    display: "flex",
+    alignItems: "center",
+    // justifyContent: "stretch",
+    boxSizing: "border-box",
+  };
 });

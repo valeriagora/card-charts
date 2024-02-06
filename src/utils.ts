@@ -1,5 +1,6 @@
 import { ECharts, graphic } from "echarts";
 import {
+  chartOptionsOverflow,
   IMAGE_OPTION_BG_RADIUS,
   L_CHART_WIDTH,
   M_CHART_WIDTH,
@@ -7,6 +8,7 @@ import {
   QUESTION_IMAGE_SIDE,
   RECTANGLE_WITH_RADIUS_CUSTOM_SHAPE,
 } from "./constants";
+import { CardSize } from "./types";
 
 export async function blobToBase64(blob: Blob): Promise<string> {
   return new Promise((resolve, _) => {
@@ -142,4 +144,14 @@ export const registerCoverShape = () => {
     RECTANGLE_WITH_RADIUS_CUSTOM_SHAPE,
     RectangleWithRadius
   );
+};
+export const hasOptionsOverflow = (
+  size: CardSize,
+  length: number,
+  withImageOptions: boolean = false
+) => {
+  if (size === CardSize.large) return false;
+  return withImageOptions
+    ? length > chartOptionsOverflow[size].withImgOptions
+    : length > chartOptionsOverflow[size].default;
 };

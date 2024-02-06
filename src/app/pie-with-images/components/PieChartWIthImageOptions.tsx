@@ -23,10 +23,11 @@ import {
   getMdOption,
   getLgOption,
 } from "@/options/pie-with-option-images";
-import { chartBoxDimensions, pieOptionsOverflow, url } from "@/constants";
+import { chartOptionsOverflow, url } from "@/constants";
 import { DndCard } from "@/components/DndCard";
-import { CardSize } from "@/types";
+import { CardSize, CustomLegend } from "@/types";
 import { ECharts } from "echarts";
+import { ChartContainer } from "@/components/ChartContainer";
 import {
   breakWord,
   getBase64Image,
@@ -76,8 +77,7 @@ const images = [
   "https://images.unsplash.com/photo-1682695796497-31a44224d6d6?q=80&w=2940&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDF8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
   "https://images.unsplash.com/photo-1704107116952-978a5712566c?q=80&w=2938&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
 ];
-type PieLegend = [number, number, string, string][];
-const customSeriesData: PieLegend = pieData.map(({ value, name }, idx) => [
+const customSeriesData: CustomLegend = pieData.map(({ value, name }, idx) => [
   value,
   idx + 1,
   name,
@@ -95,7 +95,7 @@ const PieContainer = forwardRef(function Container(
   ref
 ) {
   return (
-    <PieChartContainer
+    <ChartContainer
       size={size}
       height={height}
       ref={ref as LegacyRef<HTMLDivElement>}
@@ -104,32 +104,14 @@ const PieContainer = forwardRef(function Container(
       {hasOverflow && (
         <OverflowInfo>
           {size !== CardSize.large &&
-            pieOptionsOverflow[size as CardSize.small | CardSize.medium]
+            chartOptionsOverflow[size as CardSize.small | CardSize.medium]
               .withImgOptions}
           / {optionsCount} options{" "}
           <Image width={16} height={16} src={"/info.svg"} alt="info" />
         </OverflowInfo>
       )}
-    </PieChartContainer>
+    </ChartContainer>
   );
-});
-const PieChartContainer = styled("div")<{
-  size: CardSize;
-  height?: number;
-}>(({ size, height }) => {
-  const width: number = chartBoxDimensions[size].width;
-  return {
-    position: "relative",
-    width,
-    border: "1px solid slateblue",
-    boxSizing: "border-box",
-    height:
-      size === CardSize.large && height
-        ? height > MIN_L_CHART_HEIGHT
-          ? height
-          : MIN_L_CHART_HEIGHT
-        : chartBoxDimensions[size].height,
-  };
 });
 
 const hasOptionsOverflow = (
@@ -139,8 +121,8 @@ const hasOptionsOverflow = (
 ) => {
   if (size === CardSize.large) return false;
   return withImageOptions
-    ? length > pieOptionsOverflow[size].withImgOptions
-    : length > pieOptionsOverflow[size].default;
+    ? length > chartOptionsOverflow[size].withImgOptions
+    : length > chartOptionsOverflow[size].default;
 };
 function PieChart({ cardSize = CardSize.small, questionImage = url }: any) {
   useEffect(() => {

@@ -7,7 +7,6 @@ import {
   FormControl,
   RadioGroup,
   FormLabel,
-  styled,
 } from "@mui/material";
 import React, {
   forwardRef,
@@ -20,12 +19,13 @@ import React, {
 } from "react";
 import { getSmOption, getMdOption, getLgOption } from "@/options/pie";
 import { DndCard } from "@/components/DndCard";
-import { CardSize } from "@/types";
+import { CardSize, CustomLegend } from "@/types";
 import { ECharts } from "echarts";
 import {
   breakWord,
   getBase64Image,
   getSvgBlob,
+  hasOptionsOverflow,
   isBase64Image,
   registerCoverShape,
 } from "@/utils";
@@ -33,16 +33,15 @@ import {
   L_LEGEND_MAX_SYMBOLS_COUNT,
   L_LEGEND_WITH_IMAGE_MAX_SYMBOLS_COUNT,
   OPTION_MARGIN_BOTTOM,
-  OPTION_IMAGE_SIDE,
   TEXT_LINE_HEIGHT,
   MIN_L_CHART_HEIGHT,
-  chartBoxDimensions,
-  pieOptionsOverflow,
+  chartOptionsOverflow,
   url,
 } from "@/constants";
 import { OverflowInfo } from "@/components/styledComponents";
 import Image from "next/image";
 import { PieData } from "@/types";
+import { ChartContainer } from "@/components/ChartContainer";
 const pieData: PieData[] = [
   {
     value: 25,
@@ -94,71 +93,12 @@ const pieData: PieData[] = [
   },
 ];
 
-type PieLegend = [number, number, string][];
-const customSeriesData: PieLegend = pieData.map(({ value, name }, idx) => [
+const customSeriesData: CustomLegend = pieData.map(({ value, name }, idx) => [
   value,
   idx + 1,
   name,
 ]);
-interface IPieContainerProps {
-  size: CardSize;
-  height: number;
-  hasOverflow: boolean;
-  optionsCount: number;
-  children: ReactNode;
-}
-const PieContainer = forwardRef(function Container(
-  { size, height, hasOverflow, optionsCount, children }: IPieContainerProps,
-  ref
-) {
-  return (
-    <PieChartContainer
-      size={size}
-      height={height}
-      ref={ref as LegacyRef<HTMLDivElement>}
-    >
-      {children}
-      {hasOverflow && (
-        <OverflowInfo>
-          {size !== CardSize.large &&
-            pieOptionsOverflow[size as CardSize.small | CardSize.medium]
-              .default}
-          / {optionsCount} options{" "}
-          <Image width={16} height={16} src={"/info.svg"} alt="info" />
-        </OverflowInfo>
-      )}
-    </PieChartContainer>
-  );
-});
-const PieChartContainer = styled("div")<{
-  size: CardSize;
-  height?: number;
-}>(({ size, height }) => {
-  const width: number = chartBoxDimensions[size].width;
-  return {
-    position: "relative",
-    width,
-    border: "1px solid slateblue",
-    boxSizing: "border-box",
-    height:
-      size === CardSize.large && height
-        ? height > MIN_L_CHART_HEIGHT
-          ? height
-          : MIN_L_CHART_HEIGHT
-        : chartBoxDimensions[size].height,
-  };
-});
 
-const hasOptionsOverflow = (
-  size: CardSize,
-  length: number,
-  withImageOptions: boolean = false
-) => {
-  if (size === CardSize.large) return false;
-  return withImageOptions
-    ? length > pieOptionsOverflow[size].withImgOptions
-    : length > pieOptionsOverflow[size].default;
-};
 function PieChartWithImageOptions({
   cardSize = CardSize.small,
   questionImage = url,
@@ -176,24 +116,19 @@ function PieChartWithImageOptions({
   const [isQuestionImageReady, setIsQuestionImageReady] = useState(false);
   const containerRef = useRef<HTMLDivElement | null>(null);
   const [downloadQueue, setDownloadQueue] = useState<string[]>([]);
-  const [areBase64ImagesReady, setBase64ImagesReady] = useState(false);
-  const optionsWithImagesLines = pieChartData.reduce(
-    (total: number[], current: any) => {
-      const { value, name } = current;
-      const linesCount = breakWord(
-        `${name}`,
-        questionImageUrl
-          ? L_LEGEND_WITH_IMAGE_MAX_SYMBOLS_COUNT
-          : L_LEGEND_MAX_SYMBOLS_COUNT
-      ).length;
-      total.push(linesCount);
-      return total;
-    },
-    []
-  );
-  const optionHeights = optionsWithImagesLines.map(
-    (lines) => lines * TEXT_LINE_HEIGHT
-  );
+  console.log("pieChartData", pieChartData);
+  const optionsLines = pieChartData.reduce((total: number[], current: any) => {
+    const { name } = current;
+    const linesCount = breakWord(
+      `${name}`,
+      questionImageUrl
+        ? L_LEGEND_WITH_IMAGE_MAX_SYMBOLS_COUNT
+        : L_LEGEND_MAX_SYMBOLS_COUNT
+    ).length;
+    total.push(linesCount);
+    return total;
+  }, []);
+  const optionHeights = optionsLines.map((lines) => lines * TEXT_LINE_HEIGHT);
 
   const largeContainerHeight =
     optionHeights.reduce((total, height) => (total += height), 0) +
@@ -222,27 +157,6 @@ function PieChartWithImageOptions({
     return result;
   };
   const saveAsImage = useCallback(async () => {
-    if (size !== CardSize.small && !areBase64ImagesReady) {
-      const base64Promises: Promise<string>[] = [];
-      const optionImageUrls = pieLegendData.map((item) => item[3]);
-      for (const url of optionImageUrls) {
-        base64Promises.push(urlToBase64(url));
-      }
-      const getBase64Promises = async () =>
-        await Promise.all(base64Promises).then((values) => values);
-      const base64Urls = await getBase64Promises();
-      if (base64Urls.length) {
-        setPieLegendData((prev: any) => {
-          const newData = prev.map((item: PieLegend, idx: number) => [
-            ...item.slice(0, 3),
-            base64Urls[idx],
-          ]);
-          return newData;
-        });
-        setDownloadQueue([...downloadQueue, "download"]);
-      }
-      return;
-    }
     const isQuestionImageReady = questionImageUrl
       ? isBase64Image(questionImageUrl)
       : true;
@@ -251,7 +165,6 @@ function PieChartWithImageOptions({
       const base64QImg = await Promise.resolve(base64);
       base64QImg && setQuestionImageUrl(base64QImg);
       setDownloadQueue([...downloadQueue, "download"]);
-
       return;
     }
     chartInstance && downloadChart(chartInstance);
@@ -260,14 +173,12 @@ function PieChartWithImageOptions({
     chartInstance,
     size,
     questionImageUrl,
-    areBase64ImagesReady,
     isQuestionImageReady,
   ]);
   const onRenderEnded = useCallback(() => {
     const isQuestionImageReady = questionImageUrl
       ? isBase64Image(questionImageUrl)
       : true;
-
     setIsQuestionImageReady(isQuestionImageReady);
   }, [pieLegendData, questionImageUrl]);
   useEffect(() => {
@@ -277,12 +188,7 @@ function PieChartWithImageOptions({
         setDownloadQueue((prev) => prev.slice(0, -1));
       }, 1000);
     }
-  }, [
-    downloadQueue,
-    areBase64ImagesReady,
-    isQuestionImageReady,
-    chartInstance,
-  ]);
+  }, [downloadQueue, isQuestionImageReady, chartInstance]);
   const small = getSmOption(pieChartData, pieLegendData);
   const medium = getMdOption(pieChartData, pieLegendData, questionImageUrl);
   const large = getLgOption(
@@ -290,7 +196,7 @@ function PieChartWithImageOptions({
     pieLegendData,
     questionImageUrl,
     optionHeights,
-    optionsWithImagesLines,
+    optionsLines,
     lContainerHeight
   );
   const options = {
@@ -342,7 +248,7 @@ function PieChartWithImageOptions({
         </RadioGroup>
       </FormControl>
       <DndCard size={size}>
-        <PieContainer
+        <ChartContainer
           size={size}
           ref={containerRef}
           height={size === CardSize.large ? lContainerHeight : undefined}
@@ -355,7 +261,7 @@ function PieChartWithImageOptions({
             containerRef={containerRef}
             option={options[size]}
           />
-        </PieContainer>
+        </ChartContainer>
       </DndCard>
     </>
   );
