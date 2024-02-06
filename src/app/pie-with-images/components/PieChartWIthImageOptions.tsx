@@ -18,58 +18,34 @@ import React, {
   useRef,
   useState,
 } from "react";
-import { getSmOption, getMdOption, getLgOption } from "@/data/pie";
-import { chartBoxDimensions, url } from "@/constants";
-import { DndCard } from "@/components/DndCard";
-import { CardSize } from "../../bar/types";
-import { ECharts } from "echarts";
-import { breakWord, getBase64Image, getSvgBlob, isBase64Image } from "@/utils";
 import {
-  L_LEGEND_MAX_SYMBOLS_COUNT,
-  L_LEGEND_WITH_IMAGE_MAX_SYMBOLS_COUNT,
-  OPTION_IMAGE_MARGIN_BOTTOM,
+  getSmOption,
+  getMdOption,
+  getLgOption,
+} from "@/options/pie-with-option-images";
+import { chartBoxDimensions, pieOptionsOverflow, url } from "@/constants";
+import { DndCard } from "@/components/DndCard";
+import { CardSize } from "@/types";
+import { ECharts } from "echarts";
+import {
+  breakWord,
+  getBase64Image,
+  getSvgBlob,
+  isBase64Image,
+  registerCoverShape,
+} from "@/utils";
+import {
+  L_LEGEND_IMAGE_OPTIONS_MAX_SYMBOLS_COUNT,
+  L_LEGEND_IMAGE_OPTIONS_WITH_IMAGE_MAX_SYMBOLS_COUNT,
+  OPTION_MARGIN_BOTTOM,
   OPTION_IMAGE_SIDE,
   TEXT_LINE_HEIGHT,
-} from "@/app/pie-with-images/constants";
+  MIN_L_CHART_HEIGHT,
+} from "@/constants";
 import { OverflowInfo } from "@/components/styledComponents";
 import Image from "next/image";
+import { PieData } from "@/types";
 
-// const imageOptions = [
-//   "https://images.unsplash.com/photo-1702744473287-4cc284e97206?q=80&w=2864&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-//   "https://images.unsplash.com/photo-1682686580391-615b1f28e5ee?q=80&w=2940&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDF8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-//   "https://images.unsplash.com/photo-1702893576128-21feb60299d1?q=80&w=2940&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-//   "https://images.unsplash.com/photo-1703028408829-ba45aa14b782?q=80&w=2787&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-//   "https://images.unsplash.com/photo-1519925610903-381054cc2a1c?q=80&w=2940&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-//   "https://images.unsplash.com/photo-1682687218147-9806132dc697?q=80&w=2875&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDF8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-//   "https://images.unsplash.com/photo-1703615318360-788893a586d8?q=80&w=2785&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-//   "https://images.unsplash.com/photo-1682687982029-edb9aecf5f89?q=80&w=2942&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDF8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-//   "https://images.unsplash.com/photo-1704192761191-757e0ccc5186?q=80&w=2944&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-//   "https://images.unsplash.com/photo-1704587422648-43f456047a72?q=80&w=2787&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-//   "https://images.unsplash.com/photo-1682687220795-796d3f6f7000?q=80&w=2940&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDF8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-//   "https://images.unsplash.com/photo-1704419278767-09bc3a98581c?q=80&w=2875&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-//   "https://plus.unsplash.com/premium_photo-1697695568731-5b351d7aca4b?q=80&w=2787&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-//   "https://images.unsplash.com/photo-1682685797140-c17807f8f217?q=80&w=2940&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDF8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-//   "https://images.unsplash.com/photo-1682685797857-97de838c192e?q=80&w=2787&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDF8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-//   "https://plus.unsplash.com/premium_photo-1663045856607-60692e1e5ec6?q=80&w=2938&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-// ];
-interface PieData {
-  value: number;
-  name: string;
-}
-
-// const pieData: PieData[] = [
-
-//   { value: 2, name: "Option 11" },
-//   { value: 2, name: "Option 12" },
-//   {
-//     value: 2,
-//     name: "Option 7 Option 5 Search Engine Search Search Search Search Search Option 5 Option 7 Option 5 Search Engine Option 7 Option 5 Search Engine Option 7 Option 5 Search Engine Option 7 Option 5 Search Engine",
-//   },
-//   { value: 1, name: "Option 13" },
-//   { value: 3, name: "Option 14" },
-//   { value: 4, name: "Option 15" },
-//   { value: 5, name: "Option 16" },
-// ];
 const pieData: PieData[] = [
   {
     value: 25,
@@ -99,8 +75,6 @@ const images = [
   "https://images.unsplash.com/photo-1682685797857-97de838c192e?q=80&w=2787&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDF8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
   "https://images.unsplash.com/photo-1682695796497-31a44224d6d6?q=80&w=2940&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDF8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
   "https://images.unsplash.com/photo-1704107116952-978a5712566c?q=80&w=2938&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-  // "https://plus.unsplash.com/premium_photo-1663946448065-967d72d58b4f?q=80&w=2875&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-  // "https://images.unsplash.com/photo-1705179573286-495f1b4fabaf?q=80&w=2787&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
 ];
 type PieLegend = [number, number, string, string][];
 const customSeriesData: PieLegend = pieData.map(({ value, name }, idx) => [
@@ -109,7 +83,6 @@ const customSeriesData: PieLegend = pieData.map(({ value, name }, idx) => [
   name,
   images[idx],
 ]);
-const MIN_L_CHART_HEIGHT = 188;
 interface IPieContainerProps {
   size: CardSize;
   height: number;
@@ -158,25 +131,7 @@ const PieChartContainer = styled("div")<{
         : chartBoxDimensions[size].height,
   };
 });
-export const PIE_L_OPTION_HEIGHT = 20 * 3 + 8;
-export const PIE_L_OPTION_WITH_IMAGE_HEIGHT = 72 + 8;
-interface IPieOptionsOverflow {
-  small: {
-    default: number;
-    withImgOptions: number;
-  };
-  medium: {
-    default: number;
-    withImgOptions: number;
-  };
-}
-const pieOptionsOverflow: IPieOptionsOverflow = {
-  small: { default: 5, withImgOptions: 4 },
-  medium: {
-    default: 11,
-    withImgOptions: 4,
-  },
-};
+
 const hasOptionsOverflow = (
   size: CardSize,
   length: number,
@@ -187,12 +142,10 @@ const hasOptionsOverflow = (
     ? length > pieOptionsOverflow[size].withImgOptions
     : length > pieOptionsOverflow[size].default;
 };
-function PieChartWithImageOptions({
-  cardSize = CardSize.small,
-  questionImage = url,
-}: // imageOptionUrls = imageOptions,
-// imageOptionUrls = undefined,
-any) {
+function PieChart({ cardSize = CardSize.small, questionImage = url }: any) {
+  useEffect(() => {
+    registerCoverShape();
+  }, []);
   const [chartInstance, setChartInstance] = useState<ECharts | null>(null);
   const onChartInit = useCallback((chartInstance: ECharts) => {
     setChartInstance(chartInstance);
@@ -210,8 +163,8 @@ any) {
       const linesCount = breakWord(
         `${name}`,
         questionImageUrl
-          ? L_LEGEND_WITH_IMAGE_MAX_SYMBOLS_COUNT
-          : L_LEGEND_MAX_SYMBOLS_COUNT
+          ? L_LEGEND_IMAGE_OPTIONS_WITH_IMAGE_MAX_SYMBOLS_COUNT
+          : L_LEGEND_IMAGE_OPTIONS_MAX_SYMBOLS_COUNT
       ).length;
       total.push(linesCount);
       return total;
@@ -228,7 +181,7 @@ any) {
 
   const largeContainerHeight =
     optionHeights.reduce((total, height) => (total += height), 0) +
-    OPTION_IMAGE_MARGIN_BOTTOM * (optionHeights.length - 1);
+    OPTION_MARGIN_BOTTOM * (optionHeights.length - 1);
   const lContainerHeight =
     largeContainerHeight < MIN_L_CHART_HEIGHT
       ? MIN_L_CHART_HEIGHT
@@ -401,4 +354,4 @@ any) {
   );
 }
 
-export default PieChartWithImageOptions;
+export default PieChart;

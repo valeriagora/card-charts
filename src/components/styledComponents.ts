@@ -1,4 +1,4 @@
-import { CardSize } from "@/app/bar/types";
+import { CardSize } from "@/types";
 import { styled } from "@mui/material";
 const cardWidths = {
   small: 320,

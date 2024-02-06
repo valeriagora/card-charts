@@ -14,8 +14,8 @@ import React, {
 import { throttle } from "lodash";
 import { DndCard } from "@/components/DndCard";
 import { getBase64Image, getSvgBlob } from "@/utils";
-import { getSmOption, getMdOption, getLgOption } from "@/data/bar";
-import { url } from "../../../constants";
+import { getSmOption, getMdOption, getLgOption } from "@/options/bar";
+import { url } from "@/constants";
 import { Button } from "@mui/material";
 import { styled } from "@mui/material";
 import { ECharts } from "echarts";
@@ -29,8 +29,8 @@ import {
   OPTION_IMAGE_HEIGHT,
   IMAGE_OPTIONS_LINE_Y_GAP,
   BAR_CHART_ML_BOTTOM_PADDING,
-} from "../constants";
-import { CardSize } from "../types";
+} from "@/constants";
+import { CardSize } from "@/types";
 import { OverflowInfo } from "@/components/styledComponents";
 
 const barContainerHeights = {

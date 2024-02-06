@@ -11,7 +11,7 @@ import {
   OPTION_IMAGE_HEIGHT,
   IMAGE_OPTIONS_X_GAP,
 } from "../app/bar/constants";
-import { CardSize } from "../app/bar/types";
+import { CardSize } from "@/types";
 
 export const getSmOption = (
   data: {

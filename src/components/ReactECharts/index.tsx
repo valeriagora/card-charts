@@ -1,12 +1,5 @@
 "use client";
-import React, {
-  useRef,
-  useEffect,
-  RefObject,
-  useState,
-  useCallback,
-  memo,
-} from "react";
+import React, { useRef, useEffect, RefObject, useCallback } from "react";
 import { init, getInstanceByDom } from "echarts";
 import type { CSSProperties } from "react";
 import type { EChartsOption, ECharts, SetOptionOpts } from "echarts";

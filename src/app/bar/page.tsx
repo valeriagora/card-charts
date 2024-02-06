@@ -1,7 +1,7 @@
 "use client";
 import React from "react";
 import BarChart from "./components/BarChart";
-import { CardSize } from "./types";
+import { CardSize } from "@/types";
 
 const imageUrls = [
   "https://images.unsplash.com/photo-1702744473287-4cc284e97206?q=80&w=2864&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
