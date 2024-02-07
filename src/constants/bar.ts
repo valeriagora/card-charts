@@ -9,5 +9,6 @@ export const M_BAR_CHART_HORIZONTAL_GAP = 8;
 export const S_MAX_SYMBOLS_COUNT = 16;
 export const M_MAX_SYMBOLS_COUNT = 40;
 export const M_MAX_SYMBOLS_WITH_T2B = 26;
+export const M_MAX_SYMBOLS_WITH_QUESTION_IMG = 20;
 export const ML_BAR_BOTTOM_PADDING = 16;
 export const ML_BAR_TEXT_MARGIN_BOTTOM = 8;

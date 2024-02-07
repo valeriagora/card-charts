@@ -68,26 +68,26 @@ const barData = [
     name: "Boring",
     value: 24,
   },
-  // {
-  //   name: "Engaging",
-  //   value: 1,
-  // },
-  // {
-  //   name: "Boring",
-  //   value: 24,
-  // },
-  // {
-  //   name: "Engaging",
-  //   value: 1,
-  // },
-  // {
-  //   name: "Exciting Exciting Exciting Exciting Exciting Exciting Exciting Exciting Exciting Exciting",
-  //   value: 50,
-  // },
-  // {
-  //   name: "Intriguing Intriguing Intriguing Intriguing Intriguing Intriguing Intriguing Intriguing IntriguingIntriguingIntriguing",
-  //   value: 21,
-  // },
+  {
+    name: "Engaging",
+    value: 1,
+  },
+  {
+    name: "Boring",
+    value: 24,
+  },
+  {
+    name: "Engaging",
+    value: 1,
+  },
+  {
+    name: "Exciting Exciting Exciting Exciting Exciting Exciting Exciting Exciting Exciting Exciting",
+    value: 50,
+  },
+  {
+    name: "Intriguing Intriguing Intriguing Intriguing Intriguing Intriguing Intriguing Intriguing IntriguingIntriguingIntriguing",
+    value: 21,
+  },
 ];
 const legendData: CustomLegend[] = barData.map(({ value, name }, idx) => [
   value,

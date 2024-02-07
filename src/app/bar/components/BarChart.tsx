@@ -19,6 +19,7 @@ import {
   getSvgBlob,
   hasOptionsOverflow,
   isBase64Image,
+  registerCoverShape,
 } from "@/utils";
 import { getSmOption, getMdOption, getLgOption } from "@/options/bar";
 import {
@@ -148,8 +149,6 @@ const urlToBase64 = async (url: string) => {
 };
 
 interface IBarProps {
-  // labels: { [key: string]: string };
-  // values: number[];
   data: { name: string; value: number }[];
   legendData: CustomLegend[];
   cardSize: CardSize;
@@ -158,7 +157,6 @@ function BarChart({ data, legendData, cardSize }: IBarProps) {
   const [barChartData, setBarChartData] = useState(data);
   const [barLegendData, setBarLegendData] =
     useState<CustomLegend[]>(legendData);
-  console.log("barLegendData", barLegendData);
   const [questionImageUrl, setQuestionImageUrl] = useState("");
   const [showT2B, setShowT2B] = useState(false);
   const [isQuestionImageReady, setIsQuestionImageReady] = useState(false);
@@ -208,6 +206,9 @@ function BarChart({ data, legendData, cardSize }: IBarProps) {
   //   labels,
   //   imageOptionUrls,
   // ]);
+  useEffect(() => {
+    registerCoverShape();
+  }, []);
 
   const toggleImg = () => {
     setQuestionImageUrl(questionImageUrl ? "" : url);
@@ -284,25 +285,29 @@ function BarChart({ data, legendData, cardSize }: IBarProps) {
         barLegendData,
         withImage,
         hasOptionsOverflow(size, barChartData.length),
-        showT2B
+        showT2B,
+        questionImageUrl
       ),
     [barChartData, size, withImage, showT2B]
   );
-  // const large = useMemo(
-  //   () => getLgOption(barData, withImage, withImageOptions, showT2B),
-  //   [barData, withImage, withImageOptions, showT2B]
-  // );
+  const large = useMemo(
+    () =>
+      getLgOption(
+        barChartData,
+        barLegendData,
+        withImage,
+        hasOptionsOverflow(size, barChartData.length),
+        showT2B
+      ),
+    [barChartData, barLegendData, withImage, showT2B]
+  );
   const options = useMemo(
     () => ({
       small,
       medium,
-      // large,
+      large,
     }),
-    [
-      small,
-      medium,
-      //, large
-    ]
+    [small, medium, , large]
   );
 
   useEffect(() => {
@@ -340,7 +345,6 @@ function BarChart({ data, legendData, cardSize }: IBarProps) {
     largeContainerHeight < MIN_L_CHART_HEIGHT
       ? MIN_L_CHART_HEIGHT
       : largeContainerHeight;
-  console.log("c height", getBarsContainerHeight(size, barChartData.length));
   return (
     <div
       style={{

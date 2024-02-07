@@ -116,7 +116,6 @@ function PieChartWithImageOptions({
   const [isQuestionImageReady, setIsQuestionImageReady] = useState(false);
   const containerRef = useRef<HTMLDivElement | null>(null);
   const [downloadQueue, setDownloadQueue] = useState<string[]>([]);
-  console.log("pieChartData", pieChartData);
   const optionsLines = pieChartData.reduce((total: number[], current: any) => {
     const { name } = current;
     const linesCount = breakWord(

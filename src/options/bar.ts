@@ -200,7 +200,8 @@ export const getMdOption = (
   legendData: CustomLegend[],
   withImage: boolean,
   hasOverflow: boolean,
-  showT2B: boolean
+  showT2B: boolean,
+  questionImageUrl: string
 ): ReactEChartsProps["option"] => {
   const barData = hasOverflow ? data.slice(0, 11) : data;
   const legend = hasOverflow ? legendData.slice(0, 11) : legendData;
@@ -222,13 +223,12 @@ export const getMdOption = (
       ? {
           type: "custom",
           renderItem: (params: any, api: any) =>
-            renderT2B(params, api, data, CardSize.medium), //data.values
+            renderT2B(params, api, data, CardSize.medium),
           data: [[]],
           z: -1,
         }
       : undefined;
   return {
-    // progressive: 0,
     animation: false,
     backgroundColor: "#222430",
     show: true,
@@ -271,7 +271,7 @@ export const getMdOption = (
         renderItem: (
           param: CustomSeriesRenderItemParams,
           api: CustomSeriesRenderItemAPI
-        ) => renderBarMdLegendItem(param, api, showT2B),
+        ) => renderBarMdLegendItem(param, api, showT2B, questionImageUrl),
         data: legend,
       },
       {
@@ -288,26 +288,12 @@ export const getMdOption = (
 };
 
 export const getLgOption = (
-  data: {
-    labels: { [key: string]: string };
-    values: number[];
-    images?: string[];
-  },
+  data: { name: string; value: number }[],
+  legendData: CustomLegend[],
   withImage: boolean,
-  withImageOptions: boolean,
+  hasOverflow: boolean,
   showT2B: boolean
 ): ReactEChartsProps["option"] => {
-  const imageOptionsSeries = withImageOptions
-    ? {
-        type: "custom",
-        renderItem: (
-          params: CustomSeriesRenderItemParams,
-          api: CustomSeriesRenderItemAPI
-        ) => renderOptionImage(params, api, Math.max(...data.values)),
-        data: data.images?.map((image: string) => [0, 0, image]),
-        z: 1,
-      }
-    : undefined;
   const t2bSeries = showT2B
     ? {
         type: "custom",
@@ -346,42 +332,8 @@ export const getLgOption = (
     },
     yAxis: {
       inverse: true,
-      axisLabel: {
-        margin: withImageOptions
-          ? IMAGE_OPTIONS_X_GAP * 2 + OPTION_IMAGE_HEIGHT
-          : 8,
-        formatter: (name: string, idx: number) => {
-          const spacing = "  ";
-          const percents = data.values[idx];
-          const label = `{percents|${percents}%}${spacing}{name|${name}}`;
-          return label;
-        },
-        overflow: "break",
-        rich: {
-          percents: {
-            fontSize: "14px",
-            fontFamily: "Manrope",
-            color: "#C8CAD0",
-          },
-          name: {
-            fontSize: "14px",
-            fontFamily: "Manrope",
-            color: "#6c7080",
-          },
-        },
-        width: withImage
-          ? showT2B
-            ? 270
-            : withImageOptions
-            ? 260
-            : 340
-          : showT2B
-          ? 360
-          : withImageOptions
-          ? 380
-          : 400,
-      },
-      data: Object.values(data.labels),
+      axisLabel: {},
+      data: data,
       position: "right",
       type: "category",
       axisLine: {
@@ -396,14 +348,13 @@ export const getLgOption = (
     },
     series: [
       {
-        data: data.values,
+        data,
         type: "bar",
         barWidth: 16,
         itemStyle: {
           color: "#25B4C8",
         },
       },
-      imageOptionsSeries as SeriesOption,
       t2bSeries as SeriesOption,
     ],
   };

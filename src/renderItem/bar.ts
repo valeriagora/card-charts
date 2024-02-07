@@ -1,5 +1,5 @@
 import { chartBoxDimensions, legendTextStyles } from "@/constants";
-import { truncate } from "@/utils";
+import { getQuestionImage, truncate } from "@/utils";
 import {
   CustomSeriesRenderItemAPI,
   CustomSeriesRenderItemParams,
@@ -9,6 +9,7 @@ import {
   ML_BAR_TEXT_MARGIN_BOTTOM,
   M_BAR_CHART_HORIZONTAL_GAP,
   M_MAX_SYMBOLS_COUNT,
+  M_MAX_SYMBOLS_WITH_QUESTION_IMG,
   M_MAX_SYMBOLS_WITH_T2B,
   S_BAR_CHART_HORIZONTAL_GAP,
   S_BAR_CHART_WIDTH,
@@ -57,15 +58,25 @@ export const renderBarSmLegendItem = (
 export const renderBarMdLegendItem = (
   param: CustomSeriesRenderItemParams,
   api: CustomSeriesRenderItemAPI,
-  showT2B: boolean
+  showT2B: boolean,
+  questionImageUrl: string
 ) => {
   const [_, ySizePx] = api.size([1, 1]) as number[];
   const percents = api.value(0);
   const label = api.value(2);
-  const truncatedText = truncate(
-    label as string,
-    showT2B ? M_MAX_SYMBOLS_WITH_T2B : M_MAX_SYMBOLS_COUNT
-  );
+  const maxSymbols = !!questionImageUrl
+    ? M_MAX_SYMBOLS_WITH_QUESTION_IMG
+    : showT2B
+    ? M_MAX_SYMBOLS_WITH_T2B
+    : M_MAX_SYMBOLS_COUNT;
+  const truncatedText = truncate(label as string, maxSymbols);
+  const questionImage = questionImageUrl
+    ? getQuestionImage(
+        questionImageUrl,
+        (param.coordSys as any).height,
+        "medium"
+      )
+    : [];
   const percentsX =
     chartBoxDimensions.medium.width / 2 + M_BAR_CHART_HORIZONTAL_GAP;
   const labelX = MAX_PERCENTS_TEXT_WIDTH + percentsX;
@@ -74,6 +85,7 @@ export const renderBarMdLegendItem = (
     type: "group",
     silent: true,
     children: [
+      ...questionImage,
       {
         type: "text",
         style: {
