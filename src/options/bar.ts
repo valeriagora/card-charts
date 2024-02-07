@@ -11,90 +11,72 @@ import {
   IMAGE_OPTIONS_X_GAP,
 } from "../app/bar/constants";
 import { CardSize, CustomLegend } from "@/types";
+import { renderSmLegendItem } from "@/renderItem";
+import { renderBarMdLegendItem, renderBarSmLegendItem } from "@/renderItem/bar";
+import {
+  ML_BAR_BOTTOM_PADDING,
+  ML_BAR_TEXT_MARGIN_BOTTOM,
+} from "@/constants/bar";
+import { TEXT_LINE_HEIGHT } from "@/constants";
 
 export const getSmOption = (
-  data: {
-    labels: { [key: string]: string };
-    values: number[];
-  },
+  data: { name: string; value: number }[],
+  legendData: CustomLegend[],
   hasOverflow: boolean
-): ReactEChartsProps["option"] => ({
-  backgroundColor: "#222430",
-  show: true,
-  grid: {
-    top: 0,
-    bottom: hasOverflow ? BAR_CHART_S_BOTTOM_PADDING : 0,
-    right: "50%",
-  },
-  xAxis: {
-    name: "",
-    inverse: true,
-    axisLabel: {
+): ReactEChartsProps["option"] => {
+  const barData = hasOverflow ? data.slice(0, 4) : data;
+  const legend = hasOverflow ? legendData.slice(0, 4) : legendData;
+  return {
+    animation: false,
+    backgroundColor: "#222430",
+    show: true,
+    grid: {
+      top: 0,
+      bottom: 0,
+      right: 148 + 12,
+      left: 0,
+    },
+    xAxis: {
+      inverse: true,
       show: false,
     },
-    splitLine: {
-      show: true,
-      lineStyle: {
-        color: "#6C7080",
-        width: 1,
-      },
-    },
-  },
-  yAxis: {
-    inverse: true,
-    axisLabel: {
-      margin: 8,
-      formatter: (name: string, idx: number) => {
-        const spacing = "  ";
-        const percents = data.values[idx];
-        const label = `{percents|${percents}%}${spacing}{name|${name}}`;
-        return label;
-      },
-      rich: {
-        percents: {
-          fontSize: "14px",
-          fontFamily: "Manrope",
-          color: "#C8CAD0",
-        },
-        name: {
-          fontSize: "14px",
-          fontFamily: "Manrope",
-          color: "#6c7080",
-        },
-      },
-      // textStyle: {
-      //   fontSize: 14,
-      //   fontWeight: 500,
-      //   color: "#6C7080",
-      // },
-      width: 130,
-      overflow: "truncate",
-    },
-    data: Object.values(data.labels),
-    position: "right",
-    type: "category",
-    axisLine: {
-      show: true,
-      lineStyle: {
-        color: "#6C7080",
-        width: 1,
-      },
-    },
-    axisTick: {
+    yAxis: {
+      inverse: true,
       show: false,
-    },
-  },
-  series: [
-    {
-      data: data.values,
-      type: "bar",
-      barWidth: 16,
-      itemStyle: {
-        color: "#25B4C8",
+      data: barData.map((item) => item.name),
+      position: "right",
+      type: "category",
+      axisLine: {
+        show: true,
+        lineStyle: {
+          color: "#6C7080",
+          width: 1,
+        },
+      },
+      axisTick: {
+        show: false,
       },
     },
-  ],
-});
+    series: [
+      {
+        type: "custom",
+        renderItem: (
+          param: CustomSeriesRenderItemParams,
+          api: CustomSeriesRenderItemAPI
+        ) => renderBarSmLegendItem(param, api, legend.length),
+        data: legend,
+      },
+      {
+        data: barData,
+        type: "bar",
+        barWidth: 16,
+        itemStyle: {
+          color: "#25B4C8",
+        },
+      },
+    ],
+  };
+};
 
 const renderOptionImage = function (
   param: any,
@@ -135,14 +117,14 @@ const renderT2B = function (
   size: any,
   withImage = false
 ) {
-  const t2bPercents = values[0] + values[1];
-  let b2bPercents = values[values.length - 1] + values[values.length - 2];
+  const [_, ySizePx] = api.size([1, 1]) as number[];
+  const hasOverflow = values.length > 11;
+  const data = hasOverflow ? values.slice(0, 11) : values;
+  const t2bPercents = data[0].value + data[1].value;
+  let b2bPercents = data[data.length - 1].value + data[data.length - 2].value;
   let containerWidth =
     size === CardSize.large ? L_CONTAINER_WIDTH : M_CONTAINER_WIDTH;
-  const optionHeight =
-    size === CardSize.large
-      ? L_ROW_MAX_HEIGHT
-      : (344 - GRID_BOTTOM_PADDING) / values.length;
+  const optionHeight = size === CardSize.large ? L_ROW_MAX_HEIGHT : ySizePx;
   const containerHeight = optionHeight * 2;
   const textWidth = 60;
   const iconHeight = 8;
@@ -152,15 +134,15 @@ const renderT2B = function (
     const imageLeftMargin = 4;
     containerWidth -= imageWidth - imageLeftMargin;
   }
-  const b2bYDistance = size === "large" ? values.length - 2 : values.length - 2;
-  const b2bTextYDistance = values.length - 1;
+  const b2bYDistance = (data.length - 2) * optionHeight;
+  const b2bTextYDistance = data.length - 1;
   const showTop2Box = t2bPercents >= b2bPercents;
   const children = [
     {
       type: "rect",
       shape: {
         x: 0,
-        y: showTop2Box ? 0 : optionHeight * b2bYDistance,
+        y: showTop2Box ? 0 : b2bYDistance,
         width: containerWidth,
         height: containerHeight,
         r: 2,
@@ -214,47 +196,45 @@ const renderT2B = function (
   };
 };
 export const getMdOption = (
-  data: {
-    labels: { [key: string]: string };
-    values: number[];
-    images?: string[];
-  },
+  data: { name: string; value: number }[],
+  legendData: CustomLegend[],
   withImage: boolean,
-  withImageOptions: boolean,
   hasOverflow: boolean,
   showT2B: boolean
 ): ReactEChartsProps["option"] => {
-  const imageOptionsSeries = withImageOptions
-    ? {
-        type: "custom",
-        renderItem: (
-          params: CustomSeriesRenderItemParams,
-          api: CustomSeriesRenderItemAPI
-        ) => renderOptionImage(params, api, Math.max(...data.values)),
-        data: hasOverflow
-          ? data.images?.slice(0, 4).map((image: string) => [0, 0, image])
-          : data.images?.map((image: string) => [0, 0, image]),
-        z: 1,
-      }
-    : undefined;
+  const barData = hasOverflow ? data.slice(0, 11) : data;
+  const legend = hasOverflow ? legendData.slice(0, 11) : legendData;
+  // const imageOptionsSeries = withImageOptions
+  //   ? {
+  //       type: "custom",
+  //       renderItem: (
+  //         params: CustomSeriesRenderItemParams,
+  //         api: CustomSeriesRenderItemAPI
+  //       ) => renderOptionImage(params, api, Math.max(...data.values)),
+  //       data: hasOverflow
+  //         ? data.images?.slice(0, 4).map((image: string) => [0, 0, image])
+  //         : data.images?.map((image: string) => [0, 0, image]),
+  //       z: 1,
+  //     }
+  //   : undefined;
   const t2bSeries =
     showT2B && !withImage
       ? {
           type: "custom",
           renderItem: (params: any, api: any) =>
-            renderT2B(params, api, data.values, CardSize.medium),
+            renderT2B(params, api, data, CardSize.medium), //data.values
           data: [[]],
           z: -1,
         }
       : undefined;
   return {
     // progressive: 0,
-    // animation: false,
+    animation: false,
     backgroundColor: "#222430",
     show: true,
     grid: {
       top: 0,
-      bottom: BAR_CHART_ML_BOTTOM_PADDING,
+      bottom: ML_BAR_BOTTOM_PADDING,
       right: "50%",
     },
     xAxis: {
@@ -279,62 +259,29 @@ export const getMdOption = (
     },
     yAxis: {
       inverse: true,
-      axisLabel: {
-        margin: withImageOptions
-          ? IMAGE_OPTIONS_X_GAP * 2 + OPTION_IMAGE_HEIGHT
-          : 8,
-        formatter: (name: string, idx: number) => {
-          const spacing = "  ";
-          const percents = data.values[idx];
-          const label = `{percents|${percents}%}${spacing}{name|${name}}`;
-          return label;
-        },
-        rich: {
-          percents: {
-            fontSize: "14px",
-            fontFamily: "Manrope",
-            color: "#C8CAD0",
-          },
-          name: {
-            fontSize: "14px",
-            fontFamily: "Manrope",
-            color: "#6c7080",
-          },
-        },
-        width: withImage
-          ? withImageOptions
-            ? 90
-            : 210
-          : showT2B
-          ? 250
-          : withImageOptions
-          ? 250
-          : 370,
-        overflow: "truncate",
-      },
-      data: Object.values(data.labels),
-      position: "right",
-      type: "category",
-      axisLine: {
-        show: true,
-        lineStyle: {
-          color: "#6C7080",
-        },
-      },
+      show: true,
+      data: barData,
       axisTick: {
-        show: false,
+        show: true,
       },
     },
     series: [
       {
-        data: data.values,
+        type: "custom",
+        renderItem: (
+          param: CustomSeriesRenderItemParams,
+          api: CustomSeriesRenderItemAPI
+        ) => renderBarMdLegendItem(param, api, showT2B),
+        data: legend,
+      },
+      {
+        data: data,
         type: "bar",
         barWidth: 16,
         itemStyle: {
           color: "#25B4C8",
         },
       },
-      imageOptionsSeries as SeriesOption,
       t2bSeries as SeriesOption,
     ],
   };

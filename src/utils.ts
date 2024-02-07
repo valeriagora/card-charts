@@ -7,7 +7,12 @@ import {
   pieColors,
   QUESTION_IMAGE_SIDE,
   RECTANGLE_WITH_RADIUS_CUSTOM_SHAPE,
+  TEXT_LINE_HEIGHT,
 } from "./constants";
+import {
+  ML_BAR_BOTTOM_PADDING,
+  ML_BAR_TEXT_MARGIN_BOTTOM,
+} from "./constants/bar";
 import { CardSize } from "./types";
 
 export async function blobToBase64(blob: Blob): Promise<string> {
@@ -154,4 +159,51 @@ export const hasOptionsOverflow = (
   return withImageOptions
     ? length > chartOptionsOverflow[size].withImgOptions
     : length > chartOptionsOverflow[size].default;
+};
+export function resizeImageBase64(
+  base64Str: string,
+  maxWidth: number
+): Promise<string> {
+  return new Promise((resolve, reject) => {
+    // Create an Image object
+    const img = new Image();
+    img.onload = () => {
+      // Get the aspect ratio
+      const scaleFactor = maxWidth / img.width;
+      const scaledHeight = img.height * scaleFactor;
+
+      // Create a canvas and set the new dimensions
+      const canvas = document.createElement("canvas");
+      canvas.width = maxWidth;
+      canvas.height = scaledHeight;
+
+      // Draw the scaled image on the canvas
+      const ctx = canvas.getContext("2d");
+      ctx.drawImage(img, 0, 0, maxWidth, scaledHeight);
+
+      // Convert the canvas to a Base64 string and resolve the promise
+      resolve(canvas.toDataURL());
+    };
+    img.onerror = reject;
+
+    // Set the source of the image to the input Base64 string
+    img.src = base64Str;
+  });
+}
+
+export const getBarsContainerHeight = (size: CardSize, length: number) => {
+  if (size === CardSize.small) {
+    return length > chartOptionsOverflow.small.default
+      ? chartOptionsOverflow.small.default * TEXT_LINE_HEIGHT
+      : length * TEXT_LINE_HEIGHT;
+  }
+  if (size === CardSize.medium) {
+    return length > chartOptionsOverflow.medium.default
+      ? chartOptionsOverflow.medium.default * TEXT_LINE_HEIGHT +
+          ML_BAR_BOTTOM_PADDING +
+          ML_BAR_TEXT_MARGIN_BOTTOM * (chartOptionsOverflow.medium.default - 1)
+      : length * TEXT_LINE_HEIGHT +
+          (length - 1) * ML_BAR_TEXT_MARGIN_BOTTOM +
+          ML_BAR_BOTTOM_PADDING;
+  }
 };

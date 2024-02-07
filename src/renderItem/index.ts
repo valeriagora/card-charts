@@ -1,5 +1,5 @@
-import { chartBoxDimensions, pieColors } from "@/constants";
-import { breakWord, getLegendIconColor, truncate } from "@/utils";
+import { chartBoxDimensions, legendTextStyles, pieColors } from "@/constants";
+import { getLegendIconColor, truncate } from "@/utils";
 import {
   CustomSeriesRenderItemAPI,
   CustomSeriesRenderItemParams,
@@ -8,21 +8,10 @@ import {
   CIRCLE_ICON_MARGIN_RIGHT,
   CIRCLE_ICON_RADIUS,
   CIRCLE_ICON_S_MARGIN_LEFT,
-  L_CHART_WIDTH,
   MAX_PERCENTS_TEXT_WIDTH,
-  M_CHART_WIDTH,
-  QUESTION_IMAGE_SIDE,
-  RECTANGLE_WITH_RADIUS_CUSTOM_SHAPE,
   TEXT_LINE_HEIGHT,
 } from "@/constants";
-import { getQuestionImage } from "@/utils";
 
-const legendTextStyles = {
-  lineHeight: TEXT_LINE_HEIGHT,
-  fontSize: 14,
-  fontWeight: 500,
-  fontFamily: "Manrope, sans-serif",
-};
 export const renderSmLegendItem = (
   param: CustomSeriesRenderItemParams,
   api: CustomSeriesRenderItemAPI,

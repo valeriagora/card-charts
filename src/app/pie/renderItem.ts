@@ -19,15 +19,9 @@ import {
   pieColors,
   chartBoxDimensions,
   CHART_HORIZONTAL_GAP,
+  legendTextStyles,
 } from "@/constants";
 import { getQuestionImage } from "@/utils";
-
-const legendTextStyles = {
-  lineHeight: TEXT_LINE_HEIGHT,
-  fontSize: 14,
-  fontWeight: 500,
-  fontFamily: "Manrope, sans-serif",
-};
 
 export const renderMdLegendItem = (
   param: CustomSeriesRenderItemParams,

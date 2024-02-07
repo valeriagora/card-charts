@@ -60,3 +60,10 @@ export const chartOptionsOverflow: IChartOptionsOverflow = {
     withImgOptions: 4,
   },
 };
+
+export const legendTextStyles = {
+  lineHeight: TEXT_LINE_HEIGHT,
+  fontSize: 14,
+  fontWeight: 500,
+  fontFamily: "Manrope, sans-serif",
+};

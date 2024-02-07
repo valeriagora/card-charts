@@ -55,6 +55,7 @@ export const getSmOption = (pieData: any, pieLegendData: any) => {
   const data = pieData;
   const legendData = hasOverflow ? pieLegendData.slice(0, 4) : pieLegendData;
   return {
+    animation: false,
     tooltip: pieTooltip,
     backgroundColor: "#222430",
     ...hiddenAxises,
@@ -91,6 +92,7 @@ export const getMdOption = (
   const data = hasOverflow ? pieData.slice(0, 11) : pieData;
   const legendData = hasOverflow ? pieLegendData.slice(0, 11) : pieLegendData;
   return {
+    animation: false,
     tooltip: pieTooltip,
     backgroundColor: "#222430",
     ...hiddenAxises,
@@ -124,6 +126,7 @@ export const getLgOption = (
   optionsWithImagesLines: number[],
   containerHeight: number
 ) => ({
+  animation: false,
   tooltip: pieTooltip,
   backgroundColor: "#222430",
   ...hiddenAxises,

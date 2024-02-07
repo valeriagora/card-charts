@@ -61,7 +61,6 @@ export const ChartContainerStyled = styled("div")<{
     border: "1px solid slateblue",
     display: "flex",
     alignItems: "center",
-    // justifyContent: "stretch",
     boxSizing: "border-box",
   };
 });

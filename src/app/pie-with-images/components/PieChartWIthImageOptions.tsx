@@ -25,7 +25,7 @@ import {
 } from "@/options/pie-with-option-images";
 import { chartOptionsOverflow, url } from "@/constants";
 import { DndCard } from "@/components/DndCard";
-import { CardSize, CustomLegend } from "@/types";
+import { CardSize, CustomLegend, CustomLegendWithImage } from "@/types";
 import { ECharts } from "echarts";
 import { ChartContainer } from "@/components/ChartContainer";
 import {
@@ -46,6 +46,7 @@ import {
 import { OverflowInfo } from "@/components/styledComponents";
 import Image from "next/image";
 import { PieData } from "@/types";
+import { resizeImageBase64 } from "@/utils";
 
 const pieData: PieData[] = [
   {
@@ -77,12 +78,9 @@ const images = [
   "https://images.unsplash.com/photo-1682695796497-31a44224d6d6?q=80&w=2940&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDF8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
   "https://images.unsplash.com/photo-1704107116952-978a5712566c?q=80&w=2938&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
 ];
-const customSeriesData: CustomLegend = pieData.map(({ value, name }, idx) => [
-  value,
-  idx + 1,
-  name,
-  images[idx],
-]);
+const customSeriesData: CustomLegendWithImage = pieData.map(
+  ({ value, name }, idx) => [value, idx + 1, name, images[idx]]
+);
 interface IPieContainerProps {
   size: CardSize;
   height: number;
@@ -190,19 +188,25 @@ function PieChart({ cardSize = CardSize.small, questionImage = url }: any) {
   const saveAsImage = useCallback(async () => {
     if (size !== CardSize.small && !areBase64ImagesReady) {
       const base64Promises: Promise<string>[] = [];
-      const optionImageUrls = pieLegendData.map((item) => item[3]);
+      const optionImageUrls: string[] = pieLegendData.map((item) => item[3]);
       for (const url of optionImageUrls) {
-        base64Promises.push(urlToBase64(url));
+        base64Promises.push(
+          urlToBase64(url).then((base64: string) =>
+            resizeImageBase64(base64, 200)
+          )
+        );
       }
       const getBase64Promises = async () =>
         await Promise.all(base64Promises).then((values) => values);
       const base64Urls = await getBase64Promises();
       if (base64Urls.length) {
         setPieLegendData((prev: any) => {
-          const newData = prev.map((item: PieLegend, idx: number) => [
-            ...item.slice(0, 3),
-            base64Urls[idx],
-          ]);
+          const newData = prev.map(
+            (item: CustomLegendWithImage, idx: number) => [
+              ...item.slice(0, 3),
+              base64Urls[idx],
+            ]
+          );
           return newData;
         });
         setDownloadQueue([...downloadQueue, "download"]);
@@ -213,7 +217,9 @@ function PieChart({ cardSize = CardSize.small, questionImage = url }: any) {
       ? isBase64Image(questionImageUrl)
       : true;
     if (size !== CardSize.small && !isQuestionImageReady) {
-      const base64 = urlToBase64(questionImageUrl);
+      const base64 = urlToBase64(questionImageUrl).then((base64: string) =>
+        resizeImageBase64(base64, 200)
+      );
       const base64QImg = await Promise.resolve(base64);
       base64QImg && setQuestionImageUrl(base64QImg);
       setDownloadQueue([...downloadQueue, "download"]);
