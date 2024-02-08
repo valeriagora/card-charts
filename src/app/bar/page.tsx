@@ -1,7 +1,7 @@
 "use client";
 import React from "react";
-import BarChart from "./components/BarChart";
-import { CardSize, CustomLegend } from "@/types";
+import BarChart from "@/charts/components/bar/BarChart";
+import { CardSize, CustomLegend } from "@/charts/types";
 
 // const barLabels = {
 //   exciting:

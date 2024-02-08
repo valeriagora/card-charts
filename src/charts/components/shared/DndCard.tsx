@@ -1,5 +1,5 @@
 import { CardContainer, SmToMdChart } from "./styledComponents";
-import styles from "../app/page.module.css";
+import styles from "@/app/page.module.css";
 export const DndCard = ({ title, children, size }: any) => {
   return (
     <>

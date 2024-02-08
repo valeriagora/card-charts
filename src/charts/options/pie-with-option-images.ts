@@ -2,12 +2,12 @@ import {
   CustomSeriesRenderItemAPI,
   CustomSeriesRenderItemParams,
 } from "echarts";
-import { pieColors } from "@/constants";
+import { pieColors } from "@/charts/constants/shared";
 import {
   renderLgLegendItem,
   renderMdLegendItem,
-} from "@/app/pie-with-images/renderItem";
-import { renderSmLegendItem } from "@/renderItem";
+} from "@/charts/renderItem/pie-with-option-images";
+import { PIE_HIDDEN_AXISES } from "@/charts/constants/pie";
 
 const pieTooltip = {
   show: false,
@@ -25,67 +25,7 @@ const pieSeries = {
   radius: [51, 91],
   name: "pie-series",
 };
-const hiddenAxises = {
-  xAxis: {
-    splitLine: {
-      show: false,
-    },
-    axisTick: {
-      show: false,
-    },
-    axisLine: {
-      show: false,
-    },
-  },
-  yAxis: {
-    axisLabel: {
-      show: false,
-    },
-    type: "value",
-    splitLine: {
-      show: false,
-    },
-    axisLine: {
-      show: false,
-    },
-    axisTick: {
-      show: false,
-    },
-  },
-};
-export const getSmOption = (pieData: any, pieLegendData: any) => {
-  const hasOverflow = pieData.length > 4;
-  const data = pieData;
-  const legendData = hasOverflow ? pieLegendData.slice(0, 4) : pieLegendData;
-  return {
-    animation: false,
-    tooltip: pieTooltip,
-    backgroundColor: "#222430",
-    ...hiddenAxises,
-    grid: {
-      right: 0,
-      top: 0,
-      bottom: 0,
-      left: 132,
-    },
-    series: [
-      {
-        type: "custom",
-        renderItem: (
-          param: CustomSeriesRenderItemParams,
-          api: CustomSeriesRenderItemAPI
-        ) => renderSmLegendItem(param, api, legendData.length),
-        data: legendData,
-      },
-      {
-        ...pieSeries,
-        center: ["60px", "50%"],
-        radius: [40, 56],
-        data,
-      },
-    ],
-  };
-};
+
 export const getMdOption = (
   pieData: any,
   pieLegendData: any,
@@ -98,7 +38,7 @@ export const getMdOption = (
     animation: false,
     tooltip: pieTooltip,
     backgroundColor: "#222430",
-    ...hiddenAxises,
+    ...PIE_HIDDEN_AXISES,
     series: [
       {
         type: "custom",
@@ -132,7 +72,7 @@ export const getLgOption = (
   animation: false,
   tooltip: pieTooltip,
   backgroundColor: "#222430",
-  ...hiddenAxises,
+  ...PIE_HIDDEN_AXISES,
   series: [
     {
       type: "custom",

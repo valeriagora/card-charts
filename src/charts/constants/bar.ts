@@ -15,3 +15,8 @@ export const L_MAX_SYMBOLS_WITH_T2B = 26;
 export const L_MAX_SYMBOLS_WITH_QUESTION_IMG = 20;
 export const ML_BAR_BOTTOM_PADDING = 16;
 export const ML_BAR_TEXT_MARGIN_BOTTOM = 8;
+//
+export const IMAGE_OPTIONS_X_GAP = 8;
+export const BAR_CHART_S_BOTTOM_PADDING = 20;
+export const BAR_CHART_S_OPTION_HEIGHT = 20;
+export const BAR_CHART_S_OVERFLOW_INFO_HEIGHT = 20;

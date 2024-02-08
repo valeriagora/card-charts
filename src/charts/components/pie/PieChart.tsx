@@ -1,5 +1,5 @@
 "use client";
-import { ReactECharts } from "@/components/ReactECharts";
+import { ReactECharts } from "@/charts/components/shared/ReactECharts";
 import {
   Button,
   FormControlLabel,
@@ -8,18 +8,10 @@ import {
   RadioGroup,
   FormLabel,
 } from "@mui/material";
-import React, {
-  forwardRef,
-  LegacyRef,
-  ReactNode,
-  useCallback,
-  useEffect,
-  useRef,
-  useState,
-} from "react";
-import { getSmOption, getMdOption, getLgOption } from "@/options/pie";
-import { DndCard } from "@/components/DndCard";
-import { CardSize, CustomLegend } from "@/types";
+import React, { useCallback, useEffect, useRef, useState } from "react";
+import { getSmOption, getMdOption, getLgOption } from "@/charts/options/pie";
+import { DndCard } from "@/charts/components/shared/DndCard";
+import { CardSize, CustomLegend } from "@/charts/types";
 import { ECharts } from "echarts";
 import {
   breakWord,
@@ -28,20 +20,17 @@ import {
   hasOptionsOverflow,
   isBase64Image,
   registerCoverShape,
-} from "@/utils";
+} from "@/charts/utils";
 import {
   L_LEGEND_MAX_SYMBOLS_COUNT,
   L_LEGEND_WITH_IMAGE_MAX_SYMBOLS_COUNT,
   OPTION_MARGIN_BOTTOM,
   TEXT_LINE_HEIGHT,
   MIN_L_CHART_HEIGHT,
-  chartOptionsOverflow,
   url,
-} from "@/constants";
-import { OverflowInfo } from "@/components/styledComponents";
-import Image from "next/image";
-import { PieData } from "@/types";
-import { ChartContainer } from "@/components/ChartContainer";
+} from "@/charts/constants/shared";
+import { PieData } from "@/charts/types";
+import { ChartContainer } from "@/charts/components/shared/ChartContainer";
 const pieData: PieData[] = [
   {
     value: 25,

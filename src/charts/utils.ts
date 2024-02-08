@@ -8,12 +8,12 @@ import {
   QUESTION_IMAGE_SIDE,
   RECTANGLE_WITH_RADIUS_CUSTOM_SHAPE,
   TEXT_LINE_HEIGHT,
-} from "./constants";
+} from "@/charts/constants/shared";
 import {
   ML_BAR_BOTTOM_PADDING,
   ML_BAR_TEXT_MARGIN_BOTTOM,
-} from "./constants/bar";
-import { CardSize } from "./types";
+} from "@/charts/constants/bar";
+import { CardSize } from "@/charts/types";
 
 export async function blobToBase64(blob: Blob): Promise<string> {
   return new Promise((resolve, _) => {

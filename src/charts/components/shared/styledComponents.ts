@@ -1,5 +1,8 @@
-import { chartBoxDimensions, MIN_L_CHART_HEIGHT } from "@/constants";
-import { CardSize } from "@/types";
+import {
+  chartBoxDimensions,
+  MIN_L_CHART_HEIGHT,
+} from "@/charts/constants/shared";
+import { CardSize } from "@/charts/types";
 import { styled } from "@mui/material";
 const cardWidths = {
   small: 320,

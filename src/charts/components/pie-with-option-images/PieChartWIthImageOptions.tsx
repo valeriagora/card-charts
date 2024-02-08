@@ -1,5 +1,5 @@
 "use client";
-import { ReactECharts } from "@/components/ReactECharts";
+import { ReactECharts } from "@/charts/components/shared/ReactECharts";
 import {
   Button,
   FormControlLabel,
@@ -7,7 +7,6 @@ import {
   FormControl,
   RadioGroup,
   FormLabel,
-  styled,
 } from "@mui/material";
 import React, {
   forwardRef,
@@ -19,34 +18,35 @@ import React, {
   useState,
 } from "react";
 import {
-  getSmOption,
   getMdOption,
   getLgOption,
-} from "@/options/pie-with-option-images";
-import { chartOptionsOverflow, url } from "@/constants";
-import { DndCard } from "@/components/DndCard";
-import { CardSize, CustomLegend, CustomLegendWithImage } from "@/types";
-import { ECharts } from "echarts";
-import { ChartContainer } from "@/components/ChartContainer";
+} from "@/charts/options/pie-with-option-images";
+import { getSmOption } from "@/charts/options/pie";
 import {
-  breakWord,
-  getBase64Image,
-  getSvgBlob,
-  isBase64Image,
-  registerCoverShape,
-} from "@/utils";
-import {
+  chartOptionsOverflow,
+  url,
   L_LEGEND_IMAGE_OPTIONS_MAX_SYMBOLS_COUNT,
   L_LEGEND_IMAGE_OPTIONS_WITH_IMAGE_MAX_SYMBOLS_COUNT,
   OPTION_MARGIN_BOTTOM,
   OPTION_IMAGE_SIDE,
   TEXT_LINE_HEIGHT,
   MIN_L_CHART_HEIGHT,
-} from "@/constants";
-import { OverflowInfo } from "@/components/styledComponents";
+} from "@/charts/constants/shared";
+import { DndCard } from "@/charts/components/shared/DndCard";
+import { CardSize, CustomLegendWithImage } from "@/charts/types";
+import { ECharts } from "echarts";
+import { ChartContainer } from "@/charts/components/shared/ChartContainer";
+import {
+  breakWord,
+  getBase64Image,
+  getSvgBlob,
+  isBase64Image,
+  registerCoverShape,
+  resizeImageBase64,
+} from "@/charts/utils";
+import { OverflowInfo } from "@/charts/components/shared/styledComponents";
 import Image from "next/image";
-import { PieData } from "@/types";
-import { resizeImageBase64 } from "@/utils";
+import { PieData } from "@/charts/types";
 
 const pieData: PieData[] = [
   {

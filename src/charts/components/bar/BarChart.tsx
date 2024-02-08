@@ -1,17 +1,13 @@
 "use client";
-import { ReactECharts } from "@/components/ReactECharts";
+import { ReactECharts } from "@/charts/components/shared/ReactECharts";
 import React, {
-  forwardRef,
-  LegacyRef,
-  ReactNode,
-  use,
   useCallback,
   useEffect,
   useMemo,
   useRef,
   useState,
 } from "react";
-import { DndCard } from "@/components/DndCard";
+import { DndCard } from "@/charts/components/shared/DndCard";
 import {
   breakWord,
   getBarsContainerHeight,
@@ -20,35 +16,26 @@ import {
   hasOptionsOverflow,
   isBase64Image,
   registerCoverShape,
-} from "@/utils";
-import { getSmOption, getMdOption, getLgOption } from "@/options/bar";
+} from "@/charts/utils";
+import { getSmOption, getMdOption, getLgOption } from "@/charts/options/bar";
 import {
-  chartOptionsOverflow,
   L_LEGEND_MAX_SYMBOLS_COUNT,
   L_LEGEND_WITH_IMAGE_MAX_SYMBOLS_COUNT,
   MIN_L_CHART_HEIGHT,
   OPTION_MARGIN_BOTTOM,
   TEXT_LINE_HEIGHT,
   url,
-} from "@/constants";
-import { Button, Card } from "@mui/material";
+} from "@/charts/constants/shared";
+import { Button } from "@mui/material";
 import { styled } from "@mui/material";
 import { ECharts } from "echarts";
-import Image from "next/image";
 import Radio from "@mui/material/Radio";
 import RadioGroup from "@mui/material/RadioGroup";
 import FormControlLabel from "@mui/material/FormControlLabel";
 import FormControl from "@mui/material/FormControl";
 import FormLabel from "@mui/material/FormLabel";
-// import {
-//   OPTION_IMAGE_HEIGHT,
-//   IMAGE_OPTIONS_LINE_Y_GAP,
-//   BAR_CHART_ML_BOTTOM_PADDING,
-// } from "@/constants";
-import { CardSize, CustomLegend } from "@/types";
-import { OverflowInfo } from "@/components/styledComponents";
-import { ChartContainer } from "@/components/ChartContainer";
-import { M_BAR_MAX_OPTIONS, S_BAR_MAX_OPTIONS } from "@/constants/bar";
+import { CardSize, CustomLegend } from "@/charts/types";
+import { ChartContainer } from "@/charts/components/shared/ChartContainer";
 
 const OPTION_IMAGE_HEIGHT = 72;
 const IMAGE_OPTIONS_LINE_Y_GAP = 8;

@@ -1,4 +1,9 @@
-import { breakWord, getLegendIconColor, truncate } from "@/utils";
+import {
+  breakWord,
+  getLegendIconColor,
+  truncate,
+  getQuestionImage,
+} from "@/charts/utils";
 import {
   CustomSeriesRenderItemAPI,
   CustomSeriesRenderItemParams,
@@ -6,22 +11,21 @@ import {
 import {
   CIRCLE_ICON_MARGIN_RIGHT,
   CIRCLE_ICON_RADIUS,
-  L_LEGEND_MAX_SYMBOLS_COUNT,
-  L_LEGEND_WITH_IMAGE_MAX_SYMBOLS_COUNT,
+  L_LEGEND_IMAGE_OPTIONS_MAX_SYMBOLS_COUNT,
+  L_LEGEND_IMAGE_OPTIONS_WITH_IMAGE_MAX_SYMBOLS_COUNT,
   MAX_PERCENTS_TEXT_WIDTH,
-  M_LEGEND_MAX_SYMBOLS_COUNT,
-  M_LEGEND_WITH_IMAGE_MAX_SYMBOLS_COUNT,
+  M_LEGEND_IMAGE_OPTIONS_MAX_SYMBOLS_COUNT,
+  M_LEGEND_IMAGE_OPTIONS_WITH_IMAGE_MAX_SYMBOLS_COUNT,
   OPTION_MARGIN_BOTTOM,
   OPTION_IMAGE_MARGIN_RIGHT,
   OPTION_IMAGE_SIDE,
   RECTANGLE_WITH_RADIUS_CUSTOM_SHAPE,
   TEXT_LINE_HEIGHT,
-  pieColors,
   chartBoxDimensions,
   CHART_HORIZONTAL_GAP,
   legendTextStyles,
-} from "@/constants";
-import { getQuestionImage } from "@/utils";
+  pieColors,
+} from "@/charts/constants/shared";
 
 export const renderMdLegendItem = (
   param: CustomSeriesRenderItemParams,
@@ -34,9 +38,10 @@ export const renderMdLegendItem = (
   const iconColor = getLegendIconColor(pieColors, param.dataIndex);
   const percents = api.value(0);
   const label = api.value(2);
+  const imageOptionUrl = api.value(3);
   const verticalPadding =
     (chartBoxDimensions.medium.height -
-      itemsLength * TEXT_LINE_HEIGHT -
+      itemsLength * OPTION_IMAGE_SIDE -
       (itemsLength - 1) * OPTION_MARGIN_BOTTOM) /
     2;
   const questionImage = questionImageUrl
@@ -46,18 +51,27 @@ export const renderMdLegendItem = (
         "medium"
       )
     : [];
+  const coverY =
+    verticalPadding +
+    param.dataIndex * (OPTION_IMAGE_SIDE + OPTION_MARGIN_BOTTOM);
   const iconY =
     verticalPadding +
-    param.dataIndex * (TEXT_LINE_HEIGHT + OPTION_MARGIN_BOTTOM) +
-    TEXT_LINE_HEIGHT / 2;
+    param.dataIndex * (OPTION_IMAGE_SIDE + OPTION_MARGIN_BOTTOM) +
+    OPTION_IMAGE_SIDE / 2;
   const labelY = iconY - TEXT_LINE_HEIGHT / 2;
   const truncatedText = truncate(
     label as string,
     questionImageUrl
-      ? M_LEGEND_WITH_IMAGE_MAX_SYMBOLS_COUNT
-      : M_LEGEND_MAX_SYMBOLS_COUNT
+      ? M_LEGEND_IMAGE_OPTIONS_WITH_IMAGE_MAX_SYMBOLS_COUNT
+      : M_LEGEND_IMAGE_OPTIONS_MAX_SYMBOLS_COUNT
   );
-  const iconX = CHART_HORIZONTAL_GAP + xAxisStartPx + CIRCLE_ICON_RADIUS;
+
+  const iconX =
+    xAxisStartPx +
+    CHART_HORIZONTAL_GAP +
+    OPTION_IMAGE_SIDE +
+    OPTION_IMAGE_MARGIN_RIGHT +
+    CIRCLE_ICON_RADIUS;
   const percentsX = iconX + CIRCLE_ICON_RADIUS + CIRCLE_ICON_MARGIN_RIGHT;
   return {
     type: "group",
@@ -82,6 +96,29 @@ export const renderMdLegendItem = (
           fill: "#c8cad0",
         },
         position: [MAX_PERCENTS_TEXT_WIDTH + percentsX, labelY],
+      },
+      {
+        type: RECTANGLE_WITH_RADIUS_CUSTOM_SHAPE,
+        shape: {
+          width: OPTION_IMAGE_SIDE,
+          height: OPTION_IMAGE_SIDE,
+          x: xAxisStartPx,
+          y: coverY,
+        },
+        style: {
+          fill: "#1a1a25",
+        },
+      },
+      {
+        type: "image",
+        style: {
+          x: 0,
+          image: imageOptionUrl,
+          y: 1,
+          width: OPTION_IMAGE_SIDE,
+          height: OPTION_IMAGE_SIDE,
+        },
+        position: [xAxisStartPx, coverY],
       },
       {
         type: "circle",
@@ -119,11 +156,12 @@ export const renderLgLegendItem = (
     : [];
   const percents = api.value(0);
   const label = api.value(2);
+  const imageOptionUrl = api.value(3);
   const labelChunks = breakWord(
     label as string,
     questionImageUrl
-      ? L_LEGEND_WITH_IMAGE_MAX_SYMBOLS_COUNT
-      : L_LEGEND_MAX_SYMBOLS_COUNT
+      ? L_LEGEND_IMAGE_OPTIONS_WITH_IMAGE_MAX_SYMBOLS_COUNT
+      : L_LEGEND_IMAGE_OPTIONS_MAX_SYMBOLS_COUNT
   );
   const prevOptionHeightsSum = optionHeights.reduce((total, current, idx) => {
     if (idx < param.dataIndex) {
@@ -138,7 +176,7 @@ export const renderLgLegendItem = (
     (optionHeights.length - 1) * OPTION_MARGIN_BOTTOM;
   const chartVerticalPadding = (containerHeight - optionsHeightSum) / 2;
   const currentOptionVerticalPadding =
-    (optionHeights[param.dataIndex] - TEXT_LINE_HEIGHT) / 2;
+    (optionHeights[param.dataIndex] - OPTION_IMAGE_SIDE) / 2;
   let optionCenterY =
     itemsLength === 1
       ? prevOptionHeightsSum +
@@ -146,20 +184,25 @@ export const renderLgLegendItem = (
       : chartVerticalPadding +
         prevOptionHeightsSum +
         currentOptionVerticalPadding +
-        TEXT_LINE_HEIGHT / 2;
+        OPTION_IMAGE_SIDE / 2;
   const coverY =
     itemsLength === 1
       ? prevOptionHeightsSum +
         (optionHeights[param.dataIndex] - OPTION_MARGIN_BOTTOM) / 2 -
-        TEXT_LINE_HEIGHT / 2
-      : optionCenterY - TEXT_LINE_HEIGHT / 2;
+        OPTION_IMAGE_SIDE / 2
+      : optionCenterY - OPTION_IMAGE_SIDE / 2;
 
   const labelY =
     itemsLength === 1
       ? ySizePx / 2 - (labelChunks.length * TEXT_LINE_HEIGHT) / 2
       : optionCenterY -
         (optionsWithImagesLines[param.dataIndex] * TEXT_LINE_HEIGHT) / 2;
-  const iconX = xAxisStartPx + CHART_HORIZONTAL_GAP + CIRCLE_ICON_RADIUS;
+  const iconX =
+    xAxisStartPx +
+    CHART_HORIZONTAL_GAP +
+    OPTION_IMAGE_SIDE +
+    OPTION_IMAGE_MARGIN_RIGHT +
+    CIRCLE_ICON_RADIUS;
   const percentsX = iconX + CIRCLE_ICON_RADIUS + CIRCLE_ICON_MARGIN_RIGHT;
   const labelX = MAX_PERCENTS_TEXT_WIDTH + percentsX;
   return {
@@ -189,6 +232,32 @@ export const renderLgLegendItem = (
           fill: "#c8cad0",
         },
         position: [labelX, labelY],
+      },
+      {
+        type: RECTANGLE_WITH_RADIUS_CUSTOM_SHAPE,
+        shape: {
+          width: OPTION_IMAGE_SIDE,
+          height: OPTION_IMAGE_SIDE,
+          x: xAxisStartPx,
+          y: itemsLength === 1 ? ySizePx / 2 - OPTION_IMAGE_SIDE / 2 : coverY,
+        },
+        style: {
+          fill: "#1a1a25",
+        },
+      },
+      {
+        type: "image",
+        style: {
+          x: 0,
+          image: imageOptionUrl,
+          y: 1,
+          width: OPTION_IMAGE_SIDE,
+          height: OPTION_IMAGE_SIDE,
+        },
+        position: [
+          xAxisStartPx,
+          itemsLength === 1 ? ySizePx / 2 - OPTION_IMAGE_SIDE / 2 : coverY,
+        ],
       },
       {
         type: "circle",

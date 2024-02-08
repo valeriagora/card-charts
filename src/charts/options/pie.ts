@@ -2,9 +2,13 @@ import {
   CustomSeriesRenderItemAPI,
   CustomSeriesRenderItemParams,
 } from "echarts";
-import { pieColors } from "@/constants";
-import { renderLgLegendItem, renderMdLegendItem } from "@/app/pie/renderItem";
-import { renderSmLegendItem } from "@/renderItem";
+import { pieColors } from "@/charts/constants/shared";
+import {
+  renderSmLegendItem,
+  renderMdLegendItem,
+  renderLgLegendItem,
+} from "@/charts/renderItem/pie";
+import { PIE_HIDDEN_AXISES } from "@/charts/constants/pie";
 
 const pieTooltip = {
   show: false,
@@ -22,34 +26,7 @@ const pieSeries = {
   radius: [51, 91],
   name: "pie-series",
 };
-const hiddenAxises = {
-  xAxis: {
-    splitLine: {
-      show: false,
-    },
-    axisTick: {
-      show: false,
-    },
-    axisLine: {
-      show: false,
-    },
-  },
-  yAxis: {
-    axisLabel: {
-      show: false,
-    },
-    type: "value",
-    splitLine: {
-      show: false,
-    },
-    axisLine: {
-      show: false,
-    },
-    axisTick: {
-      show: false,
-    },
-  },
-};
+
 export const getSmOption = (pieData: any, pieLegendData: any) => {
   const hasOverflow = pieData.length > 4;
   const data = pieData;
@@ -58,7 +35,7 @@ export const getSmOption = (pieData: any, pieLegendData: any) => {
     animation: false,
     tooltip: pieTooltip,
     backgroundColor: "#222430",
-    ...hiddenAxises,
+    ...PIE_HIDDEN_AXISES,
     grid: {
       right: 0,
       top: 0,
@@ -95,7 +72,7 @@ export const getMdOption = (
     animation: false,
     tooltip: pieTooltip,
     backgroundColor: "#222430",
-    ...hiddenAxises,
+    ...PIE_HIDDEN_AXISES,
     series: [
       {
         type: "custom",
@@ -129,7 +106,7 @@ export const getLgOption = (
   animation: false,
   tooltip: pieTooltip,
   backgroundColor: "#222430",
-  ...hiddenAxises,
+  ...PIE_HIDDEN_AXISES,
   series: [
     {
       type: "custom",

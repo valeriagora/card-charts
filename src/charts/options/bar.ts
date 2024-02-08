@@ -1,27 +1,16 @@
-import { ReactEChartsProps } from "@/components/ReactECharts";
+import { ReactEChartsProps } from "@/charts/components/shared/ReactECharts";
 import {
   CustomSeriesRenderItemParams,
   SeriesOption,
   CustomSeriesRenderItemAPI,
 } from "echarts";
-import {
-  BAR_CHART_ML_BOTTOM_PADDING,
-  BAR_CHART_S_BOTTOM_PADDING,
-  OPTION_IMAGE_HEIGHT,
-  IMAGE_OPTIONS_X_GAP,
-} from "../app/bar/constants";
-import { CardSize, CustomLegend } from "@/types";
-import { renderSmLegendItem } from "@/renderItem";
+import { ML_BAR_BOTTOM_PADDING } from "@/charts/constants/bar";
+import { CardSize, CustomLegend } from "@/charts/types";
 import {
   renderBarLgLegendItem,
   renderBarMdLegendItem,
   renderBarSmLegendItem,
-} from "@/renderItem/bar";
-import {
-  ML_BAR_BOTTOM_PADDING,
-  ML_BAR_TEXT_MARGIN_BOTTOM,
-} from "@/constants/bar";
-import { TEXT_LINE_HEIGHT } from "@/constants";
+} from "@/charts/renderItem/bar";
 
 export const getSmOption = (
   data: { name: string; value: number }[],
@@ -379,9 +368,7 @@ export const getLgOption = (
         data,
         type: "bar",
         barWidth: 16,
-        // barGap: "200%",
         // barCategoryGap: 100,
-        // barMaxWidth: 42,
         itemStyle: {
           color: "#25B4C8",
         },

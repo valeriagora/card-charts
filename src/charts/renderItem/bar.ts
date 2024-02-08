@@ -1,15 +1,17 @@
-import { chartBoxDimensions, legendTextStyles } from "@/constants";
-import { breakWord, getQuestionImage, truncate } from "@/utils";
+import { breakWord, getQuestionImage, truncate } from "@/charts/utils";
 import {
   CustomSeriesRenderItemAPI,
   CustomSeriesRenderItemParams,
 } from "echarts";
-import { MAX_PERCENTS_TEXT_WIDTH, TEXT_LINE_HEIGHT } from "@/constants";
+import {
+  MAX_PERCENTS_TEXT_WIDTH,
+  chartBoxDimensions,
+  legendTextStyles,
+} from "@/charts/constants/shared";
 import {
   L_MAX_SYMBOLS_COUNT,
   L_MAX_SYMBOLS_WITH_QUESTION_IMG,
   L_MAX_SYMBOLS_WITH_T2B,
-  ML_BAR_TEXT_MARGIN_BOTTOM,
   M_BAR_CHART_HORIZONTAL_GAP,
   M_MAX_SYMBOLS_COUNT,
   M_MAX_SYMBOLS_WITH_QUESTION_IMG,
@@ -17,7 +19,7 @@ import {
   S_BAR_CHART_HORIZONTAL_GAP,
   S_BAR_CHART_WIDTH,
   S_MAX_SYMBOLS_COUNT,
-} from "@/constants/bar";
+} from "@/charts/constants/bar";
 
 export const renderBarSmLegendItem = (
   param: CustomSeriesRenderItemParams,

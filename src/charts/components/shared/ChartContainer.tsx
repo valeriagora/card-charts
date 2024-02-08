@@ -1,5 +1,5 @@
-import { chartOptionsOverflow } from "@/constants";
-import { CardSize } from "@/types";
+import { chartOptionsOverflow } from "@/charts/constants/shared";
+import { CardSize } from "@/charts/types";
 import Image from "next/image";
 import { forwardRef, LegacyRef, ReactNode } from "react";
 import { ChartContainerStyled, OverflowInfo } from "./styledComponents";
