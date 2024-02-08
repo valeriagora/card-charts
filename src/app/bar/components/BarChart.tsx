@@ -269,6 +269,30 @@ function BarChart({ data, legendData, cardSize }: IBarProps) {
     //     large: false,
   }, []);
   // }, [values.length, withImageOptions]);
+  const optionsLines = barChartData.reduce((total: number[], current: any) => {
+    const { name } = current;
+    const linesCount = breakWord(
+      `${name}`,
+      questionImageUrl
+        ? L_LEGEND_WITH_IMAGE_MAX_SYMBOLS_COUNT
+        : L_LEGEND_MAX_SYMBOLS_COUNT
+    ).length;
+    total.push(linesCount);
+    return total;
+  }, []);
+  const optionHeights = optionsLines.map(
+    (lines: number) => lines * TEXT_LINE_HEIGHT
+  );
+  const largeContainerHeight =
+    optionHeights.reduce(
+      (total: number, height: number) => (total += height),
+      0
+    ) +
+    OPTION_MARGIN_BOTTOM * (optionHeights.length - 1);
+  const lContainerHeight =
+    largeContainerHeight < MIN_L_CHART_HEIGHT
+      ? MIN_L_CHART_HEIGHT
+      : largeContainerHeight;
   const small = useMemo(
     () =>
       getSmOption(
@@ -297,7 +321,11 @@ function BarChart({ data, legendData, cardSize }: IBarProps) {
         barLegendData,
         withImage,
         hasOptionsOverflow(size, barChartData.length),
-        showT2B
+        showT2B,
+        questionImageUrl,
+        optionHeights,
+        optionsLines,
+        lContainerHeight
       ),
     [barChartData, barLegendData, withImage, showT2B]
   );
@@ -320,31 +348,7 @@ function BarChart({ data, legendData, cardSize }: IBarProps) {
   const onChartInit = useCallback((chartInstance: ECharts) => {
     setChartInstance(chartInstance);
   }, []);
-  const optionsLines = barChartData.reduce((total: number[], current: any) => {
-    const { name } = current;
-    const linesCount = breakWord(
-      `${name}`,
-      questionImageUrl
-        ? L_LEGEND_WITH_IMAGE_MAX_SYMBOLS_COUNT
-        : L_LEGEND_MAX_SYMBOLS_COUNT
-    ).length;
-    total.push(linesCount);
-    return total;
-  }, []);
-  const optionHeights = optionsLines.map(
-    (lines: number) => lines * TEXT_LINE_HEIGHT
-  );
 
-  const largeContainerHeight =
-    optionHeights.reduce(
-      (total: number, height: number) => (total += height),
-      0
-    ) +
-    OPTION_MARGIN_BOTTOM * (optionHeights.length - 1);
-  const lContainerHeight =
-    largeContainerHeight < MIN_L_CHART_HEIGHT
-      ? MIN_L_CHART_HEIGHT
-      : largeContainerHeight;
   return (
     <div
       style={{
@@ -413,7 +417,11 @@ function BarChart({ data, legendData, cardSize }: IBarProps) {
           hasOverflow={hasOptionsOverflow(size, barChartData.length)}
         >
           <BarsContainer
-            height={getBarsContainerHeight(size, barChartData.length)}
+            height={
+              size === CardSize.large
+                ? lContainerHeight
+                : getBarsContainerHeight(size, barChartData.length)
+            }
           >
             <ReactECharts
               containerRef={containerRef}

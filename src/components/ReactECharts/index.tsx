@@ -59,6 +59,7 @@ const ReactECharts = function ReactECharts({
       ref && observer.unobserve(ref);
     };
   }, [containerRef, onChartInit]);
+  // var tooltipDisplay = "";
 
   useEffect(() => {
     chartInstance.current?.on("finished", onFinished);

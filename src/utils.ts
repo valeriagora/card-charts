@@ -206,4 +206,7 @@ export const getBarsContainerHeight = (size: CardSize, length: number) => {
           (length - 1) * ML_BAR_TEXT_MARGIN_BOTTOM +
           ML_BAR_BOTTOM_PADDING;
   }
+  // if (size===CardSize.large) {
+  //   return
+  // }
 };

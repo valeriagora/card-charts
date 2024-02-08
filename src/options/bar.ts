@@ -12,7 +12,11 @@ import {
 } from "../app/bar/constants";
 import { CardSize, CustomLegend } from "@/types";
 import { renderSmLegendItem } from "@/renderItem";
-import { renderBarMdLegendItem, renderBarSmLegendItem } from "@/renderItem/bar";
+import {
+  renderBarLgLegendItem,
+  renderBarMdLegendItem,
+  renderBarSmLegendItem,
+} from "@/renderItem/bar";
 import {
   ML_BAR_BOTTOM_PADDING,
   ML_BAR_TEXT_MARGIN_BOTTOM,
@@ -292,7 +296,11 @@ export const getLgOption = (
   legendData: CustomLegend[],
   withImage: boolean,
   hasOverflow: boolean,
-  showT2B: boolean
+  showT2B: boolean,
+  questionImageUrl: string,
+  optionHeights: number[],
+  optionsLines: number[],
+  containerHeight: number
 ): ReactEChartsProps["option"] => {
   const t2bSeries = showT2B
     ? {
@@ -304,14 +312,16 @@ export const getLgOption = (
       }
     : undefined;
   return {
+    animation: false,
     backgroundColor: "#222430",
     show: true,
     grid: {
       top: 0,
-      bottom: BAR_CHART_ML_BOTTOM_PADDING,
+      bottom: ML_BAR_BOTTOM_PADDING,
       right: "50%",
     },
     xAxis: {
+      name: "",
       inverse: true,
       axisLabel: {
         margin: 2,
@@ -332,25 +342,46 @@ export const getLgOption = (
     },
     yAxis: {
       inverse: true,
-      axisLabel: {},
-      data: data,
-      position: "right",
-      type: "category",
-      axisLine: {
-        show: true,
-        lineStyle: {
-          color: "#6C7080",
-        },
-      },
+      show: true,
+      data,
       axisTick: {
-        show: false,
+        show: true,
       },
     },
+    tooltip: {
+      trigger: "item",
+      position: ["50%", "50%"],
+    },
     series: [
+      {
+        type: "custom",
+        // triggerLineEvent: true,
+        tooltip: {
+          // trigger: "item",
+          position: ["50%", "50%"],
+        },
+        renderItem: (
+          param: CustomSeriesRenderItemParams,
+          api: CustomSeriesRenderItemAPI
+        ) =>
+          renderBarLgLegendItem(
+            param,
+            api,
+            showT2B,
+            questionImageUrl,
+            optionHeights,
+            optionsLines,
+            containerHeight
+          ),
+        data: legendData,
+      },
       {
         data,
         type: "bar",
         barWidth: 16,
+        // barGap: "200%",
+        // barCategoryGap: 100,
+        // barMaxWidth: 42,
         itemStyle: {
           color: "#25B4C8",
         },
