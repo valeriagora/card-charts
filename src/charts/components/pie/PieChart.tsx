@@ -20,6 +20,8 @@ import {
   hasOptionsOverflow,
   isBase64Image,
   registerCoverShape,
+  resizeImageBase64,
+  urlToBase64,
 } from "@/charts/utils";
 import {
   L_LEGEND_MAX_SYMBOLS_COUNT,
@@ -31,64 +33,10 @@ import {
 } from "@/charts/constants/shared";
 import { PieData } from "@/charts/types";
 import { ChartContainer } from "@/charts/components/shared/ChartContainer";
-const pieData: PieData[] = [
-  {
-    value: 25,
-    name: "Pie chart without options images Other Search Engine Search Engine Search Search Engine Search Engine Search Engine Search Engine  ",
-  },
-  {
-    value: 15,
-    name: "Option 1 Option 1 Test test test test test test Test test test test test test Test test test test test test Test test test test test test Test test test test test test",
-  },
-  {
-    value: 2,
-    name: "Option 2  Test test test test test test Option 2 Option 2 Option 2 Option 2Option 2 Option 2 Option 2 Option 2 Option 2 Option 2 Option 2 Option 2 Option 2 Option 2 Option 2 Option 2 Option 2 Option 2 Option 2 Option 2",
-  },
-  {
-    value: 3,
-    name: "Option 3",
-  },
-  {
-    value: 5,
-    name: "Option 4 Test test test test test test  Test test test test test test  Test test test test test test  Test test test test test test  Test test test test test test",
-  },
-  {
-    value: 25,
-    name: "Pie chart without options images Other Search Engine Search Engine Search Search Engine Search Engine Search Engine Search Engine  ",
-  },
-  {
-    value: 15,
-    name: "Option 1 Option 1 Test test test test test test Test test test test test test Test test test test test test Test test test test test test Test test test test test test",
-  },
-  {
-    value: 2,
-    name: "Option 2  Test test test test test test Option 2 Option 2 Option 2 Option 2Option 2 Option 2 Option 2 Option 2 Option 2 Option 2 Option 2 Option 2 Option 2 Option 2 Option 2 Option 2 Option 2 Option 2 Option 2 Option 2",
-  },
-  {
-    value: 3,
-    name: "Option 3",
-  },
-  {
-    value: 5,
-    name: "Option 4 Test test test test test test  Test test test test test test  Test test test test test test  Test test test test test test  Test test test test test test",
-  },
-  {
-    value: 15,
-    name: "Last 4 Test test test test test test  Test test test test test test  Test test test test test test  Test test test test test test  Test test test test test test",
-  },
-  {
-    value: 3,
-    name: "Overflow 4 Test test test test test test  Test test test test test test  Test test test test test test  Test test test test test test  Test test test test test test",
-  },
-];
 
-const customSeriesData: CustomLegend = pieData.map(({ value, name }, idx) => [
-  value,
-  idx + 1,
-  name,
-]);
-
-function PieChartWithImageOptions({
+function PieChart({
+  pieData,
+  legendData,
   cardSize = CardSize.small,
   questionImage = url,
 }: any) {
@@ -100,7 +48,7 @@ function PieChartWithImageOptions({
     setChartInstance(chartInstance);
   }, []);
   const [pieChartData, setPieChartData] = useState<PieData[]>(pieData);
-  const [pieLegendData, setPieLegendData] = useState(customSeriesData);
+  const [pieLegendData, setPieLegendData] = useState(legendData);
   const [questionImageUrl, setQuestionImageUrl] = useState("");
   const [isQuestionImageReady, setIsQuestionImageReady] = useState(false);
   const containerRef = useRef<HTMLDivElement | null>(null);
@@ -140,16 +88,15 @@ function PieChartWithImageOptions({
     document.body.appendChild(anchorElement);
     anchorElement.click();
   };
-  const urlToBase64 = async (url: string) => {
-    let result = await getBase64Image(url);
-    return result;
-  };
+
   const saveAsImage = useCallback(async () => {
     const isQuestionImageReady = questionImageUrl
       ? isBase64Image(questionImageUrl)
       : true;
     if (size !== CardSize.small && !isQuestionImageReady) {
-      const base64 = urlToBase64(questionImageUrl);
+      const base64 = urlToBase64(questionImageUrl).then((base64: string) =>
+        resizeImageBase64(base64, 200)
+      );
       const base64QImg = await Promise.resolve(base64);
       base64QImg && setQuestionImageUrl(base64QImg);
       setDownloadQueue([...downloadQueue, "download"]);
@@ -255,4 +202,4 @@ function PieChartWithImageOptions({
   );
 }
 
-export default PieChartWithImageOptions;
+export default PieChart;

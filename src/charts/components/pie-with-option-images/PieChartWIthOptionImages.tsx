@@ -24,7 +24,6 @@ import {
 import { getSmOption } from "@/charts/options/pie";
 import {
   chartOptionsOverflow,
-  url,
   L_LEGEND_IMAGE_OPTIONS_MAX_SYMBOLS_COUNT,
   L_LEGEND_IMAGE_OPTIONS_WITH_IMAGE_MAX_SYMBOLS_COUNT,
   OPTION_MARGIN_BOTTOM,
@@ -38,49 +37,16 @@ import { ECharts } from "echarts";
 import { ChartContainer } from "@/charts/components/shared/ChartContainer";
 import {
   breakWord,
-  getBase64Image,
   getSvgBlob,
   isBase64Image,
   registerCoverShape,
   resizeImageBase64,
+  urlToBase64,
 } from "@/charts/utils";
 import { OverflowInfo } from "@/charts/components/shared/styledComponents";
 import Image from "next/image";
 import { PieData } from "@/charts/types";
 
-const pieData: PieData[] = [
-  {
-    value: 25,
-    name: "Other Search Engine Search Engine Search Search Engine Search Engine Search Engine Search Engine  ",
-  },
-  {
-    value: 15,
-    name: "Option 1 Option 1 Test test test test test test Test test test test test test Test test test test test test Test test test test test test Test test test test test test",
-  },
-  {
-    value: 2,
-    name: "Option 2  Test test test test test test Option 2 Option 2 Option 2 Option 2Option 2 Option 2 Option 2 Option 2 Option 2 Option 2 Option 2 Option 2 Option 2 Option 2 Option 2 Option 2 Option 2 Option 2 Option 2 Option 2",
-  },
-  {
-    value: 3,
-    name: "Option 3",
-  },
-  {
-    value: 5,
-    name: "Option 4 Test test test test test test  Test test test test test test  Test test test test test test  Test test test test test test  Test test test test test test",
-  },
-];
-
-const images = [
-  "https://plus.unsplash.com/premium_photo-1697695568731-5b351d7aca4b?q=80&w=2787&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-  "https://images.unsplash.com/photo-1682685797140-c17807f8f217?q=80&w=2940&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDF8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-  "https://images.unsplash.com/photo-1682685797857-97de838c192e?q=80&w=2787&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDF8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-  "https://images.unsplash.com/photo-1682695796497-31a44224d6d6?q=80&w=2940&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDF8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-  "https://images.unsplash.com/photo-1704107116952-978a5712566c?q=80&w=2938&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-];
-const customSeriesData: CustomLegendWithImage = pieData.map(
-  ({ value, name }, idx) => [value, idx + 1, name, images[idx]]
-);
 interface IPieContainerProps {
   size: CardSize;
   height: number;
@@ -122,7 +88,12 @@ const hasOptionsOverflow = (
     ? length > chartOptionsOverflow[size].withImgOptions
     : length > chartOptionsOverflow[size].default;
 };
-function PieChart({ cardSize = CardSize.small, questionImage = url }: any) {
+function PieChartWIthOptionImages({
+  cardSize = CardSize.small,
+  questionImage,
+  pieData,
+  legendData,
+}: any) {
   useEffect(() => {
     registerCoverShape();
   }, []);
@@ -131,7 +102,7 @@ function PieChart({ cardSize = CardSize.small, questionImage = url }: any) {
     setChartInstance(chartInstance);
   }, []);
   const [pieChartData, setPieChartData] = useState<PieData[]>(pieData);
-  const [pieLegendData, setPieLegendData] = useState(customSeriesData);
+  const [pieLegendData, setPieLegendData] = useState(legendData);
   const [questionImageUrl, setQuestionImageUrl] = useState("");
   const [isQuestionImageReady, setIsQuestionImageReady] = useState(false);
   const containerRef = useRef<HTMLDivElement | null>(null);
@@ -181,10 +152,7 @@ function PieChart({ cardSize = CardSize.small, questionImage = url }: any) {
     document.body.appendChild(anchorElement);
     anchorElement.click();
   };
-  const urlToBase64 = async (url: string) => {
-    let result = await getBase64Image(url);
-    return result;
-  };
+
   const saveAsImage = useCallback(async () => {
     if (size !== CardSize.small && !areBase64ImagesReady) {
       const base64Promises: Promise<string>[] = [];
@@ -342,4 +310,4 @@ function PieChart({ cardSize = CardSize.small, questionImage = url }: any) {
   );
 }
 
-export default PieChart;
+export default PieChartWIthOptionImages;

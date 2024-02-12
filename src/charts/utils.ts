@@ -52,6 +52,10 @@ export const getBase64Image = (url: string): Promise<string> => {
     img.onerror = (error) => reject(error);
   });
 };
+export const urlToBase64 = async (url: string) => {
+  let result = await getBase64Image(url);
+  return result;
+};
 export const getLegendIconColor = (colors: string[], index: number) => {
   const remainder = index % colors.length;
   return pieColors[remainder];

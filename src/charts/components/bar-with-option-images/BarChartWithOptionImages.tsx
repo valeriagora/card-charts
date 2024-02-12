@@ -9,18 +9,18 @@ import React, {
 } from "react";
 import { DndCard } from "@/charts/components/shared/DndCard";
 import {
+  getBase64Image,
   getSvgBlob,
   hasOptionsOverflow,
   isBase64Image,
   registerCoverShape,
-  resizeImageBase64,
-  urlToBase64,
 } from "@/charts/utils";
 import { getSmOption, getMdOption, getLgOption } from "@/charts/options/bar";
 import {
   MIN_L_CHART_HEIGHT,
   OPTION_MARGIN_BOTTOM,
   TEXT_LINE_HEIGHT,
+  url,
 } from "@/charts/constants/shared";
 import { Button } from "@mui/material";
 import { ECharts } from "echarts";
@@ -37,9 +37,8 @@ interface IBarProps {
   data: { name: string; value: number }[];
   legendData: CustomLegend[];
   cardSize: CardSize;
-  questionImage: string;
 }
-function BarChart({ data, legendData, cardSize, questionImage }: IBarProps) {
+function BarChartWithOptionImages({ data, legendData, cardSize }: IBarProps) {
   const [barChartData, setBarChartData] = useState(data);
   const [barLegendData, setBarLegendData] =
     useState<CustomLegend[]>(legendData);
@@ -47,17 +46,52 @@ function BarChart({ data, legendData, cardSize, questionImage }: IBarProps) {
   const [showT2B, setShowT2B] = useState(false);
   const [isQuestionImageReady, setIsQuestionImageReady] = useState(false);
   const withImage = !!questionImageUrl;
+
   const [chartInstance, setChartInstance] = useState<ECharts | null>(null);
   const [size, setSize] = useState<CardSize>(cardSize);
   const containerRef = useRef<HTMLDivElement | null>(null);
   const [downloadQueue, setDownloadQueue] = useState<string[]>([]);
+  const [areBase64ImagesReady, setBase64ImagesReady] = useState(false);
 
+  // useEffect(() => {
+  //   if (size === CardSize.large) {
+  //     setBarData({
+  //       values,
+  //       labels,
+  //       images: imageOptionUrls,
+  //     });
+  //   }
+  //   if (size === CardSize.medium && mdHasOverflow) {
+  //     setBarData({
+  //       values: withImageOptions ? values.slice(0, 4) : values.slice(0, 11),
+  //       labels: withImageOptions
+  //         ? Object.fromEntries(Object.entries(labels).slice(0, 4))
+  //         : Object.fromEntries(Object.entries(labels).slice(0, 11)),
+  //       images: imageOptionUrls,
+  //     });
+  //   }
+  //   if (size === CardSize.small && smHasOverflow) {
+  //     setBarData({
+  //       values: values.slice(0, 5),
+  //       labels: Object.fromEntries(Object.entries(labels).slice(0, 5)),
+  //       images: undefined,
+  //     });
+  //   }
+  // }, [
+  //   size,
+  //   smHasOverflow,
+  //   mdHasOverflow,
+  //   withImageOptions,
+  //   values,
+  //   labels,
+  //   imageOptionUrls,
+  // ]);
   useEffect(() => {
     registerCoverShape();
   }, []);
 
   const toggleImg = () => {
-    setQuestionImageUrl(questionImageUrl ? "" : questionImage);
+    setQuestionImageUrl(questionImageUrl ? "" : url);
   };
   const toggleT2B = () => {
     setShowT2B(!showT2B);
@@ -78,7 +112,7 @@ function BarChart({ data, legendData, cardSize, questionImage }: IBarProps) {
     const url = await getSvgBlob(chartInstance);
     const anchorElement = document.createElement("a");
     anchorElement.href = url;
-    anchorElement.download = `bar-chart-${size}.svg`;
+    anchorElement.download = `bar-chart.svg`;
     document.body.appendChild(anchorElement);
     anchorElement.click();
   };
@@ -123,7 +157,7 @@ function BarChart({ data, legendData, cardSize, questionImage }: IBarProps) {
         showT2B,
         questionImageUrl
       ),
-    [barChartData, size, withImage, showT2B, isQuestionImageReady]
+    [barChartData, size, withImage, showT2B]
   );
   const lContainerHeight =
     ML_BAR_BOTTOM_PADDING +
@@ -143,7 +177,7 @@ function BarChart({ data, legendData, cardSize, questionImage }: IBarProps) {
         questionImageUrl,
         largeContainerHeight
       ),
-    [barChartData, barLegendData, withImage, showT2B, isQuestionImageReady]
+    [barChartData, barLegendData, withImage, showT2B]
   );
   const options = useMemo(
     () => ({
@@ -253,4 +287,4 @@ function BarChart({ data, legendData, cardSize, questionImage }: IBarProps) {
   );
 }
 
-export default BarChart;
+export default BarChartWithOptionImages;
