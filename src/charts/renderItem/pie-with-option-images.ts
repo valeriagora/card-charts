@@ -78,7 +78,6 @@ export const renderMdLegendItem = (
     silent: true,
     children: [
       ...questionImage,
-
       {
         type: "text",
         style: {

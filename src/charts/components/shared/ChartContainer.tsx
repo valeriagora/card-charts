@@ -9,10 +9,18 @@ interface IChartContainerProps {
   height?: number;
   hasOverflow: boolean;
   optionsCount: number;
+  withOptionImages?: boolean;
   children: ReactNode;
 }
 export const ChartContainer = forwardRef(function Container(
-  { size, height, hasOverflow, optionsCount, children }: IChartContainerProps,
+  {
+    size,
+    height,
+    hasOverflow,
+    optionsCount,
+    children,
+    withOptionImages = false,
+  }: IChartContainerProps,
   ref
 ) {
   return (
@@ -25,8 +33,9 @@ export const ChartContainer = forwardRef(function Container(
       {hasOverflow && (
         <OverflowInfo>
           {size !== CardSize.large &&
-            chartOptionsOverflow[size as CardSize.small | CardSize.medium]
-              .default}
+            chartOptionsOverflow[size as CardSize.small | CardSize.medium][
+              withOptionImages ? "withImgOptions" : "default"
+            ]}
           / {optionsCount} options{" "}
           <Image width={16} height={16} src={"/info.svg"} alt="info" />
         </OverflowInfo>

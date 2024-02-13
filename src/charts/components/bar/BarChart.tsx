@@ -31,7 +31,12 @@ import FormControl from "@mui/material/FormControl";
 import FormLabel from "@mui/material/FormLabel";
 import { CardSize, CustomLegend } from "@/charts/types";
 import { ChartContainer } from "@/charts/components/shared/ChartContainer";
-import { ML_BAR_BOTTOM_PADDING } from "@/charts/constants/bar";
+import {
+  BAR_HEIGHT,
+  ML_GRID_BOTTOM_PADDING,
+  M_BAR_Y_GAP,
+  M_BAR_Y_PADDINGS,
+} from "@/charts/constants/bar";
 
 interface IBarProps {
   data: { name: string; value: number }[];
@@ -126,9 +131,10 @@ function BarChart({ data, legendData, cardSize, questionImage }: IBarProps) {
     [barChartData, size, withImage, showT2B, isQuestionImageReady]
   );
   const lContainerHeight =
-    ML_BAR_BOTTOM_PADDING +
-    TEXT_LINE_HEIGHT * barChartData.length +
-    (barChartData.length - 1) * OPTION_MARGIN_BOTTOM;
+    ML_GRID_BOTTOM_PADDING +
+    BAR_HEIGHT * barChartData.length +
+    (barChartData.length - 1) * M_BAR_Y_GAP +
+    M_BAR_Y_PADDINGS;
   const largeContainerHeight =
     lContainerHeight > MIN_L_CHART_HEIGHT
       ? lContainerHeight

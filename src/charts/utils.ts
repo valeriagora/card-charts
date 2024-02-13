@@ -10,7 +10,7 @@ import {
   TEXT_LINE_HEIGHT,
 } from "@/charts/constants/shared";
 import {
-  ML_BAR_BOTTOM_PADDING,
+  ML_GRID_BOTTOM_PADDING,
   ML_BAR_TEXT_MARGIN_BOTTOM,
 } from "@/charts/constants/bar";
 import { CardSize } from "@/charts/types";
@@ -204,11 +204,11 @@ export const getBarsContainerHeight = (size: CardSize, length: number) => {
   if (size === CardSize.medium) {
     return length > chartOptionsOverflow.medium.default
       ? chartOptionsOverflow.medium.default * TEXT_LINE_HEIGHT +
-          ML_BAR_BOTTOM_PADDING +
+          ML_GRID_BOTTOM_PADDING +
           ML_BAR_TEXT_MARGIN_BOTTOM * (chartOptionsOverflow.medium.default - 1)
       : length * TEXT_LINE_HEIGHT +
           (length - 1) * ML_BAR_TEXT_MARGIN_BOTTOM +
-          ML_BAR_BOTTOM_PADDING;
+          ML_GRID_BOTTOM_PADDING;
   }
   // if (size===CardSize.large) {
   //   return

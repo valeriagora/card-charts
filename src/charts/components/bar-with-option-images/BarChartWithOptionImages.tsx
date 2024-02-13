@@ -14,10 +14,17 @@ import {
   hasOptionsOverflow,
   isBase64Image,
   registerCoverShape,
+  resizeImageBase64,
+  urlToBase64,
 } from "@/charts/utils";
-import { getSmOption, getMdOption, getLgOption } from "@/charts/options/bar";
+import { getSmOption } from "@/charts/options/bar";
+import {
+  getMdOption,
+  getLgOption,
+} from "@/charts/options/bar-with-option-images";
 import {
   MIN_L_CHART_HEIGHT,
+  OPTION_IMAGE_SIDE,
   OPTION_MARGIN_BOTTOM,
   TEXT_LINE_HEIGHT,
   url,
@@ -31,7 +38,10 @@ import FormControl from "@mui/material/FormControl";
 import FormLabel from "@mui/material/FormLabel";
 import { CardSize, CustomLegend } from "@/charts/types";
 import { ChartContainer } from "@/charts/components/shared/ChartContainer";
-import { ML_BAR_BOTTOM_PADDING } from "@/charts/constants/bar";
+import {
+  ML_GRID_BOTTOM_PADDING,
+  M_BAR_WITH_OPTION_IMG_Y_GAP,
+} from "@/charts/constants/bar";
 
 interface IBarProps {
   data: { name: string; value: number }[];
@@ -53,39 +63,6 @@ function BarChartWithOptionImages({ data, legendData, cardSize }: IBarProps) {
   const [downloadQueue, setDownloadQueue] = useState<string[]>([]);
   const [areBase64ImagesReady, setBase64ImagesReady] = useState(false);
 
-  // useEffect(() => {
-  //   if (size === CardSize.large) {
-  //     setBarData({
-  //       values,
-  //       labels,
-  //       images: imageOptionUrls,
-  //     });
-  //   }
-  //   if (size === CardSize.medium && mdHasOverflow) {
-  //     setBarData({
-  //       values: withImageOptions ? values.slice(0, 4) : values.slice(0, 11),
-  //       labels: withImageOptions
-  //         ? Object.fromEntries(Object.entries(labels).slice(0, 4))
-  //         : Object.fromEntries(Object.entries(labels).slice(0, 11)),
-  //       images: imageOptionUrls,
-  //     });
-  //   }
-  //   if (size === CardSize.small && smHasOverflow) {
-  //     setBarData({
-  //       values: values.slice(0, 5),
-  //       labels: Object.fromEntries(Object.entries(labels).slice(0, 5)),
-  //       images: undefined,
-  //     });
-  //   }
-  // }, [
-  //   size,
-  //   smHasOverflow,
-  //   mdHasOverflow,
-  //   withImageOptions,
-  //   values,
-  //   labels,
-  //   imageOptionUrls,
-  // ]);
   useEffect(() => {
     registerCoverShape();
   }, []);
@@ -143,7 +120,7 @@ function BarChartWithOptionImages({ data, legendData, cardSize }: IBarProps) {
       getSmOption(
         barChartData,
         barLegendData,
-        hasOptionsOverflow(size, barChartData.length)
+        hasOptionsOverflow(size, barChartData.length, true)
       ),
     [barChartData, size]
   );
@@ -153,16 +130,16 @@ function BarChartWithOptionImages({ data, legendData, cardSize }: IBarProps) {
         barChartData,
         barLegendData,
         withImage,
-        hasOptionsOverflow(size, barChartData.length),
+        hasOptionsOverflow(size, barChartData.length, true),
         showT2B,
         questionImageUrl
       ),
     [barChartData, size, withImage, showT2B]
   );
   const lContainerHeight =
-    ML_BAR_BOTTOM_PADDING +
-    TEXT_LINE_HEIGHT * barChartData.length +
-    (barChartData.length - 1) * OPTION_MARGIN_BOTTOM;
+    ML_GRID_BOTTOM_PADDING +
+    M_BAR_WITH_OPTION_IMG_Y_GAP * barChartData.length +
+    16 * barChartData.length;
   const largeContainerHeight =
     lContainerHeight > MIN_L_CHART_HEIGHT
       ? lContainerHeight
@@ -265,7 +242,8 @@ function BarChartWithOptionImages({ data, legendData, cardSize }: IBarProps) {
           size={size}
           height={size === CardSize.large ? largeContainerHeight : undefined}
           optionsCount={barChartData.length}
-          hasOverflow={hasOptionsOverflow(size, barChartData.length)}
+          hasOverflow={hasOptionsOverflow(size, barChartData.length, true)}
+          withOptionImages
         >
           {/* <BarsContainer
             height={
