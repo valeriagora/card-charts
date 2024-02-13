@@ -4,7 +4,7 @@ import {
   SeriesOption,
   CustomSeriesRenderItemAPI,
 } from "echarts";
-import { CardSize, CustomLegend } from "@/charts/types";
+import { CardSize, CustomLegend, CustomLegendWithImage } from "@/charts/types";
 import {
   renderBarLgLegendItem,
   renderBarMdLegendItem,
@@ -24,7 +24,7 @@ import {
 
 export const getMdOption = (
   data: { name: string; value: number }[],
-  legendData: CustomLegend[],
+  legendData: CustomLegend | CustomLegendWithImage,
   withImage: boolean,
   hasOverflow: boolean,
   showT2B: boolean,
@@ -124,7 +124,7 @@ export const getMdOption = (
 
 export const getLgOption = (
   data: { name: string; value: number }[],
-  legendData: CustomLegend[],
+  legendData: CustomLegend | CustomLegendWithImage,
   withImage: boolean,
   showT2B: boolean,
   questionImageUrl: string,

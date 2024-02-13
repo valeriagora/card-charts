@@ -191,7 +191,6 @@ function PieChartWIthOptionImages({
       const base64QImg = await Promise.resolve(base64);
       base64QImg && setQuestionImageUrl(base64QImg);
       setDownloadQueue([...downloadQueue, "download"]);
-
       return;
     }
     chartInstance && downloadChart(chartInstance);

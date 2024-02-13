@@ -14,7 +14,7 @@ import {
   M_BAR_Y_GAP,
   M_BAR_Y_PADDINGS,
 } from "@/charts/constants/bar";
-import { CardSize, CustomLegend } from "@/charts/types";
+import { CardSize, CustomLegend, CustomLegendWithImage } from "@/charts/types";
 import {
   renderBarLgLegendItem,
   renderBarMdLegendItem,
@@ -31,7 +31,7 @@ import { breakWord } from "../utils";
 
 export const getSmOption = (
   data: { name: string; value: number }[],
-  legendData: CustomLegend[],
+  legendData: CustomLegend | CustomLegendWithImage,
   hasOverflow: boolean
 ): ReactEChartsProps["option"] => {
   const barData = hasOverflow ? data.slice(0, 4) : data;

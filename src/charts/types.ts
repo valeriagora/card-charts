@@ -17,5 +17,7 @@ export enum CardSize {
   medium = "medium",
   large = "large",
 }
-export type CustomLegend = [number, number, string][];
-export type CustomLegendWithImage = [number, number, string, string][];
+export type CustomLegendItem = [number, number, string];
+export type CustomLegend = CustomLegendItem[];
+export type CustomLegendWithImageItem = [number, number, string, string];
+export type CustomLegendWithImage = CustomLegendWithImageItem[];

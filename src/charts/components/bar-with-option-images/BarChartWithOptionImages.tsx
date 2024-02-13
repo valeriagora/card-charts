@@ -36,7 +36,12 @@ import RadioGroup from "@mui/material/RadioGroup";
 import FormControlLabel from "@mui/material/FormControlLabel";
 import FormControl from "@mui/material/FormControl";
 import FormLabel from "@mui/material/FormLabel";
-import { CardSize, CustomLegend } from "@/charts/types";
+import {
+  CardSize,
+  CustomLegend,
+  CustomLegendWithImage,
+  CustomLegendWithImageItem,
+} from "@/charts/types";
 import { ChartContainer } from "@/charts/components/shared/ChartContainer";
 import {
   ML_GRID_BOTTOM_PADDING,
@@ -45,18 +50,17 @@ import {
 
 interface IBarProps {
   data: { name: string; value: number }[];
-  legendData: CustomLegend[];
+  legendData: CustomLegendWithImage;
   cardSize: CardSize;
 }
 function BarChartWithOptionImages({ data, legendData, cardSize }: IBarProps) {
   const [barChartData, setBarChartData] = useState(data);
   const [barLegendData, setBarLegendData] =
-    useState<CustomLegend[]>(legendData);
+    useState<CustomLegendWithImage>(legendData);
   const [questionImageUrl, setQuestionImageUrl] = useState("");
   const [showT2B, setShowT2B] = useState(false);
   const [isQuestionImageReady, setIsQuestionImageReady] = useState(false);
   const withImage = !!questionImageUrl;
-
   const [chartInstance, setChartInstance] = useState<ECharts | null>(null);
   const [size, setSize] = useState<CardSize>(cardSize);
   const containerRef = useRef<HTMLDivElement | null>(null);
@@ -79,12 +83,15 @@ function BarChartWithOptionImages({ data, legendData, cardSize }: IBarProps) {
   };
 
   const onRenderEnded = useCallback(() => {
+    const areBase64ImagesReady = barLegendData.every((legendItem) =>
+      isBase64Image(legendItem[3])
+    );
     const isQuestionImageReady = questionImageUrl
       ? isBase64Image(questionImageUrl)
       : true;
     setIsQuestionImageReady(isQuestionImageReady);
+    setBase64ImagesReady(!!areBase64ImagesReady);
   }, [barLegendData, questionImageUrl]);
-
   const downloadChart = async (chartInstance: ECharts) => {
     const url = await getSvgBlob(chartInstance);
     const anchorElement = document.createElement("a");
@@ -93,8 +100,34 @@ function BarChartWithOptionImages({ data, legendData, cardSize }: IBarProps) {
     document.body.appendChild(anchorElement);
     anchorElement.click();
   };
-
   const saveAsImage = useCallback(async () => {
+    if (size !== CardSize.small && !areBase64ImagesReady) {
+      const base64Promises: Promise<string>[] = [];
+      const optionImageUrls: any[] = barLegendData.map((item) => item[3]);
+      for (const url of optionImageUrls) {
+        base64Promises.push(
+          urlToBase64(url).then((base64: string) =>
+            resizeImageBase64(base64, 200)
+          )
+        );
+      }
+      const getBase64Promises = async () =>
+        await Promise.all(base64Promises).then((values) => values);
+      const base64Urls = await getBase64Promises();
+      if (base64Urls.length) {
+        setBarLegendData((prev: any) => {
+          const newData = prev.map(
+            (item: CustomLegendWithImage, idx: number) => [
+              ...item.slice(0, 3),
+              base64Urls[idx],
+            ]
+          );
+          return newData;
+        });
+        setDownloadQueue([...downloadQueue, "download"]);
+      }
+      return;
+    }
     const isQuestionImageReady = questionImageUrl
       ? isBase64Image(questionImageUrl)
       : true;
@@ -113,28 +146,22 @@ function BarChartWithOptionImages({ data, legendData, cardSize }: IBarProps) {
     chartInstance,
     size,
     questionImageUrl,
+    areBase64ImagesReady,
     isQuestionImageReady,
   ]);
-  const small = useMemo(
-    () =>
-      getSmOption(
-        barChartData,
-        barLegendData,
-        hasOptionsOverflow(size, barChartData.length, true)
-      ),
-    [barChartData, size]
+  const small = getSmOption(
+    barChartData,
+    barLegendData,
+    hasOptionsOverflow(size, barChartData.length, true)
   );
-  const medium = useMemo(
-    () =>
-      getMdOption(
-        barChartData,
-        barLegendData,
-        withImage,
-        hasOptionsOverflow(size, barChartData.length, true),
-        showT2B,
-        questionImageUrl
-      ),
-    [barChartData, size, withImage, showT2B]
+
+  const medium = getMdOption(
+    barChartData,
+    barLegendData,
+    withImage,
+    hasOptionsOverflow(size, barChartData.length, true),
+    showT2B,
+    questionImageUrl
   );
   const lContainerHeight =
     ML_GRID_BOTTOM_PADDING +
@@ -144,17 +171,13 @@ function BarChartWithOptionImages({ data, legendData, cardSize }: IBarProps) {
     lContainerHeight > MIN_L_CHART_HEIGHT
       ? lContainerHeight
       : MIN_L_CHART_HEIGHT;
-  const large = useMemo(
-    () =>
-      getLgOption(
-        barChartData,
-        barLegendData,
-        withImage,
-        showT2B,
-        questionImageUrl,
-        largeContainerHeight
-      ),
-    [barChartData, barLegendData, withImage, showT2B]
+  const large = getLgOption(
+    barChartData,
+    barLegendData,
+    withImage,
+    showT2B,
+    questionImageUrl,
+    largeContainerHeight
   );
   const options = useMemo(
     () => ({
@@ -164,15 +187,24 @@ function BarChartWithOptionImages({ data, legendData, cardSize }: IBarProps) {
     }),
     [small, medium, , large]
   );
-
   useEffect(() => {
-    if (downloadQueue.length && chartInstance && isQuestionImageReady) {
+    if (
+      downloadQueue.length &&
+      areBase64ImagesReady &&
+      chartInstance &&
+      isQuestionImageReady
+    ) {
       setTimeout(() => {
         downloadChart(chartInstance);
         setDownloadQueue((prev) => prev.slice(0, -1));
       }, 1000);
     }
-  }, [downloadQueue, isQuestionImageReady, chartInstance]);
+  }, [
+    downloadQueue,
+    areBase64ImagesReady,
+    isQuestionImageReady,
+    chartInstance,
+  ]);
   const onChartInit = useCallback((chartInstance: ECharts) => {
     setChartInstance(chartInstance);
   }, []);
