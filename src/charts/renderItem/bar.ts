@@ -8,6 +8,11 @@ import {
   chartBoxDimensions,
   legendTextStyles,
   QUESTION_IMAGE_SIDE,
+  S_CHART_GRID_X_GAP,
+  S_LABEL_X_GAP,
+  ML_LABEL_X_GAP,
+  ML_CHART_GRID_X_GAP,
+  S_CHART_X_GAP,
 } from "@/charts/constants/shared";
 import {
   L_BAR_GRID_CHART_WIDTH,
@@ -16,10 +21,11 @@ import {
   L_MAX_SYMBOLS_WITH_QUESTION_IMG_AND_T2B,
   L_MAX_SYMBOLS_WITH_T2B,
   ML_BAR_CHART_HORIZONTAL_GAP,
+  ML_Y_AXIS_LABEL_X_GAP,
+  M_BAR_CHART_WIDTH,
   M_MAX_SYMBOLS_COUNT,
   M_MAX_SYMBOLS_WITH_QUESTION_IMG,
   M_MAX_SYMBOLS_WITH_T2B,
-  S_BAR_CHART_HORIZONTAL_GAP,
   S_BAR_CHART_WIDTH,
   S_MAX_SYMBOLS_COUNT,
 } from "@/charts/constants/bar";
@@ -35,9 +41,8 @@ export const renderBarSmLegendItem = (
   const percents = api.value(0);
   const label = api.value(2);
   const truncatedText = truncate(label as string, S_MAX_SYMBOLS_COUNT);
-  const percentsX =
-    xAxisStartPx + S_BAR_CHART_WIDTH + S_BAR_CHART_HORIZONTAL_GAP;
-  const labelX = MAX_PERCENTS_TEXT_WIDTH + percentsX;
+  const percentsX = xAxisStartPx + S_BAR_CHART_WIDTH + S_CHART_X_GAP;
+  const labelX = percentsX + MAX_PERCENTS_TEXT_WIDTH + S_LABEL_X_GAP;
   const labelY = param.dataIndex * ySizePx + gridVerticalPadding;
   return {
     type: "group",
@@ -84,12 +89,11 @@ export const renderBarMdLegendItem = (
     ? getQuestionImage(
         questionImageUrl,
         chartBoxDimensions.medium.height,
-        "medium"
+        CardSize.medium
       )
     : [];
-  const percentsX =
-    chartBoxDimensions.medium.width / 2 + ML_BAR_CHART_HORIZONTAL_GAP;
-  const labelX = MAX_PERCENTS_TEXT_WIDTH + percentsX;
+  const percentsX = M_BAR_CHART_WIDTH + ML_CHART_GRID_X_GAP;
+  const labelX = percentsX + MAX_PERCENTS_TEXT_WIDTH + ML_Y_AXIS_LABEL_X_GAP;
   const labelY =
     gridVerticalPadding + param.dataIndex * ySizePx + (ySizePx - 16) / 2 - 2;
   return {
@@ -143,8 +147,10 @@ export const renderBarLgLegendItem = (
   const questionImage = questionImageUrl
     ? getQuestionImage(questionImageUrl, containerHeight, CardSize.large)
     : [];
-  const percentsX = L_BAR_GRID_CHART_WIDTH + ML_BAR_CHART_HORIZONTAL_GAP;
-  const labelX = MAX_PERCENTS_TEXT_WIDTH + percentsX;
+  console.log("*", L_BAR_GRID_CHART_WIDTH, ML_CHART_GRID_X_GAP);
+
+  const percentsX = L_BAR_GRID_CHART_WIDTH + ML_CHART_GRID_X_GAP;
+  const labelX = MAX_PERCENTS_TEXT_WIDTH + ML_LABEL_X_GAP + percentsX;
   const labelY =
     gridVerticalPadding + param.dataIndex * ySizePx + (ySizePx - 16) / 2 - 2;
   return {
@@ -175,7 +181,6 @@ export const renderBarLgLegendItem = (
 };
 
 const ML_CARD_HORIZONTAL_PADDING = 20;
-const L_ROW_MAX_HEIGHT = 60;
 const L_CONTAINER_WIDTH = 992 - ML_CARD_HORIZONTAL_PADDING * 2;
 const M_CONTAINER_WIDTH = 656 - ML_CARD_HORIZONTAL_PADDING * 2;
 const T2B_TEXT_RIGHT_PADDING = 10;

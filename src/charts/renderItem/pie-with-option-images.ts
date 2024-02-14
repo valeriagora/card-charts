@@ -9,7 +9,7 @@ import {
   CustomSeriesRenderItemParams,
 } from "echarts";
 import {
-  CIRCLE_ICON_MARGIN_RIGHT,
+  CIRCLE_ICON_X_MARGIN,
   CIRCLE_ICON_RADIUS,
   L_LEGEND_IMAGE_OPTIONS_MAX_SYMBOLS_COUNT,
   L_LEGEND_IMAGE_OPTIONS_WITH_IMAGE_MAX_SYMBOLS_COUNT,
@@ -25,7 +25,14 @@ import {
   CHART_HORIZONTAL_GAP,
   legendTextStyles,
   pieColors,
+  ML_CHART_X_GAP,
 } from "@/charts/constants/shared";
+import { CardSize } from "../types";
+import {
+  LEGEND_ICON_RADIUS,
+  LEGEND_ICON_X_GAP,
+  LEGEND_LABEL_X_GAP,
+} from "../constants/pie";
 
 export const renderMdLegendItem = (
   param: CustomSeriesRenderItemParams,
@@ -34,7 +41,6 @@ export const renderMdLegendItem = (
   itemsLength: number
 ) => {
   const xAxisStartPx = param.coordSys.x;
-  const [_, ySizePx] = api.size([1, 1]) as number[];
   const iconColor = getLegendIconColor(pieColors, param.dataIndex);
   const percents = api.value(0);
   const label = api.value(2);
@@ -48,7 +54,7 @@ export const renderMdLegendItem = (
     ? getQuestionImage(
         questionImageUrl,
         (param.coordSys as any).height,
-        "medium"
+        CardSize.medium
       )
     : [];
   const coverY =
@@ -65,14 +71,16 @@ export const renderMdLegendItem = (
       ? M_LEGEND_IMAGE_OPTIONS_WITH_IMAGE_MAX_SYMBOLS_COUNT
       : M_LEGEND_IMAGE_OPTIONS_MAX_SYMBOLS_COUNT
   );
-
+  const coverX = xAxisStartPx + ML_CHART_X_GAP;
   const iconX =
-    xAxisStartPx +
-    CHART_HORIZONTAL_GAP +
+    coverX +
     OPTION_IMAGE_SIDE +
     OPTION_IMAGE_MARGIN_RIGHT +
-    CIRCLE_ICON_RADIUS;
-  const percentsX = iconX + CIRCLE_ICON_RADIUS + CIRCLE_ICON_MARGIN_RIGHT;
+    LEGEND_ICON_X_GAP +
+    LEGEND_ICON_RADIUS;
+  const percentsX =
+    iconX + LEGEND_ICON_X_GAP + LEGEND_ICON_RADIUS + LEGEND_LABEL_X_GAP;
+  const labelX = percentsX + MAX_PERCENTS_TEXT_WIDTH + LEGEND_LABEL_X_GAP;
   return {
     type: "group",
     silent: true,
@@ -94,14 +102,14 @@ export const renderMdLegendItem = (
           ...legendTextStyles,
           fill: "#c8cad0",
         },
-        position: [MAX_PERCENTS_TEXT_WIDTH + percentsX, labelY],
+        position: [labelX, labelY],
       },
       {
         type: RECTANGLE_WITH_RADIUS_CUSTOM_SHAPE,
         shape: {
           width: OPTION_IMAGE_SIDE,
           height: OPTION_IMAGE_SIDE,
-          x: xAxisStartPx,
+          x: coverX,
           y: coverY,
         },
         style: {
@@ -117,7 +125,7 @@ export const renderMdLegendItem = (
           width: OPTION_IMAGE_SIDE,
           height: OPTION_IMAGE_SIDE,
         },
-        position: [xAxisStartPx, coverY],
+        position: [coverX, coverY],
       },
       {
         type: "circle",
@@ -150,7 +158,7 @@ export const renderLgLegendItem = (
     ? getQuestionImage(
         questionImageUrl,
         (param.coordSys as any).height,
-        "large"
+        CardSize.large
       )
     : [];
   const percents = api.value(0);
@@ -196,14 +204,24 @@ export const renderLgLegendItem = (
       ? ySizePx / 2 - (labelChunks.length * TEXT_LINE_HEIGHT) / 2
       : optionCenterY -
         (optionsWithImagesLines[param.dataIndex] * TEXT_LINE_HEIGHT) / 2;
+  const coverX = xAxisStartPx + ML_CHART_X_GAP;
   const iconX =
-    xAxisStartPx +
-    CHART_HORIZONTAL_GAP +
+    coverX +
     OPTION_IMAGE_SIDE +
     OPTION_IMAGE_MARGIN_RIGHT +
-    CIRCLE_ICON_RADIUS;
-  const percentsX = iconX + CIRCLE_ICON_RADIUS + CIRCLE_ICON_MARGIN_RIGHT;
-  const labelX = MAX_PERCENTS_TEXT_WIDTH + percentsX;
+    LEGEND_ICON_X_GAP +
+    LEGEND_ICON_RADIUS;
+  const percentsX =
+    iconX + LEGEND_ICON_X_GAP + LEGEND_ICON_RADIUS + LEGEND_LABEL_X_GAP;
+  const labelX = percentsX + MAX_PERCENTS_TEXT_WIDTH + LEGEND_LABEL_X_GAP;
+  // const iconX =
+  //   xAxisStartPx +
+  //   CHART_HORIZONTAL_GAP +
+  //   OPTION_IMAGE_SIDE +
+  //   OPTION_IMAGE_MARGIN_RIGHT +
+  //   CIRCLE_ICON_RADIUS;
+  // const percentsX = iconX + CIRCLE_ICON_RADIUS + CIRCLE_ICON_X_MARGIN;
+  // const labelX = MAX_PERCENTS_TEXT_WIDTH + percentsX;
   return {
     type: "group",
     silent: true,
@@ -237,7 +255,7 @@ export const renderLgLegendItem = (
         shape: {
           width: OPTION_IMAGE_SIDE,
           height: OPTION_IMAGE_SIDE,
-          x: xAxisStartPx,
+          x: coverX,
           y: itemsLength === 1 ? ySizePx / 2 - OPTION_IMAGE_SIDE / 2 : coverY,
         },
         style: {
@@ -254,7 +272,7 @@ export const renderLgLegendItem = (
           height: OPTION_IMAGE_SIDE,
         },
         position: [
-          xAxisStartPx,
+          coverX,
           itemsLength === 1 ? ySizePx / 2 - OPTION_IMAGE_SIDE / 2 : coverY,
         ],
       },

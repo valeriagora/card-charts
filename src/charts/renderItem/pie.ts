@@ -9,7 +9,7 @@ import {
   CustomSeriesRenderItemParams,
 } from "echarts";
 import {
-  CIRCLE_ICON_MARGIN_RIGHT,
+  CIRCLE_ICON_X_MARGIN,
   CIRCLE_ICON_RADIUS,
   L_LEGEND_MAX_SYMBOLS_COUNT,
   L_LEGEND_WITH_IMAGE_MAX_SYMBOLS_COUNT,
@@ -22,26 +22,37 @@ import {
   chartBoxDimensions,
   CHART_HORIZONTAL_GAP,
   legendTextStyles,
-  CIRCLE_ICON_S_MARGIN_LEFT,
+  ML_CHART_GRID_X_GAP,
+  S_CHART_GRID_X_GAP,
+  S_LABEL_X_GAP,
+  S_CHART_X_GAP,
+  ML_CHART_X_GAP,
 } from "@/charts/constants/shared";
+import {
+  LEGEND_ICON_RADIUS,
+  LEGEND_ICON_X_GAP,
+  LEGEND_LABEL_X_GAP,
+} from "../constants/pie";
+import { CardSize } from "../types";
 export const renderSmLegendItem = (
   param: CustomSeriesRenderItemParams,
   api: CustomSeriesRenderItemAPI,
   itemsLength: number
 ) => {
   const xAxisStartPx = param.coordSys.x;
-  const [_, ySizePx] = api.size([1, 1]) as number[];
   const iconColor = getLegendIconColor(pieColors, param.dataIndex);
   const percents = api.value(0);
   const label = api.value(2);
   const truncatedText = truncate(label as string, 11);
-  const iconX = xAxisStartPx + CIRCLE_ICON_RADIUS + CIRCLE_ICON_S_MARGIN_LEFT;
+  const iconX =
+    xAxisStartPx + S_CHART_X_GAP + LEGEND_ICON_X_GAP + LEGEND_ICON_RADIUS;
   const iconY =
     (chartBoxDimensions.small.height - itemsLength * TEXT_LINE_HEIGHT) / 2 +
     TEXT_LINE_HEIGHT / 2 +
     param.dataIndex * TEXT_LINE_HEIGHT;
-  const percentsX = iconX + CIRCLE_ICON_RADIUS + CIRCLE_ICON_MARGIN_RIGHT;
-  const labelX = MAX_PERCENTS_TEXT_WIDTH + percentsX;
+  const percentsX =
+    iconX + LEGEND_ICON_X_GAP + LEGEND_ICON_RADIUS + LEGEND_LABEL_X_GAP;
+  const labelX = percentsX + MAX_PERCENTS_TEXT_WIDTH + LEGEND_LABEL_X_GAP;
   const labelY =
     (chartBoxDimensions.small.height - itemsLength * TEXT_LINE_HEIGHT) / 2 +
     param.dataIndex * TEXT_LINE_HEIGHT;
@@ -89,7 +100,6 @@ export const renderMdLegendItem = (
   itemsLength: number
 ) => {
   const xAxisStartPx = param.coordSys.x;
-  const [_, ySizePx] = api.size([1, 1]) as number[];
   const iconColor = getLegendIconColor(pieColors, param.dataIndex);
   const percents = api.value(0);
   const label = api.value(2);
@@ -102,7 +112,7 @@ export const renderMdLegendItem = (
     ? getQuestionImage(
         questionImageUrl,
         (param.coordSys as any).height,
-        "medium"
+        CardSize.medium
       )
     : [];
   const iconY =
@@ -116,14 +126,16 @@ export const renderMdLegendItem = (
       ? M_LEGEND_WITH_IMAGE_MAX_SYMBOLS_COUNT
       : M_LEGEND_MAX_SYMBOLS_COUNT
   );
-  const iconX = CHART_HORIZONTAL_GAP + xAxisStartPx + CIRCLE_ICON_RADIUS;
-  const percentsX = iconX + CIRCLE_ICON_RADIUS + CIRCLE_ICON_MARGIN_RIGHT;
+  const iconX =
+    xAxisStartPx + ML_CHART_X_GAP + LEGEND_ICON_X_GAP + LEGEND_ICON_RADIUS;
+  const percentsX =
+    iconX + LEGEND_ICON_X_GAP + LEGEND_ICON_RADIUS + LEGEND_LABEL_X_GAP;
+  const labelX = percentsX + MAX_PERCENTS_TEXT_WIDTH + LEGEND_LABEL_X_GAP;
   return {
     type: "group",
     silent: true,
     children: [
       ...questionImage,
-
       {
         type: "text",
         style: {
@@ -140,7 +152,7 @@ export const renderMdLegendItem = (
           ...legendTextStyles,
           fill: "#c8cad0",
         },
-        position: [MAX_PERCENTS_TEXT_WIDTH + percentsX, labelY],
+        position: [labelX, labelY],
       },
       {
         type: "circle",
@@ -173,7 +185,7 @@ export const renderLgLegendItem = (
     ? getQuestionImage(
         questionImageUrl,
         (param.coordSys as any).height,
-        "large"
+        CardSize.large
       )
     : [];
   const percents = api.value(0);
@@ -206,21 +218,16 @@ export const renderLgLegendItem = (
         prevOptionHeightsSum +
         currentOptionVerticalPadding +
         TEXT_LINE_HEIGHT / 2;
-  const coverY =
-    itemsLength === 1
-      ? prevOptionHeightsSum +
-        (optionHeights[param.dataIndex] - OPTION_MARGIN_BOTTOM) / 2 -
-        TEXT_LINE_HEIGHT / 2
-      : optionCenterY - TEXT_LINE_HEIGHT / 2;
-
   const labelY =
     itemsLength === 1
       ? ySizePx / 2 - (labelChunks.length * TEXT_LINE_HEIGHT) / 2
       : optionCenterY -
         (optionsWithImagesLines[param.dataIndex] * TEXT_LINE_HEIGHT) / 2;
-  const iconX = xAxisStartPx + CHART_HORIZONTAL_GAP + CIRCLE_ICON_RADIUS;
-  const percentsX = iconX + CIRCLE_ICON_RADIUS + CIRCLE_ICON_MARGIN_RIGHT;
-  const labelX = MAX_PERCENTS_TEXT_WIDTH + percentsX;
+  const iconX =
+    xAxisStartPx + ML_CHART_X_GAP + LEGEND_ICON_X_GAP + LEGEND_ICON_RADIUS;
+  const percentsX =
+    iconX + LEGEND_ICON_X_GAP + LEGEND_ICON_RADIUS + LEGEND_LABEL_X_GAP;
+  const labelX = percentsX + MAX_PERCENTS_TEXT_WIDTH + LEGEND_LABEL_X_GAP;
   return {
     type: "group",
     silent: true,

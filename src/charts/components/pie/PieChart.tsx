@@ -11,7 +11,7 @@ import {
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { getSmOption, getMdOption, getLgOption } from "@/charts/options/pie";
 import { DndCard } from "@/charts/components/shared/DndCard";
-import { CardSize, CustomLegend } from "@/charts/types";
+import { CardSize } from "@/charts/types";
 import { ECharts } from "echarts";
 import {
   breakWord,
@@ -29,7 +29,6 @@ import {
   OPTION_MARGIN_BOTTOM,
   TEXT_LINE_HEIGHT,
   MIN_L_CHART_HEIGHT,
-  url,
 } from "@/charts/constants/shared";
 import { PieData } from "@/charts/types";
 import { ChartContainer } from "@/charts/components/shared/ChartContainer";
@@ -38,7 +37,7 @@ function PieChart({
   pieData,
   legendData,
   cardSize = CardSize.small,
-  questionImage = url,
+  questionImage,
 }: any) {
   useEffect(() => {
     registerCoverShape();

@@ -34,20 +34,19 @@ import { ChartContainer } from "@/charts/components/shared/ChartContainer";
 import {
   BAR_HEIGHT,
   ML_GRID_BOTTOM_PADDING,
-  M_BAR_Y_GAP,
-  M_BAR_Y_PADDINGS,
+  ML_BAR_CHART_Y_GAP,
+  // M_BAR_Y_PADDINGS,
 } from "@/charts/constants/bar";
 
 interface IBarProps {
   data: { name: string; value: number }[];
-  legendData: CustomLegend[];
+  legendData: CustomLegend;
   cardSize: CardSize;
   questionImage: string;
 }
 function BarChart({ data, legendData, cardSize, questionImage }: IBarProps) {
   const [barChartData, setBarChartData] = useState(data);
-  const [barLegendData, setBarLegendData] =
-    useState<CustomLegend[]>(legendData);
+  const [barLegendData, setBarLegendData] = useState<CustomLegend>(legendData);
   const [questionImageUrl, setQuestionImageUrl] = useState("");
   const [showT2B, setShowT2B] = useState(false);
   const [isQuestionImageReady, setIsQuestionImageReady] = useState(false);
@@ -133,8 +132,8 @@ function BarChart({ data, legendData, cardSize, questionImage }: IBarProps) {
   const lContainerHeight =
     ML_GRID_BOTTOM_PADDING +
     BAR_HEIGHT * barChartData.length +
-    (barChartData.length - 1) * M_BAR_Y_GAP +
-    M_BAR_Y_PADDINGS;
+    (barChartData.length - 1) * ML_BAR_CHART_Y_GAP;
+  // + M_BAR_Y_PADDINGS;
   const largeContainerHeight =
     lContainerHeight > MIN_L_CHART_HEIGHT
       ? lContainerHeight

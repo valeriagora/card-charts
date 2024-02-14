@@ -1,7 +1,4 @@
-import { IChartOptionsOverflow } from "@/types";
-
-export const url =
-  "https://images.unsplash.com/photo-1682695796795-cc287af78a2b?q=80&w=2940&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDF8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D";
+import { IChartOptionsOverflow } from "@/charts/types";
 
 export const chartBoxDimensions = {
   small: {
@@ -29,9 +26,7 @@ export const pieColors = [
   "#E5975F",
   "#B5B7CA",
 ];
-export const MAX_PERCENTS_TEXT_WIDTH = 36;
-export const L_CHART_WIDTH = 952;
-export const M_CHART_WIDTH = 616;
+export const MAX_PERCENTS_TEXT_WIDTH = 32;
 export const IMAGE_OPTION_BG_RADIUS = 8;
 export const QUESTION_IMAGE_SIDE = 120;
 export const M_LEGEND_MAX_SYMBOLS_COUNT = 34;
@@ -45,14 +40,26 @@ export const L_LEGEND_IMAGE_OPTIONS_WITH_IMAGE_MAX_SYMBOLS_COUNT = 31;
 export const TEXT_LINE_HEIGHT = 20;
 export const OPTION_IMAGE_SIDE = 72;
 export const OPTION_IMAGE_MARGIN_RIGHT = 8;
-export const OPTION_MARGIN_BOTTOM = 8;
-export const CIRCLE_ICON_MARGIN_RIGHT = 4;
-export const CIRCLE_ICON_S_MARGIN_LEFT = 4;
+//
+export const CIRCLE_ICON_X_MARGIN = 4;
 export const CIRCLE_ICON_RADIUS = 6;
 export const RECTANGLE_WITH_RADIUS_CUSTOM_SHAPE =
   "RECTANGLE_WITH_RADIUS_CUSTOM_SHAPE";
 export const MIN_L_CHART_HEIGHT = 188;
 export const CHART_HORIZONTAL_GAP = 8;
+//
+export const S_LABEL_X_GAP = 4;
+export const ML_LABEL_X_GAP = 8;
+export const S_CHART_GRID_X_GAP = 12;
+export const ML_CHART_GRID_X_GAP = 8;
+// gap between chart and legend or y-axis
+export const S_CHART_X_GAP = 12;
+export const ML_CHART_X_GAP = 8;
+// vertical gap between options
+export const ML_OPTION_Y_GAP = 8;
+// y axis item(bar) or legend item(pie) margin bottom
+export const OPTION_Y_GAP = 8;
+export const OPTION_MARGIN_BOTTOM = 8;
 export const chartOptionsOverflow: IChartOptionsOverflow = {
   small: { default: 4, withImgOptions: 4 },
   medium: {

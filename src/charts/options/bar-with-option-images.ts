@@ -10,16 +10,16 @@ import {
   renderBarMdLegendItem,
 } from "@/charts/renderItem/bar-with-option-images";
 import { renderT2B } from "@/charts/renderItem/bar";
-import { chartBoxDimensions } from "../constants/shared";
+import { chartBoxDimensions, ML_CHART_X_GAP } from "../constants/shared";
 import { breakWord } from "../utils";
 import {
   BAR_CHART_ML_BOTTOM_PADDING,
-  BAR_GRID_LEFT,
   BAR_HEIGHT,
-  L_BAR_GRID_CHART_WIDTH,
-  ML_BAR_CHART_HORIZONTAL_GAP,
+  L_BAR_CHART_WIDTH,
+  ML_CHART_PADDING_LEFT,
   ML_GRID_BOTTOM_PADDING,
-  M_BAR_WITH_OPTION_IMG_Y_GAP,
+  M_BAR_CHART_WIDTH,
+  ML_BAR_WITH_OPTION_IMG_CHART_Y_GAP,
 } from "../constants/bar";
 
 export const getMdOption = (
@@ -35,7 +35,7 @@ export const getMdOption = (
   const gridVerticalPadding = hasOverflow
     ? 0
     : (chartBoxDimensions.medium.height -
-        M_BAR_WITH_OPTION_IMG_Y_GAP * barData.length -
+        ML_BAR_WITH_OPTION_IMG_CHART_Y_GAP * barData.length -
         BAR_HEIGHT * barData.length -
         BAR_CHART_ML_BOTTOM_PADDING) /
       2;
@@ -62,8 +62,8 @@ export const getMdOption = (
     grid: {
       top: gridVerticalPadding,
       bottom: gridVerticalPadding + ML_GRID_BOTTOM_PADDING,
-      right: "50%",
-      left: BAR_GRID_LEFT,
+      right: M_BAR_CHART_WIDTH + ML_CHART_X_GAP,
+      left: ML_CHART_PADDING_LEFT,
     },
     xAxis: {
       name: "",
@@ -72,7 +72,7 @@ export const getMdOption = (
         margin: 2,
         show: true,
         fontFamily: "Manrope",
-        color: "#6C7080",
+        color: "#c8cad0",
         fontSize: 12,
         lineHeight: 16,
         fontWeight: 400,
@@ -110,7 +110,7 @@ export const getMdOption = (
         data: legend,
       },
       {
-        data: barData, //data
+        data: barData,
         type: "bar",
         barWidth: 16,
         itemStyle: {
@@ -146,8 +146,8 @@ export const getLgOption = (
     grid: {
       top: 0,
       bottom: ML_GRID_BOTTOM_PADDING,
-      left: BAR_GRID_LEFT,
-      right: L_BAR_GRID_CHART_WIDTH + ML_BAR_CHART_HORIZONTAL_GAP,
+      right: L_BAR_CHART_WIDTH + ML_CHART_X_GAP,
+      left: ML_CHART_PADDING_LEFT,
     },
     xAxis: {
       name: "",
@@ -156,7 +156,7 @@ export const getLgOption = (
         margin: 2,
         show: true,
         fontFamily: "Manrope",
-        color: "#6C7080",
+        color: "#c8cad0",
         fontSize: 12,
         lineHeight: 16,
         fontWeight: 400,
@@ -174,7 +174,7 @@ export const getLgOption = (
       show: true,
       data,
       axisTick: {
-        show: true,
+        show: false,
       },
     },
     tooltip: {

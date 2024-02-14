@@ -8,11 +8,15 @@ import {
   BAR_CHART_ML_BOTTOM_PADDING,
   BAR_GRID_LEFT,
   BAR_HEIGHT,
+  L_BAR_CHART_WIDTH,
   L_BAR_GRID_CHART_WIDTH,
   ML_BAR_CHART_HORIZONTAL_GAP,
+  ML_CHART_PADDING_LEFT,
   ML_GRID_BOTTOM_PADDING,
-  M_BAR_Y_GAP,
-  M_BAR_Y_PADDINGS,
+  M_BAR_CHART_WIDTH,
+  ML_BAR_CHART_Y_GAP,
+  ML_BAR_WITH_OPTION_IMG_CHART_Y_GAP,
+  // M_BAR_Y_PADDINGS,
 } from "@/charts/constants/bar";
 import { CardSize, CustomLegend, CustomLegendWithImage } from "@/charts/types";
 import {
@@ -23,8 +27,10 @@ import {
 } from "@/charts/renderItem/bar";
 import {
   chartBoxDimensions,
+  ML_CHART_X_GAP,
   OPTION_IMAGE_SIDE,
-  OPTION_MARGIN_BOTTOM,
+  // OPTION_MARGIN_BOTTOM,
+  S_CHART_X_GAP,
   TEXT_LINE_HEIGHT,
 } from "../constants/shared";
 import { breakWord } from "../utils";
@@ -45,7 +51,7 @@ export const getSmOption = (
     grid: {
       top: gridVerticalPadding,
       bottom: gridVerticalPadding,
-      right: 148 + 12,
+      right: 148 + S_CHART_X_GAP,
       left: 0,
     },
     xAxis: {
@@ -98,7 +104,7 @@ export const getSmOption = (
 
 export const getMdOption = (
   data: { name: string; value: number }[],
-  legendData: CustomLegend[],
+  legendData: CustomLegend,
   withImage: boolean,
   hasOverflow: boolean,
   showT2B: boolean,
@@ -109,9 +115,9 @@ export const getMdOption = (
   const gridVerticalPadding = hasOverflow
     ? 0
     : (chartBoxDimensions.medium.height -
-        M_BAR_Y_GAP * (barData.length - 1) -
+        ML_BAR_CHART_Y_GAP * (barData.length - 1) -
         BAR_HEIGHT * barData.length -
-        M_BAR_Y_PADDINGS -
+        // M_BAR_Y_PADDINGS -
         BAR_CHART_ML_BOTTOM_PADDING) /
       2;
   const t2bSeries =
@@ -131,8 +137,8 @@ export const getMdOption = (
     grid: {
       top: gridVerticalPadding,
       bottom: gridVerticalPadding + ML_GRID_BOTTOM_PADDING,
-      right: "50%",
-      left: BAR_GRID_LEFT,
+      right: M_BAR_CHART_WIDTH + ML_CHART_X_GAP,
+      left: ML_CHART_PADDING_LEFT,
     },
     xAxis: {
       name: "",
@@ -141,7 +147,7 @@ export const getMdOption = (
         margin: 2,
         show: true,
         fontFamily: "Manrope",
-        color: "#6C7080",
+        color: "#c8cad0",
         fontSize: 12,
         lineHeight: 16,
         fontWeight: 400,
@@ -193,7 +199,7 @@ export const getMdOption = (
 
 export const getLgOption = (
   data: { name: string; value: number }[],
-  legendData: CustomLegend[],
+  legendData: CustomLegend,
   withImage: boolean,
   showT2B: boolean,
   questionImageUrl: string,
@@ -202,7 +208,7 @@ export const getLgOption = (
   const gridVerticalPadding =
     (containerHeight -
       data.length * BAR_HEIGHT -
-      (data.length - 1) * OPTION_MARGIN_BOTTOM -
+      (data.length - 1) * ML_BAR_CHART_Y_GAP -
       BAR_CHART_ML_BOTTOM_PADDING) /
     2;
   const t2bSeries = showT2B
@@ -228,8 +234,8 @@ export const getLgOption = (
     grid: {
       top: gridVerticalPadding,
       bottom: gridVerticalPadding,
-      left: BAR_GRID_LEFT,
-      right: L_BAR_GRID_CHART_WIDTH + ML_BAR_CHART_HORIZONTAL_GAP,
+      left: ML_CHART_PADDING_LEFT,
+      right: L_BAR_CHART_WIDTH + ML_CHART_X_GAP,
     },
     xAxis: {
       name: "",
@@ -238,7 +244,7 @@ export const getLgOption = (
         margin: 2,
         show: true,
         fontFamily: "Manrope",
-        color: "#6C7080",
+        color: "#c8cad0",
         fontSize: 12,
         lineHeight: 16,
         fontWeight: 400,

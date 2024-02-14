@@ -12,6 +12,10 @@ import {
   OPTION_IMAGE_SIDE,
   RECTANGLE_WITH_RADIUS_CUSTOM_SHAPE,
   OPTION_IMAGE_MARGIN_RIGHT,
+  S_LABEL_X_GAP,
+  ML_LABEL_X_GAP,
+  ML_CHART_GRID_X_GAP,
+  ML_CHART_X_GAP,
 } from "@/charts/constants/shared";
 import {
   L_BAR_GRID_CHART_WIDTH,
@@ -24,11 +28,12 @@ import {
   M_MAX_SYMBOLS_WITH_OPTION_IMG_COUNT,
   M_MAX_SYMBOLS_WITH_QUESTION_AND_OPTION_IMG,
   M_MAX_SYMBOLS_WITH_T2B_WITH_OPTION_IMG,
-  M_BAR_Y_PADDINGS,
   L_MAX_SYMBOLS_WITH_OPTION_IMG,
   L_MAX_SYMBOLS_WITH_QUESTION_AND_OPTION_IMG,
   L_MAX_SYMBOLS_WITH_T2B_WITH_OPTION_IMG,
   L_MAX_SYMBOLS_WITH_QUESTION_AND_OPTION_IMG_AND_T2B,
+  M_BAR_CHART_WIDTH,
+  L_BAR_CHART_WIDTH,
 } from "@/charts/constants/bar";
 import { CardSize } from "../types";
 
@@ -53,13 +58,12 @@ export const renderBarMdLegendItem = (
     ? getQuestionImage(
         questionImageUrl,
         chartBoxDimensions.medium.height,
-        "medium"
+        CardSize.medium
       )
     : [];
-  const coverX =
-    chartBoxDimensions.medium.width / 2 + ML_BAR_CHART_HORIZONTAL_GAP;
+  const coverX = M_BAR_CHART_WIDTH + ML_CHART_X_GAP;
   const percentsX = coverX + OPTION_IMAGE_SIDE + OPTION_IMAGE_MARGIN_RIGHT;
-  const labelX = MAX_PERCENTS_TEXT_WIDTH + percentsX;
+  const labelX = percentsX + MAX_PERCENTS_TEXT_WIDTH + ML_LABEL_X_GAP;
   const labelY =
     gridVerticalPadding +
     param.dataIndex * ySizePx +
@@ -143,9 +147,9 @@ export const renderBarLgLegendItem = (
   const questionImage = questionImageUrl
     ? getQuestionImage(questionImageUrl, containerHeight, CardSize.large)
     : [];
-  const coverX = L_BAR_GRID_CHART_WIDTH + ML_BAR_CHART_HORIZONTAL_GAP;
-  const percentsX = coverX + OPTION_IMAGE_SIDE + ML_BAR_CHART_HORIZONTAL_GAP;
-  const labelX = MAX_PERCENTS_TEXT_WIDTH + percentsX;
+  const coverX = L_BAR_CHART_WIDTH + ML_CHART_X_GAP;
+  const percentsX = coverX + OPTION_IMAGE_SIDE + OPTION_IMAGE_MARGIN_RIGHT;
+  const labelX = percentsX + MAX_PERCENTS_TEXT_WIDTH + ML_LABEL_X_GAP;
   const labelY = param.dataIndex * ySizePx + (ySizePx - 16) / 2 - 2;
   const coverY = param.dataIndex * ySizePx + (ySizePx - OPTION_IMAGE_SIDE) / 2;
   return {

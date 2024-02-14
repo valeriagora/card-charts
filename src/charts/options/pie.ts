@@ -32,6 +32,7 @@ export const getSmOption = (pieData: any, pieLegendData: any) => {
   const data = pieData;
   const legendData = hasOverflow ? pieLegendData.slice(0, 4) : pieLegendData;
   return {
+    silent: true,
     animation: false,
     tooltip: pieTooltip,
     backgroundColor: "#222430",
@@ -40,7 +41,7 @@ export const getSmOption = (pieData: any, pieLegendData: any) => {
       right: 0,
       top: 0,
       bottom: 0,
-      left: 132,
+      left: 120,
     },
     series: [
       {
@@ -69,6 +70,7 @@ export const getMdOption = (
   const data = hasOverflow ? pieData.slice(0, 11) : pieData;
   const legendData = hasOverflow ? pieLegendData.slice(0, 11) : pieLegendData;
   return {
+    silent: true,
     animation: false,
     tooltip: pieTooltip,
     backgroundColor: "#222430",
@@ -88,7 +90,7 @@ export const getMdOption = (
       },
     ],
     grid: {
-      left: "50%",
+      left: 304,
       right: 1,
       top: 0,
       bottom: 0,
@@ -103,6 +105,7 @@ export const getLgOption = (
   optionsWithImagesLines: number[],
   containerHeight: number
 ) => ({
+  silent: true,
   animation: false,
   tooltip: pieTooltip,
   backgroundColor: "#222430",
@@ -130,7 +133,7 @@ export const getLgOption = (
     },
   ],
   grid: {
-    left: "50%",
+    left: 472,
     right: 1,
     top: 0,
     bottom: 0,

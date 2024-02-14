@@ -137,6 +137,7 @@ function PieChartWIthOptionImages({
     largeContainerHeight < MIN_L_CHART_HEIGHT
       ? MIN_L_CHART_HEIGHT
       : largeContainerHeight;
+  console.log("pie container height", lContainerHeight);
   const [size, setSize] = useState(cardSize);
   const toggleImg = () => {
     setQuestionImageUrl(questionImageUrl ? "" : questionImage);

@@ -27,7 +27,7 @@ import {
   OPTION_IMAGE_SIDE,
   OPTION_MARGIN_BOTTOM,
   TEXT_LINE_HEIGHT,
-  url,
+  // url,
 } from "@/charts/constants/shared";
 import { Button } from "@mui/material";
 import { ECharts } from "echarts";
@@ -45,15 +45,21 @@ import {
 import { ChartContainer } from "@/charts/components/shared/ChartContainer";
 import {
   ML_GRID_BOTTOM_PADDING,
-  M_BAR_WITH_OPTION_IMG_Y_GAP,
+  ML_BAR_WITH_OPTION_IMG_CHART_Y_GAP,
 } from "@/charts/constants/bar";
 
 interface IBarProps {
   data: { name: string; value: number }[];
   legendData: CustomLegendWithImage;
   cardSize: CardSize;
+  questionImage: string;
 }
-function BarChartWithOptionImages({ data, legendData, cardSize }: IBarProps) {
+function BarChartWithOptionImages({
+  data,
+  legendData,
+  cardSize,
+  questionImage,
+}: IBarProps) {
   const [barChartData, setBarChartData] = useState(data);
   const [barLegendData, setBarLegendData] =
     useState<CustomLegendWithImage>(legendData);
@@ -72,7 +78,7 @@ function BarChartWithOptionImages({ data, legendData, cardSize }: IBarProps) {
   }, []);
 
   const toggleImg = () => {
-    setQuestionImageUrl(questionImageUrl ? "" : url);
+    setQuestionImageUrl(questionImageUrl ? "" : questionImage);
   };
   const toggleT2B = () => {
     setShowT2B(!showT2B);
@@ -165,7 +171,7 @@ function BarChartWithOptionImages({ data, legendData, cardSize }: IBarProps) {
   );
   const lContainerHeight =
     ML_GRID_BOTTOM_PADDING +
-    M_BAR_WITH_OPTION_IMG_Y_GAP * barChartData.length +
+    ML_BAR_WITH_OPTION_IMG_CHART_Y_GAP * barChartData.length +
     16 * barChartData.length;
   const largeContainerHeight =
     lContainerHeight > MIN_L_CHART_HEIGHT

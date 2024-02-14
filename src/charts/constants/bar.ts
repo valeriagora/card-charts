@@ -1,14 +1,11 @@
-export const OPTION_IMAGE_HEIGHT = 20;
-export const IMAGE_OPTIONS_LINE_Y_GAP = 8;
 export const BAR_CHART_ML_BOTTOM_PADDING = 16;
 export const BAR_HEIGHT = 16;
-export const M_BAR_Y_GAP = 12;
-export const M_BAR_WITH_OPTION_IMG_Y_GAP = 64;
+export const ML_BAR_CHART_Y_GAP = 12;
+export const ML_BAR_WITH_OPTION_IMG_CHART_Y_GAP = 64;
+// top & bottom paddings of bar chart container
 export const M_BAR_Y_PADDINGS = 8;
 export const S_BAR_MARGIN_BOTTOM = 4;
 export const ML_BAR_MARGIN_BOTTOM = 12;
-export const S_BAR_CHART_WIDTH = 112;
-export const S_BAR_CHART_HORIZONTAL_GAP = 12;
 export const ML_BAR_CHART_HORIZONTAL_GAP = 8;
 export const S_MAX_SYMBOLS_COUNT = 16;
 export const M_MAX_SYMBOLS_COUNT = 40;
@@ -18,7 +15,7 @@ export const M_MAX_SYMBOLS_WITH_OPTION_IMG_COUNT = 27;
 export const M_MAX_SYMBOLS_WITH_T2B_WITH_OPTION_IMG = 13;
 export const M_MAX_SYMBOLS_WITH_QUESTION_AND_OPTION_IMG = 7;
 export const L_MAX_SYMBOLS_COUNT = 75;
-export const L_MAX_SYMBOLS_WITH_T2B = 60;
+export const L_MAX_SYMBOLS_WITH_T2B = 53;
 export const L_MAX_SYMBOLS_WITH_QUESTION_IMG = 55;
 export const L_MAX_SYMBOLS_WITH_QUESTION_IMG_AND_T2B = 34;
 export const L_MAX_SYMBOLS_WITH_OPTION_IMG = 55;
@@ -33,3 +30,11 @@ export const BAR_CHART_S_BOTTOM_PADDING = 20;
 export const BAR_CHART_S_OPTION_HEIGHT = 20;
 export const BAR_CHART_S_OVERFLOW_INFO_HEIGHT = 20;
 export const BAR_GRID_LEFT = 8;
+// bar y-axis gap between text parts(percents and name)
+export const S_Y_AXIS_LABEL_X_GAP = 4;
+export const ML_Y_AXIS_LABEL_X_GAP = 8;
+// bar chart padding left to make the last x-axis label visible
+export const ML_CHART_PADDING_LEFT = 8;
+export const S_BAR_CHART_WIDTH = 120;
+export const M_BAR_CHART_WIDTH = 304;
+export const L_BAR_CHART_WIDTH = 472;

@@ -1,9 +1,8 @@
 import { ECharts, graphic } from "echarts";
 import {
+  chartBoxDimensions,
   chartOptionsOverflow,
   IMAGE_OPTION_BG_RADIUS,
-  L_CHART_WIDTH,
-  M_CHART_WIDTH,
   pieColors,
   QUESTION_IMAGE_SIDE,
   RECTANGLE_WITH_RADIUS_CUSTOM_SHAPE,
@@ -85,9 +84,9 @@ export const isBase64Image = (img: string) => img.startsWith("data:image");
 export const getQuestionImage = (
   questionImageUrl: string,
   coordSysHeight: number,
-  size: string
+  size: CardSize
 ) => {
-  const chartWidth = size === "medium" ? M_CHART_WIDTH : L_CHART_WIDTH;
+  const chartWidth = chartBoxDimensions[size].width;
   return [
     {
       type: RECTANGLE_WITH_RADIUS_CUSTOM_SHAPE,
