@@ -1,6 +1,6 @@
 import {
   chartBoxDimensions,
-  MIN_L_CHART_HEIGHT,
+  MIN_CHART_HEIGHT_L,
 } from "@/charts/constants/shared";
 import { CardSize } from "@/charts/types";
 import { styled } from "@mui/material";
@@ -57,9 +57,9 @@ export const ChartContainerStyled = styled("div")<{
     width,
     height:
       size === CardSize.large && height
-        ? height > MIN_L_CHART_HEIGHT
+        ? height > MIN_CHART_HEIGHT_L
           ? height
-          : MIN_L_CHART_HEIGHT
+          : MIN_CHART_HEIGHT_L
         : chartBoxDimensions[size].height,
     border: "1px solid slateblue",
     display: "flex",

@@ -9,7 +9,6 @@ import React, {
 } from "react";
 import { DndCard } from "@/charts/components/shared/DndCard";
 import {
-  getBase64Image,
   getSvgBlob,
   hasOptionsOverflow,
   isBase64Image,
@@ -22,13 +21,7 @@ import {
   getMdOption,
   getLgOption,
 } from "@/charts/options/bar-with-option-images";
-import {
-  MIN_L_CHART_HEIGHT,
-  OPTION_IMAGE_SIDE,
-  OPTION_MARGIN_BOTTOM,
-  TEXT_LINE_HEIGHT,
-  // url,
-} from "@/charts/constants/shared";
+import { MIN_CHART_HEIGHT_L } from "@/charts/constants/shared";
 import { Button } from "@mui/material";
 import { ECharts } from "echarts";
 import Radio from "@mui/material/Radio";
@@ -36,16 +29,11 @@ import RadioGroup from "@mui/material/RadioGroup";
 import FormControlLabel from "@mui/material/FormControlLabel";
 import FormControl from "@mui/material/FormControl";
 import FormLabel from "@mui/material/FormLabel";
-import {
-  CardSize,
-  CustomLegend,
-  CustomLegendWithImage,
-  CustomLegendWithImageItem,
-} from "@/charts/types";
+import { CardSize, CustomLegendWithImage } from "@/charts/types";
 import { ChartContainer } from "@/charts/components/shared/ChartContainer";
 import {
-  ML_GRID_BOTTOM_PADDING,
-  ML_BAR_WITH_OPTION_IMG_CHART_Y_GAP,
+  BAR_CHART_CONTAINER_PADDING_BOTTOM_ML,
+  BAR_Y_GAP_WITH_OPTION_IMG_ML,
 } from "@/charts/constants/bar";
 
 interface IBarProps {
@@ -170,13 +158,13 @@ function BarChartWithOptionImages({
     questionImageUrl
   );
   const lContainerHeight =
-    ML_GRID_BOTTOM_PADDING +
-    ML_BAR_WITH_OPTION_IMG_CHART_Y_GAP * barChartData.length +
+    BAR_CHART_CONTAINER_PADDING_BOTTOM_ML +
+    BAR_Y_GAP_WITH_OPTION_IMG_ML * barChartData.length +
     16 * barChartData.length;
   const largeContainerHeight =
-    lContainerHeight > MIN_L_CHART_HEIGHT
+    lContainerHeight > MIN_CHART_HEIGHT_L
       ? lContainerHeight
-      : MIN_L_CHART_HEIGHT;
+      : MIN_CHART_HEIGHT_L;
   const large = getLgOption(
     barChartData,
     barLegendData,
@@ -283,20 +271,12 @@ function BarChartWithOptionImages({
           hasOverflow={hasOptionsOverflow(size, barChartData.length, true)}
           withOptionImages
         >
-          {/* <BarsContainer
-            height={
-              size === CardSize.large
-                ? 16 + 20 * barChartData.length + (barChartData.length - 1) * 8
-                : getBarsContainerHeight(size, barChartData.length)
-            }
-          > */}
           <ReactECharts
             containerRef={containerRef}
             option={options[size]}
             onChartInit={onChartInit}
             onRenderEnded={onRenderEnded}
           />
-          {/* </BarsContainer> */}
         </ChartContainer>
       </DndCard>
     </div>

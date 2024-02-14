@@ -9,30 +9,24 @@ import {
   CustomSeriesRenderItemParams,
 } from "echarts";
 import {
-  CIRCLE_ICON_X_MARGIN,
-  CIRCLE_ICON_RADIUS,
-  L_LEGEND_IMAGE_OPTIONS_MAX_SYMBOLS_COUNT,
-  L_LEGEND_IMAGE_OPTIONS_WITH_IMAGE_MAX_SYMBOLS_COUNT,
   MAX_PERCENTS_TEXT_WIDTH,
-  M_LEGEND_IMAGE_OPTIONS_MAX_SYMBOLS_COUNT,
-  M_LEGEND_IMAGE_OPTIONS_WITH_IMAGE_MAX_SYMBOLS_COUNT,
-  OPTION_MARGIN_BOTTOM,
   OPTION_IMAGE_MARGIN_RIGHT,
   OPTION_IMAGE_SIDE,
   RECTANGLE_WITH_RADIUS_CUSTOM_SHAPE,
   TEXT_LINE_HEIGHT,
   chartBoxDimensions,
-  CHART_HORIZONTAL_GAP,
+  CHART_CONTAINER_X_GAP_ML,
   legendTextStyles,
   pieColors,
-  ML_CHART_X_GAP,
 } from "@/charts/constants/shared";
-import { CardSize } from "../types";
 import {
-  LEGEND_ICON_RADIUS,
-  LEGEND_ICON_X_GAP,
-  LEGEND_LABEL_X_GAP,
-} from "../constants/pie";
+  PIE_LEGEND_ICON_X_PADDING,
+  PIE_LEGEND_ICON_RADIUS,
+  PIE_LEGEND_ITEM_TEXT_X_GAP,
+  PIE_LEGEND_ITEM_Y_GAP_ML,
+  pieMaxSymbols,
+} from "@/charts/constants/pie";
+import { CardSize } from "../types";
 
 export const renderMdLegendItem = (
   param: CustomSeriesRenderItemParams,
@@ -48,7 +42,7 @@ export const renderMdLegendItem = (
   const verticalPadding =
     (chartBoxDimensions.medium.height -
       itemsLength * OPTION_IMAGE_SIDE -
-      (itemsLength - 1) * OPTION_MARGIN_BOTTOM) /
+      (itemsLength - 1) * PIE_LEGEND_ITEM_Y_GAP_ML) /
     2;
   const questionImage = questionImageUrl
     ? getQuestionImage(
@@ -59,28 +53,33 @@ export const renderMdLegendItem = (
     : [];
   const coverY =
     verticalPadding +
-    param.dataIndex * (OPTION_IMAGE_SIDE + OPTION_MARGIN_BOTTOM);
+    param.dataIndex * (OPTION_IMAGE_SIDE + PIE_LEGEND_ITEM_Y_GAP_ML);
   const iconY =
     verticalPadding +
-    param.dataIndex * (OPTION_IMAGE_SIDE + OPTION_MARGIN_BOTTOM) +
+    param.dataIndex * (OPTION_IMAGE_SIDE + PIE_LEGEND_ITEM_Y_GAP_ML) +
     OPTION_IMAGE_SIDE / 2;
   const labelY = iconY - TEXT_LINE_HEIGHT / 2;
+  const maxSymbolsWithOptionImgs = pieMaxSymbols.medium.withOptionImgs;
   const truncatedText = truncate(
     label as string,
     questionImageUrl
-      ? M_LEGEND_IMAGE_OPTIONS_WITH_IMAGE_MAX_SYMBOLS_COUNT
-      : M_LEGEND_IMAGE_OPTIONS_MAX_SYMBOLS_COUNT
+      ? maxSymbolsWithOptionImgs.withQuestionImg
+      : maxSymbolsWithOptionImgs.default
   );
-  const coverX = xAxisStartPx + ML_CHART_X_GAP;
+  const coverX = xAxisStartPx + CHART_CONTAINER_X_GAP_ML;
   const iconX =
     coverX +
     OPTION_IMAGE_SIDE +
     OPTION_IMAGE_MARGIN_RIGHT +
-    LEGEND_ICON_X_GAP +
-    LEGEND_ICON_RADIUS;
+    PIE_LEGEND_ICON_X_PADDING +
+    PIE_LEGEND_ICON_RADIUS;
   const percentsX =
-    iconX + LEGEND_ICON_X_GAP + LEGEND_ICON_RADIUS + LEGEND_LABEL_X_GAP;
-  const labelX = percentsX + MAX_PERCENTS_TEXT_WIDTH + LEGEND_LABEL_X_GAP;
+    iconX +
+    PIE_LEGEND_ICON_X_PADDING +
+    PIE_LEGEND_ICON_RADIUS +
+    PIE_LEGEND_ITEM_TEXT_X_GAP;
+  const labelX =
+    percentsX + MAX_PERCENTS_TEXT_WIDTH + PIE_LEGEND_ITEM_TEXT_X_GAP;
   return {
     type: "group",
     silent: true,
@@ -164,30 +163,31 @@ export const renderLgLegendItem = (
   const percents = api.value(0);
   const label = api.value(2);
   const imageOptionUrl = api.value(3);
+  const maxSymbolsWithOptionImgs = pieMaxSymbols.large.withOptionImgs;
   const labelChunks = breakWord(
     label as string,
     questionImageUrl
-      ? L_LEGEND_IMAGE_OPTIONS_WITH_IMAGE_MAX_SYMBOLS_COUNT
-      : L_LEGEND_IMAGE_OPTIONS_MAX_SYMBOLS_COUNT
+      ? maxSymbolsWithOptionImgs.withQuestionImg
+      : maxSymbolsWithOptionImgs.default
   );
   const prevOptionHeightsSum = optionHeights.reduce((total, current, idx) => {
     if (idx < param.dataIndex) {
       const optionMarginBottom =
-        idx === optionHeights.length ? 0 : OPTION_MARGIN_BOTTOM;
+        idx === optionHeights.length ? 0 : PIE_LEGEND_ITEM_Y_GAP_ML;
       total += current + optionMarginBottom;
     }
     return total;
   }, 0);
   const optionsHeightSum =
     optionHeights.reduce((total, current) => total + current, 0) +
-    (optionHeights.length - 1) * OPTION_MARGIN_BOTTOM;
+    (optionHeights.length - 1) * PIE_LEGEND_ITEM_Y_GAP_ML;
   const chartVerticalPadding = (containerHeight - optionsHeightSum) / 2;
   const currentOptionVerticalPadding =
     (optionHeights[param.dataIndex] - OPTION_IMAGE_SIDE) / 2;
   let optionCenterY =
     itemsLength === 1
       ? prevOptionHeightsSum +
-        (optionHeights[param.dataIndex] - OPTION_MARGIN_BOTTOM) / 2
+        (optionHeights[param.dataIndex] - PIE_LEGEND_ITEM_Y_GAP_ML) / 2
       : chartVerticalPadding +
         prevOptionHeightsSum +
         currentOptionVerticalPadding +
@@ -195,33 +195,28 @@ export const renderLgLegendItem = (
   const coverY =
     itemsLength === 1
       ? prevOptionHeightsSum +
-        (optionHeights[param.dataIndex] - OPTION_MARGIN_BOTTOM) / 2 -
+        (optionHeights[param.dataIndex] - PIE_LEGEND_ITEM_Y_GAP_ML) / 2 -
         OPTION_IMAGE_SIDE / 2
       : optionCenterY - OPTION_IMAGE_SIDE / 2;
-
   const labelY =
     itemsLength === 1
       ? ySizePx / 2 - (labelChunks.length * TEXT_LINE_HEIGHT) / 2
       : optionCenterY -
         (optionsWithImagesLines[param.dataIndex] * TEXT_LINE_HEIGHT) / 2;
-  const coverX = xAxisStartPx + ML_CHART_X_GAP;
+  const coverX = xAxisStartPx + CHART_CONTAINER_X_GAP_ML;
   const iconX =
     coverX +
     OPTION_IMAGE_SIDE +
     OPTION_IMAGE_MARGIN_RIGHT +
-    LEGEND_ICON_X_GAP +
-    LEGEND_ICON_RADIUS;
+    PIE_LEGEND_ICON_X_PADDING +
+    PIE_LEGEND_ICON_RADIUS;
   const percentsX =
-    iconX + LEGEND_ICON_X_GAP + LEGEND_ICON_RADIUS + LEGEND_LABEL_X_GAP;
-  const labelX = percentsX + MAX_PERCENTS_TEXT_WIDTH + LEGEND_LABEL_X_GAP;
-  // const iconX =
-  //   xAxisStartPx +
-  //   CHART_HORIZONTAL_GAP +
-  //   OPTION_IMAGE_SIDE +
-  //   OPTION_IMAGE_MARGIN_RIGHT +
-  //   CIRCLE_ICON_RADIUS;
-  // const percentsX = iconX + CIRCLE_ICON_RADIUS + CIRCLE_ICON_X_MARGIN;
-  // const labelX = MAX_PERCENTS_TEXT_WIDTH + percentsX;
+    iconX +
+    PIE_LEGEND_ICON_X_PADDING +
+    PIE_LEGEND_ICON_RADIUS +
+    PIE_LEGEND_ITEM_TEXT_X_GAP;
+  const labelX =
+    percentsX + MAX_PERCENTS_TEXT_WIDTH + PIE_LEGEND_ITEM_TEXT_X_GAP;
   return {
     type: "group",
     silent: true,

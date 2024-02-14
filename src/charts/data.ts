@@ -12,7 +12,7 @@ export const data = [
     value: 25,
   },
   {
-    name: "Intriguing Intriguing Intriguing Intriguing Intriguing Intriguing Intriguing Intriguing IntriguingIntriguingIntriguing",
+    name: "Intriguing Intriguing Intriguing Intriguing Intriguing Intriguing Intriguing Intriguing Intriguing Intriguing Intriguing",
     value: 22,
   },
   {
@@ -27,9 +27,8 @@ export const data = [
     name: "Short answer option",
     value: 1,
   },
-  //
   {
-    name: "Intriguing Intriguing Intriguing Intriguing Intriguing Intriguing Intriguing Intriguing IntriguingIntriguingIntriguing",
+    name: "Intriguing Intriguing Intriguing Intriguing Intriguing Intriguing Intriguing Intriguing",
     value: 22,
   },
   {

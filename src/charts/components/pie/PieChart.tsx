@@ -15,7 +15,6 @@ import { CardSize } from "@/charts/types";
 import { ECharts } from "echarts";
 import {
   breakWord,
-  getBase64Image,
   getSvgBlob,
   hasOptionsOverflow,
   isBase64Image,
@@ -24,12 +23,13 @@ import {
   urlToBase64,
 } from "@/charts/utils";
 import {
-  L_LEGEND_MAX_SYMBOLS_COUNT,
-  L_LEGEND_WITH_IMAGE_MAX_SYMBOLS_COUNT,
-  OPTION_MARGIN_BOTTOM,
   TEXT_LINE_HEIGHT,
-  MIN_L_CHART_HEIGHT,
+  MIN_CHART_HEIGHT_L,
 } from "@/charts/constants/shared";
+import {
+  pieMaxSymbols,
+  PIE_LEGEND_ITEM_Y_GAP_ML,
+} from "@/charts/constants/pie";
 import { PieData } from "@/charts/types";
 import { ChartContainer } from "@/charts/components/shared/ChartContainer";
 
@@ -54,11 +54,12 @@ function PieChart({
   const [downloadQueue, setDownloadQueue] = useState<string[]>([]);
   const optionsLines = pieChartData.reduce((total: number[], current: any) => {
     const { name } = current;
+    const largeMaxSymbols = pieMaxSymbols.large.withoutOptionImgs;
     const linesCount = breakWord(
       `${name}`,
       questionImageUrl
-        ? L_LEGEND_WITH_IMAGE_MAX_SYMBOLS_COUNT
-        : L_LEGEND_MAX_SYMBOLS_COUNT
+        ? largeMaxSymbols.withQuestionImg
+        : largeMaxSymbols.default
     ).length;
     total.push(linesCount);
     return total;
@@ -67,10 +68,10 @@ function PieChart({
 
   const largeContainerHeight =
     optionHeights.reduce((total, height) => (total += height), 0) +
-    OPTION_MARGIN_BOTTOM * (optionHeights.length - 1);
+    PIE_LEGEND_ITEM_Y_GAP_ML * (optionHeights.length - 1);
   const lContainerHeight =
-    largeContainerHeight < MIN_L_CHART_HEIGHT
-      ? MIN_L_CHART_HEIGHT
+    largeContainerHeight < MIN_CHART_HEIGHT_L
+      ? MIN_CHART_HEIGHT_L
       : largeContainerHeight;
   const [size, setSize] = useState(cardSize);
   const toggleImg = () => {

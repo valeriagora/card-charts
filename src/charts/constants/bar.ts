@@ -1,40 +1,42 @@
-export const BAR_CHART_ML_BOTTOM_PADDING = 16;
 export const BAR_HEIGHT = 16;
-export const ML_BAR_CHART_Y_GAP = 12;
-export const ML_BAR_WITH_OPTION_IMG_CHART_Y_GAP = 64;
-// top & bottom paddings of bar chart container
-export const M_BAR_Y_PADDINGS = 8;
-export const S_BAR_MARGIN_BOTTOM = 4;
-export const ML_BAR_MARGIN_BOTTOM = 12;
-export const ML_BAR_CHART_HORIZONTAL_GAP = 8;
-export const S_MAX_SYMBOLS_COUNT = 16;
-export const M_MAX_SYMBOLS_COUNT = 40;
-export const M_MAX_SYMBOLS_WITH_T2B = 26;
-export const M_MAX_SYMBOLS_WITH_QUESTION_IMG = 20;
-export const M_MAX_SYMBOLS_WITH_OPTION_IMG_COUNT = 27;
-export const M_MAX_SYMBOLS_WITH_T2B_WITH_OPTION_IMG = 13;
-export const M_MAX_SYMBOLS_WITH_QUESTION_AND_OPTION_IMG = 7;
-export const L_MAX_SYMBOLS_COUNT = 75;
-export const L_MAX_SYMBOLS_WITH_T2B = 53;
-export const L_MAX_SYMBOLS_WITH_QUESTION_IMG = 55;
-export const L_MAX_SYMBOLS_WITH_QUESTION_IMG_AND_T2B = 34;
-export const L_MAX_SYMBOLS_WITH_OPTION_IMG = 55;
-export const L_MAX_SYMBOLS_WITH_T2B_WITH_OPTION_IMG = 40;
-export const L_MAX_SYMBOLS_WITH_QUESTION_AND_OPTION_IMG = 35;
-export const L_MAX_SYMBOLS_WITH_QUESTION_AND_OPTION_IMG_AND_T2B = 20;
-export const ML_GRID_BOTTOM_PADDING = 16;
-export const ML_BAR_TEXT_MARGIN_BOTTOM = 8;
-export const L_BAR_GRID_CHART_WIDTH = 472;
-export const IMAGE_OPTIONS_X_GAP = 8;
-export const BAR_CHART_S_BOTTOM_PADDING = 20;
-export const BAR_CHART_S_OPTION_HEIGHT = 20;
-export const BAR_CHART_S_OVERFLOW_INFO_HEIGHT = 20;
-export const BAR_GRID_LEFT = 8;
-// bar y-axis gap between text parts(percents and name)
-export const S_Y_AXIS_LABEL_X_GAP = 4;
-export const ML_Y_AXIS_LABEL_X_GAP = 8;
-// bar chart padding left to make the last x-axis label visible
-export const ML_CHART_PADDING_LEFT = 8;
-export const S_BAR_CHART_WIDTH = 120;
-export const M_BAR_CHART_WIDTH = 304;
-export const L_BAR_CHART_WIDTH = 472;
+export const barMaxSymbolsCount = {
+  small: 16,
+  medium: {
+    withoutOptionImgs: {
+      default: 40,
+      withT2B: 26,
+      withQuestionImg: 20,
+    },
+    withOptionImgs: {
+      default: 27,
+      withT2B: 13,
+      withQuestionImg: 6,
+    },
+  },
+  large: {
+    withoutOptionImgs: {
+      default: 68,
+      withT2B: 53,
+      withQuestionImg: 46,
+      withQuestionImgAndT2B: 34,
+    },
+    withOptionImgs: {
+      default: 54,
+      withT2B: 40,
+      withQuestionImg: 35,
+      withQuestionImgAndT2B: 20,
+    },
+  },
+};
+export const BAR_Y_AXIS_TEXT_X_GAP_S = 4;
+export const BAR_Y_AXIS_TEXT_X_GAP_ML = 8;
+export const BAR_CHART_PADDING_LEFT_ML = 8;
+export const BAR_CHART_CONTAINER_PADDING_BOTTOM_ML = 16;
+export const BAR_Y_AXIS_ITEM_Y_GAP_ML = 8;
+export const BAR_Y_GAP_S = 4;
+export const BAR_Y_GAP_ML = 12;
+export const BAR_Y_GAP_WITH_OPTION_IMG_ML = 64;
+export const BAR_Y_AXIS_WIDTH_S = 148;
+export const BAR_Y_AXIS_WIDTH_M = 304;
+export const BAR_Y_AXIS_WIDTH_L = 472;
+export const T2B_TEXT_RIGHT_PADDING = 10;

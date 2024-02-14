@@ -2,7 +2,12 @@ import {
   CustomSeriesRenderItemAPI,
   CustomSeriesRenderItemParams,
 } from "echarts";
-import { pieColors } from "@/charts/constants/shared";
+import {
+  CHART_WIDTH_L,
+  CHART_WIDTH_M,
+  pieColors,
+  CHART_WIDTH_S,
+} from "@/charts/constants/shared";
 import {
   renderSmLegendItem,
   renderMdLegendItem,
@@ -41,7 +46,7 @@ export const getSmOption = (pieData: any, pieLegendData: any) => {
       right: 0,
       top: 0,
       bottom: 0,
-      left: 120,
+      left: CHART_WIDTH_S,
     },
     series: [
       {
@@ -90,8 +95,8 @@ export const getMdOption = (
       },
     ],
     grid: {
-      left: 304,
-      right: 1,
+      left: CHART_WIDTH_M,
+      right: 0,
       top: 0,
       bottom: 0,
     },
@@ -133,8 +138,8 @@ export const getLgOption = (
     },
   ],
   grid: {
-    left: 472,
-    right: 1,
+    left: CHART_WIDTH_L,
+    right: 0,
     top: 0,
     bottom: 0,
   },

@@ -10,18 +10,19 @@ import {
   renderBarMdLegendItem,
 } from "@/charts/renderItem/bar-with-option-images";
 import { renderT2B } from "@/charts/renderItem/bar";
-import { chartBoxDimensions, ML_CHART_X_GAP } from "../constants/shared";
+import {
+  chartBoxDimensions,
+  CHART_CONTAINER_X_GAP_ML,
+  CHART_WIDTH_L,
+  CHART_WIDTH_M,
+} from "../constants/shared";
 import { breakWord } from "../utils";
 import {
-  BAR_CHART_ML_BOTTOM_PADDING,
   BAR_HEIGHT,
-  L_BAR_CHART_WIDTH,
-  ML_CHART_PADDING_LEFT,
-  ML_GRID_BOTTOM_PADDING,
-  M_BAR_CHART_WIDTH,
-  ML_BAR_WITH_OPTION_IMG_CHART_Y_GAP,
+  BAR_CHART_PADDING_LEFT_ML,
+  BAR_Y_GAP_WITH_OPTION_IMG_ML,
+  BAR_CHART_CONTAINER_PADDING_BOTTOM_ML,
 } from "../constants/bar";
-
 export const getMdOption = (
   data: { name: string; value: number }[],
   legendData: CustomLegend | CustomLegendWithImage,
@@ -35,9 +36,9 @@ export const getMdOption = (
   const gridVerticalPadding = hasOverflow
     ? 0
     : (chartBoxDimensions.medium.height -
-        ML_BAR_WITH_OPTION_IMG_CHART_Y_GAP * barData.length -
+        BAR_Y_GAP_WITH_OPTION_IMG_ML * barData.length -
         BAR_HEIGHT * barData.length -
-        BAR_CHART_ML_BOTTOM_PADDING) /
+        BAR_CHART_CONTAINER_PADDING_BOTTOM_ML) /
       2;
   const t2bSeries =
     showT2B && !withImage
@@ -61,9 +62,9 @@ export const getMdOption = (
     show: true,
     grid: {
       top: gridVerticalPadding,
-      bottom: gridVerticalPadding + ML_GRID_BOTTOM_PADDING,
-      right: M_BAR_CHART_WIDTH + ML_CHART_X_GAP,
-      left: ML_CHART_PADDING_LEFT,
+      bottom: gridVerticalPadding + BAR_CHART_CONTAINER_PADDING_BOTTOM_ML,
+      right: CHART_WIDTH_M + CHART_CONTAINER_X_GAP_ML,
+      left: BAR_CHART_PADDING_LEFT_ML,
     },
     xAxis: {
       name: "",
@@ -145,9 +146,9 @@ export const getLgOption = (
     show: true,
     grid: {
       top: 0,
-      bottom: ML_GRID_BOTTOM_PADDING,
-      right: L_BAR_CHART_WIDTH + ML_CHART_X_GAP,
-      left: ML_CHART_PADDING_LEFT,
+      bottom: BAR_CHART_CONTAINER_PADDING_BOTTOM_ML,
+      right: CHART_WIDTH_L + CHART_CONTAINER_X_GAP_ML,
+      left: BAR_CHART_PADDING_LEFT_ML,
     },
     xAxis: {
       name: "",

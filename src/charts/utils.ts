@@ -2,15 +2,15 @@ import { ECharts, graphic } from "echarts";
 import {
   chartBoxDimensions,
   chartOptionsOverflow,
-  IMAGE_OPTION_BG_RADIUS,
+  IMAGE_BG_RADIUS,
   pieColors,
   QUESTION_IMAGE_SIDE,
   RECTANGLE_WITH_RADIUS_CUSTOM_SHAPE,
   TEXT_LINE_HEIGHT,
 } from "@/charts/constants/shared";
 import {
-  ML_GRID_BOTTOM_PADDING,
-  ML_BAR_TEXT_MARGIN_BOTTOM,
+  BAR_Y_AXIS_TEXT_X_GAP_ML,
+  BAR_CHART_CONTAINER_PADDING_BOTTOM_ML,
 } from "@/charts/constants/bar";
 import { CardSize } from "@/charts/types";
 
@@ -121,30 +121,20 @@ export const registerCoverShape = () => {
     buildPath: function (ctx, shape) {
       const { x, y, height } = shape;
       ctx.beginPath();
-      ctx.moveTo(x + IMAGE_OPTION_BG_RADIUS, y);
-      ctx.lineTo(x + height - IMAGE_OPTION_BG_RADIUS, y);
-      ctx.quadraticCurveTo(
-        x + height,
-        y,
-        x + height,
-        y + IMAGE_OPTION_BG_RADIUS
-      );
-      ctx.lineTo(x + height, y + height - IMAGE_OPTION_BG_RADIUS);
+      ctx.moveTo(x + IMAGE_BG_RADIUS, y);
+      ctx.lineTo(x + height - IMAGE_BG_RADIUS, y);
+      ctx.quadraticCurveTo(x + height, y, x + height, y + IMAGE_BG_RADIUS);
+      ctx.lineTo(x + height, y + height - IMAGE_BG_RADIUS);
       ctx.quadraticCurveTo(
         x + height,
         y + height,
-        x + height - IMAGE_OPTION_BG_RADIUS,
+        x + height - IMAGE_BG_RADIUS,
         y + height
       );
-      ctx.lineTo(x + IMAGE_OPTION_BG_RADIUS, y + height);
-      ctx.quadraticCurveTo(
-        x,
-        y + height,
-        x,
-        y + height - IMAGE_OPTION_BG_RADIUS
-      );
-      ctx.lineTo(x, y + IMAGE_OPTION_BG_RADIUS);
-      ctx.quadraticCurveTo(x, y, x + IMAGE_OPTION_BG_RADIUS, y);
+      ctx.lineTo(x + IMAGE_BG_RADIUS, y + height);
+      ctx.quadraticCurveTo(x, y + height, x, y + height - IMAGE_BG_RADIUS);
+      ctx.lineTo(x, y + IMAGE_BG_RADIUS);
+      ctx.quadraticCurveTo(x, y, x + IMAGE_BG_RADIUS, y);
       ctx.closePath();
     },
   });
@@ -203,13 +193,10 @@ export const getBarsContainerHeight = (size: CardSize, length: number) => {
   if (size === CardSize.medium) {
     return length > chartOptionsOverflow.medium.default
       ? chartOptionsOverflow.medium.default * TEXT_LINE_HEIGHT +
-          ML_GRID_BOTTOM_PADDING +
-          ML_BAR_TEXT_MARGIN_BOTTOM * (chartOptionsOverflow.medium.default - 1)
+          BAR_CHART_CONTAINER_PADDING_BOTTOM_ML +
+          BAR_Y_AXIS_TEXT_X_GAP_ML * (chartOptionsOverflow.medium.default - 1)
       : length * TEXT_LINE_HEIGHT +
-          (length - 1) * ML_BAR_TEXT_MARGIN_BOTTOM +
-          ML_GRID_BOTTOM_PADDING;
+          (length - 1) * BAR_Y_AXIS_TEXT_X_GAP_ML +
+          BAR_CHART_CONTAINER_PADDING_BOTTOM_ML;
   }
-  // if (size===CardSize.large) {
-  //   return
-  // }
 };

@@ -17,11 +17,7 @@ import {
   urlToBase64,
 } from "@/charts/utils";
 import { getSmOption, getMdOption, getLgOption } from "@/charts/options/bar";
-import {
-  MIN_L_CHART_HEIGHT,
-  OPTION_MARGIN_BOTTOM,
-  TEXT_LINE_HEIGHT,
-} from "@/charts/constants/shared";
+import { MIN_CHART_HEIGHT_L } from "@/charts/constants/shared";
 import { Button } from "@mui/material";
 import { ECharts } from "echarts";
 import Radio from "@mui/material/Radio";
@@ -33,9 +29,8 @@ import { CardSize, CustomLegend } from "@/charts/types";
 import { ChartContainer } from "@/charts/components/shared/ChartContainer";
 import {
   BAR_HEIGHT,
-  ML_GRID_BOTTOM_PADDING,
-  ML_BAR_CHART_Y_GAP,
-  // M_BAR_Y_PADDINGS,
+  BAR_CHART_CONTAINER_PADDING_BOTTOM_ML,
+  BAR_Y_GAP_ML,
 } from "@/charts/constants/bar";
 
 interface IBarProps {
@@ -130,14 +125,13 @@ function BarChart({ data, legendData, cardSize, questionImage }: IBarProps) {
     [barChartData, size, withImage, showT2B, isQuestionImageReady]
   );
   const lContainerHeight =
-    ML_GRID_BOTTOM_PADDING +
+    BAR_CHART_CONTAINER_PADDING_BOTTOM_ML +
     BAR_HEIGHT * barChartData.length +
-    (barChartData.length - 1) * ML_BAR_CHART_Y_GAP;
-  // + M_BAR_Y_PADDINGS;
+    (barChartData.length - 1) * BAR_Y_GAP_ML;
   const largeContainerHeight =
-    lContainerHeight > MIN_L_CHART_HEIGHT
+    lContainerHeight > MIN_CHART_HEIGHT_L
       ? lContainerHeight
-      : MIN_L_CHART_HEIGHT;
+      : MIN_CHART_HEIGHT_L;
   const large = useMemo(
     () =>
       getLgOption(
@@ -238,20 +232,12 @@ function BarChart({ data, legendData, cardSize, questionImage }: IBarProps) {
           optionsCount={barChartData.length}
           hasOverflow={hasOptionsOverflow(size, barChartData.length)}
         >
-          {/* <BarsContainer
-            height={
-              size === CardSize.large
-                ? 16 + 20 * barChartData.length + (barChartData.length - 1) * 8
-                : getBarsContainerHeight(size, barChartData.length)
-            }
-          > */}
           <ReactECharts
             containerRef={containerRef}
             option={options[size]}
             onChartInit={onChartInit}
             onRenderEnded={onRenderEnded}
           />
-          {/* </BarsContainer> */}
         </ChartContainer>
       </DndCard>
     </div>

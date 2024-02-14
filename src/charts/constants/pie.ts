@@ -26,9 +26,31 @@ export const PIE_HIDDEN_AXISES = {
     },
   },
 };
-// pie legend icon container's horizontal padding
-export const LEGEND_ICON_X_GAP = 4;
-// pie legend gaps between icon and percents, percents and name text
-export const LEGEND_LABEL_X_GAP = 4;
-// pie legend icon radius
-export const LEGEND_ICON_RADIUS = 6;
+
+export const PIE_LEGEND_ITEM_TEXT_X_GAP = 4;
+export const PIE_LEGEND_ITEM_Y_GAP_ML = 8;
+export const PIE_LEGEND_ICON_X_PADDING = 4;
+export const PIE_LEGEND_ICON_RADIUS = 6;
+export const pieMaxSymbols = {
+  small: 10,
+  medium: {
+    withoutOptionImgs: {
+      default: 36,
+      withQuestionImg: 15,
+    },
+    withOptionImgs: {
+      default: 24,
+      withQuestionImg: 4,
+    },
+  },
+  large: {
+    withoutOptionImgs: {
+      default: 70,
+      withQuestionImg: 50,
+    },
+    withOptionImgs: {
+      default: 50,
+      withQuestionImg: 33,
+    },
+  },
+};

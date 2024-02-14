@@ -7,24 +7,15 @@ import {
   MAX_PERCENTS_TEXT_WIDTH,
   chartBoxDimensions,
   legendTextStyles,
-  QUESTION_IMAGE_SIDE,
-  OPTION_MARGIN_BOTTOM,
   OPTION_IMAGE_SIDE,
   RECTANGLE_WITH_RADIUS_CUSTOM_SHAPE,
   OPTION_IMAGE_MARGIN_RIGHT,
-  S_LABEL_X_GAP,
-  ML_LABEL_X_GAP,
-  ML_CHART_GRID_X_GAP,
-  ML_CHART_X_GAP,
+  CHART_CONTAINER_X_GAP_ML,
+  CHART_WIDTH_M,
+  CHART_WIDTH_L,
 } from "@/charts/constants/shared";
 import {
-  L_BAR_GRID_CHART_WIDTH,
-  L_MAX_SYMBOLS_COUNT,
-  L_MAX_SYMBOLS_WITH_QUESTION_IMG,
-  L_MAX_SYMBOLS_WITH_QUESTION_IMG_AND_T2B,
-  L_MAX_SYMBOLS_WITH_T2B,
-  ML_GRID_BOTTOM_PADDING,
-  ML_BAR_CHART_HORIZONTAL_GAP,
+  BAR_CHART_CONTAINER_PADDING_BOTTOM_ML,
   M_MAX_SYMBOLS_WITH_OPTION_IMG_COUNT,
   M_MAX_SYMBOLS_WITH_QUESTION_AND_OPTION_IMG,
   M_MAX_SYMBOLS_WITH_T2B_WITH_OPTION_IMG,
@@ -32,8 +23,8 @@ import {
   L_MAX_SYMBOLS_WITH_QUESTION_AND_OPTION_IMG,
   L_MAX_SYMBOLS_WITH_T2B_WITH_OPTION_IMG,
   L_MAX_SYMBOLS_WITH_QUESTION_AND_OPTION_IMG_AND_T2B,
-  M_BAR_CHART_WIDTH,
-  L_BAR_CHART_WIDTH,
+  BAR_Y_AXIS_TEXT_X_GAP_ML,
+  barMaxSymbolsCount,
 } from "@/charts/constants/bar";
 import { CardSize } from "../types";
 
@@ -48,11 +39,12 @@ export const renderBarMdLegendItem = (
   const percents = api.value(0);
   const label = api.value(2);
   const optionImageUrl = api.value(3);
+  const maxSymbolsCount = barMaxSymbolsCount.medium.withOptionImgs;
   const maxSymbols = !!questionImageUrl
-    ? M_MAX_SYMBOLS_WITH_QUESTION_AND_OPTION_IMG
+    ? maxSymbolsCount.withQuestionImg
     : showT2B
-    ? M_MAX_SYMBOLS_WITH_T2B_WITH_OPTION_IMG
-    : M_MAX_SYMBOLS_WITH_OPTION_IMG_COUNT;
+    ? maxSymbolsCount.withT2B
+    : maxSymbolsCount.default;
   const truncatedText = truncate(label as string, maxSymbols);
   const questionImage = questionImageUrl
     ? getQuestionImage(
@@ -61,13 +53,13 @@ export const renderBarMdLegendItem = (
         CardSize.medium
       )
     : [];
-  const coverX = M_BAR_CHART_WIDTH + ML_CHART_X_GAP;
+  const coverX = CHART_WIDTH_M + CHART_CONTAINER_X_GAP_ML;
   const percentsX = coverX + OPTION_IMAGE_SIDE + OPTION_IMAGE_MARGIN_RIGHT;
-  const labelX = percentsX + MAX_PERCENTS_TEXT_WIDTH + ML_LABEL_X_GAP;
+  const labelX = percentsX + MAX_PERCENTS_TEXT_WIDTH + BAR_Y_AXIS_TEXT_X_GAP_ML;
   const labelY =
     gridVerticalPadding +
     param.dataIndex * ySizePx +
-    (ySizePx - ML_GRID_BOTTOM_PADDING) / 2 -
+    (ySizePx - BAR_CHART_CONTAINER_PADDING_BOTTOM_ML) / 2 -
     2;
   const coverY =
     gridVerticalPadding +
@@ -136,20 +128,21 @@ export const renderBarLgLegendItem = (
   const isT2BAndQuestionImgShown = showT2B && !!questionImageUrl;
   const isOnlyT2BShown = showT2B && !questionImageUrl;
   const isOnlyImageShown = !!questionImageUrl && !showT2B;
+  const maxSymbolsCount = barMaxSymbolsCount.large.withOptionImgs;
   const maxSymbols = isT2BAndQuestionImgShown
-    ? L_MAX_SYMBOLS_WITH_QUESTION_AND_OPTION_IMG_AND_T2B
+    ? maxSymbolsCount.withQuestionImgAndT2B
     : isOnlyT2BShown
-    ? L_MAX_SYMBOLS_WITH_T2B_WITH_OPTION_IMG
+    ? maxSymbolsCount.withT2B
     : isOnlyImageShown
-    ? L_MAX_SYMBOLS_WITH_QUESTION_AND_OPTION_IMG
-    : L_MAX_SYMBOLS_WITH_OPTION_IMG;
+    ? maxSymbolsCount.withQuestionImg
+    : maxSymbolsCount.default;
   const truncatedText = truncate(label as string, maxSymbols);
   const questionImage = questionImageUrl
     ? getQuestionImage(questionImageUrl, containerHeight, CardSize.large)
     : [];
-  const coverX = L_BAR_CHART_WIDTH + ML_CHART_X_GAP;
+  const coverX = CHART_WIDTH_L + CHART_CONTAINER_X_GAP_ML;
   const percentsX = coverX + OPTION_IMAGE_SIDE + OPTION_IMAGE_MARGIN_RIGHT;
-  const labelX = percentsX + MAX_PERCENTS_TEXT_WIDTH + ML_LABEL_X_GAP;
+  const labelX = percentsX + MAX_PERCENTS_TEXT_WIDTH + BAR_Y_AXIS_TEXT_X_GAP_ML;
   const labelY = param.dataIndex * ySizePx + (ySizePx - 16) / 2 - 2;
   const coverY = param.dataIndex * ySizePx + (ySizePx - OPTION_IMAGE_SIDE) / 2;
   return {

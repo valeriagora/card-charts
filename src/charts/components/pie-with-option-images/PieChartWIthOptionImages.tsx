@@ -24,13 +24,14 @@ import {
 import { getSmOption } from "@/charts/options/pie";
 import {
   chartOptionsOverflow,
-  L_LEGEND_IMAGE_OPTIONS_MAX_SYMBOLS_COUNT,
-  L_LEGEND_IMAGE_OPTIONS_WITH_IMAGE_MAX_SYMBOLS_COUNT,
-  OPTION_MARGIN_BOTTOM,
   OPTION_IMAGE_SIDE,
   TEXT_LINE_HEIGHT,
-  MIN_L_CHART_HEIGHT,
+  MIN_CHART_HEIGHT_L,
 } from "@/charts/constants/shared";
+import {
+  pieMaxSymbols,
+  PIE_LEGEND_ITEM_Y_GAP_ML,
+} from "@/charts/constants/pie";
 import { DndCard } from "@/charts/components/shared/DndCard";
 import { CardSize, CustomLegendWithImage } from "@/charts/types";
 import { ECharts } from "echarts";
@@ -111,11 +112,12 @@ function PieChartWIthOptionImages({
   const optionsWithImagesLines = pieChartData.reduce(
     (total: number[], current: any) => {
       const { value, name } = current;
+      const largeMaxSymbols = pieMaxSymbols.large.withOptionImgs;
       const linesCount = breakWord(
         `${name}`,
         questionImageUrl
-          ? L_LEGEND_IMAGE_OPTIONS_WITH_IMAGE_MAX_SYMBOLS_COUNT
-          : L_LEGEND_IMAGE_OPTIONS_MAX_SYMBOLS_COUNT
+          ? largeMaxSymbols.withQuestionImg
+          : largeMaxSymbols.default
       ).length;
       total.push(linesCount);
       return total;
@@ -132,10 +134,10 @@ function PieChartWIthOptionImages({
 
   const largeContainerHeight =
     optionHeights.reduce((total, height) => (total += height), 0) +
-    OPTION_MARGIN_BOTTOM * (optionHeights.length - 1);
+    PIE_LEGEND_ITEM_Y_GAP_ML * (optionHeights.length - 1);
   const lContainerHeight =
-    largeContainerHeight < MIN_L_CHART_HEIGHT
-      ? MIN_L_CHART_HEIGHT
+    largeContainerHeight < MIN_CHART_HEIGHT_L
+      ? MIN_CHART_HEIGHT_L
       : largeContainerHeight;
   console.log("pie container height", lContainerHeight);
   const [size, setSize] = useState(cardSize);
