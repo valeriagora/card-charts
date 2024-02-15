@@ -7,6 +7,7 @@ import {
 import {
   CustomSeriesRenderItemAPI,
   CustomSeriesRenderItemParams,
+  CustomSeriesRenderItemReturn,
 } from "echarts";
 import {
   MAX_PERCENTS_TEXT_WIDTH,
@@ -29,7 +30,8 @@ export const renderSmLegendItem = (
   param: CustomSeriesRenderItemParams,
   api: CustomSeriesRenderItemAPI,
   itemsLength: number
-) => {
+): CustomSeriesRenderItemReturn => {
+  // @ts-ignore
   const xAxisStartPx = param.coordSys.x;
   const iconColor = getLegendIconColor(pieColors, param.dataIndex);
   const percents = api.value(0);
@@ -66,7 +68,7 @@ export const renderSmLegendItem = (
           fill: "#fff",
         },
         position: [percentsX, labelY],
-      },
+      } as any,
       {
         type: "text",
         style: {
@@ -96,7 +98,8 @@ export const renderMdLegendItem = (
   api: CustomSeriesRenderItemAPI,
   questionImageUrl: string,
   itemsLength: number
-) => {
+): CustomSeriesRenderItemReturn => {
+  // @ts-ignore
   const xAxisStartPx = param.coordSys.x;
   const iconColor = getLegendIconColor(pieColors, param.dataIndex);
   const percents = api.value(0);
@@ -184,8 +187,9 @@ export const renderLgLegendItem = (
   containerHeight: number
 ) => {
   const itemsLength = optionHeights.length;
+  // @ts-ignore
   const xAxisStartPx = param.coordSys.x;
-  const [_, ySizePx] = api.size([1, 1]) as number[];
+  const [_, ySizePx] = api.size!([1, 1]) as number[];
   const iconColor = getLegendIconColor(pieColors, param.dataIndex);
   const questionImage = questionImageUrl
     ? getQuestionImage(

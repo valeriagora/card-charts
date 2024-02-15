@@ -3,6 +3,8 @@ import {
   CustomSeriesRenderItemParams,
   SeriesOption,
   CustomSeriesRenderItemAPI,
+  CustomSeriesRenderItem,
+  CustomSeriesRenderItemReturn,
 } from "echarts";
 import { CardSize, CustomLegend, CustomLegendWithImage } from "@/charts/types";
 import {
@@ -134,8 +136,10 @@ export const getLgOption = (
   const t2bSeries = showT2B
     ? {
         type: "custom",
-        renderItem: (params: any, api: any) =>
-          renderT2B(params, api, data, 0, CardSize.large, withImage),
+        renderItem: (
+          params: CustomSeriesRenderItemParams,
+          api: CustomSeriesRenderItemAPI
+        ) => renderT2B(params, api, data, 0, CardSize.large, withImage),
         data: [[]],
         z: -1,
       }

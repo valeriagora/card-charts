@@ -1,5 +1,8 @@
 "use client";
-import { ReactECharts } from "@/charts/components/shared/ReactECharts";
+import {
+  ReactECharts,
+  ReactEChartsProps,
+} from "@/charts/components/shared/ReactECharts";
 import {
   Button,
   FormControlLabel,
@@ -74,7 +77,7 @@ function PieChart({
     largeContainerHeight < MIN_CHART_HEIGHT_L
       ? MIN_CHART_HEIGHT_L
       : largeContainerHeight;
-  const [size, setSize] = useState(cardSize);
+  const [size, setSize] = useState<CardSize>(cardSize);
   const toggleImg = () => {
     setQuestionImageUrl(questionImageUrl ? "" : questionImage);
   };
@@ -198,7 +201,7 @@ function PieChart({
             onChartInit={onChartInit}
             onRenderEnded={onRenderEnded}
             containerRef={containerRef}
-            option={options[size]}
+            option={options[size] as ReactEChartsProps["option"]}
           />
         </ChartContainer>
       </DndCard>

@@ -161,11 +161,9 @@ function BarChartWithOptionImages({
         base64Promises.push(b64);
       }
       const getBase64Promises = async () =>
-        await Promise.all(base64Promises)
-          .then((values) => {
-            return values;
-          })
-          .catch((e) => console.log("promise.all err;", e));
+        await Promise.all(base64Promises).then((values) => {
+          return values;
+        });
 
       const base64Urls = await getBase64Promises();
       if (base64Urls.length) {

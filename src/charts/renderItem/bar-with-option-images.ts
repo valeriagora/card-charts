@@ -1,7 +1,9 @@
 import { breakWord, getQuestionImage, truncate } from "@/charts/utils";
 import {
+  CustomSeriesRenderItem,
   CustomSeriesRenderItemAPI,
   CustomSeriesRenderItemParams,
+  CustomSeriesRenderItemReturn,
 } from "echarts";
 import {
   MAX_PERCENTS_TEXT_WIDTH,
@@ -16,13 +18,6 @@ import {
 } from "@/charts/constants/shared";
 import {
   BAR_CHART_CONTAINER_PADDING_BOTTOM_ML,
-  M_MAX_SYMBOLS_WITH_OPTION_IMG_COUNT,
-  M_MAX_SYMBOLS_WITH_QUESTION_AND_OPTION_IMG,
-  M_MAX_SYMBOLS_WITH_T2B_WITH_OPTION_IMG,
-  L_MAX_SYMBOLS_WITH_OPTION_IMG,
-  L_MAX_SYMBOLS_WITH_QUESTION_AND_OPTION_IMG,
-  L_MAX_SYMBOLS_WITH_T2B_WITH_OPTION_IMG,
-  L_MAX_SYMBOLS_WITH_QUESTION_AND_OPTION_IMG_AND_T2B,
   BAR_Y_AXIS_TEXT_X_GAP_ML,
   barMaxSymbolsCount,
 } from "@/charts/constants/bar";
@@ -34,8 +29,8 @@ export const renderBarMdLegendItem = (
   gridVerticalPadding: number,
   showT2B: boolean,
   questionImageUrl: string
-) => {
-  const [_, ySizePx] = api.size([1, 1]) as number[];
+): CustomSeriesRenderItemReturn => {
+  const [_, ySizePx] = api.size!([1, 1]) as number[];
   const percents = api.value(0);
   const label = api.value(2);
   const optionImageUrl = api.value(3);
@@ -120,8 +115,8 @@ export const renderBarLgLegendItem = (
   showT2B: boolean,
   questionImageUrl: string,
   containerHeight: number
-) => {
-  const [_, ySizePx] = api.size([1, 1]) as number[];
+): CustomSeriesRenderItemReturn => {
+  const [_, ySizePx] = api.size!([1, 1]) as number[];
   const percents = api.value(0);
   const label = api.value(2);
   const optionImageUrl = api.value(3);

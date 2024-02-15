@@ -2,6 +2,7 @@ import { getQuestionImage, truncate } from "@/charts/utils";
 import {
   CustomSeriesRenderItemAPI,
   CustomSeriesRenderItemParams,
+  CustomSeriesRenderItemReturn,
 } from "echarts";
 import {
   MAX_PERCENTS_TEXT_WIDTH,
@@ -26,9 +27,10 @@ export const renderBarSmLegendItem = (
   param: CustomSeriesRenderItemParams,
   api: CustomSeriesRenderItemAPI,
   gridVerticalPadding: number
-) => {
-  const xAxisStartPx = param.coordSys.x;
-  const [_, ySizePx] = api.size([1, 1]) as number[];
+): CustomSeriesRenderItemReturn => {
+  // @ts-ignore
+  const xAxisStartPx: number = param.coordSys.x;
+  const [_, ySizePx] = api.size!([1, 1]) as number[];
   const percents = api.value(0);
   const label = api.value(2);
   const truncatedText = truncate(label as string, barMaxSymbolsCount.small);
@@ -58,7 +60,7 @@ export const renderBarSmLegendItem = (
         position: [labelX, labelY],
       },
     ],
-  };
+  } as any;
 };
 export const renderBarMdLegendItem = (
   param: CustomSeriesRenderItemParams,
@@ -66,8 +68,8 @@ export const renderBarMdLegendItem = (
   gridVerticalPadding: number,
   showT2B: boolean,
   questionImageUrl: string
-) => {
-  const [_, ySizePx] = api.size([1, 1]) as number[];
+): CustomSeriesRenderItemReturn => {
+  const [_, ySizePx] = api.size!([1, 1]) as number[];
   const percents = api.value(0);
   const label = api.value(2);
   const maxSymbolsCount = barMaxSymbolsCount.medium.withoutOptionImgs;
@@ -121,8 +123,8 @@ export const renderBarLgLegendItem = (
   questionImageUrl: string,
   gridVerticalPadding: number,
   containerHeight: number
-) => {
-  const [_, ySizePx] = api.size([1, 1]) as number[];
+): CustomSeriesRenderItemReturn => {
+  const [_, ySizePx] = api.size!([1, 1]) as number[];
   const percents = api.value(0);
   const label = api.value(2);
   const isT2BAndQuestionImgShown = showT2B && !!questionImageUrl;

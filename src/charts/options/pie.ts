@@ -14,13 +14,15 @@ import {
   renderLgLegendItem,
 } from "@/charts/renderItem/pie";
 import { PIE_HIDDEN_AXISES } from "@/charts/constants/pie";
+import { ReactEChartsProps } from "../components/shared/ReactECharts";
+import { CustomLegend } from "../types";
 
 const pieTooltip = {
-  show: true,
+  show: false,
 };
 const pieSeries = {
-  type: "pie",
-  color: pieColors,
+  type: "pie" as any,
+  color: pieColors as any[],
   label: {
     show: false,
   },
@@ -29,7 +31,10 @@ const pieSeries = {
   name: "pie-series",
 };
 
-export const getSmOption = (data: any, pieLegendData: any) => {
+export const getSmOption = (
+  data: { name: string; value: number }[],
+  pieLegendData: CustomLegend
+): ReactEChartsProps["option"] => {
   const hasOverflow = data.length > 4;
   const legendData = hasOverflow ? pieLegendData.slice(0, 4) : pieLegendData;
   return {
@@ -43,9 +48,6 @@ export const getSmOption = (data: any, pieLegendData: any) => {
       top: 0,
       bottom: 0,
       left: CHART_WIDTH_S,
-    },
-    itemStyle: {
-      color: "crimson",
     },
     series: [
       {
@@ -66,10 +68,10 @@ export const getSmOption = (data: any, pieLegendData: any) => {
   };
 };
 export const getMdOption = (
-  pieData: any,
-  pieLegendData: any,
+  pieData: { name: string; value: number }[],
+  pieLegendData: CustomLegend,
   questionImage: string
-) => {
+): ReactEChartsProps["option"] => {
   const hasOverflow = pieData.length > 11;
   const data = hasOverflow ? pieData.slice(0, 11) : pieData;
   const legendData = hasOverflow ? pieLegendData.slice(0, 11) : pieLegendData;

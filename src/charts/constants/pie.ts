@@ -14,7 +14,7 @@ export const PIE_HIDDEN_AXISES = {
     axisLabel: {
       show: false,
     },
-    type: "value",
+    type: "value" as any,
     splitLine: {
       show: false,
     },

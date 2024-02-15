@@ -24,6 +24,7 @@
     "@emotion/react": "^11.11.1",
     "@emotion/styled": "^11.11.0",
     "@mui/material": "^5.14.20",
+    "@types/echarts": "^4.9.22",
     "echarts": "^5.4.3",
     "lodash": "^4.17.21"
   }

@@ -1,5 +1,8 @@
 "use client";
-import { ReactECharts } from "@/charts/components/shared/ReactECharts";
+import {
+  ReactECharts,
+  ReactEChartsProps,
+} from "@/charts/components/shared/ReactECharts";
 import {
   Button,
   FormControlLabel,
@@ -12,8 +15,10 @@ import React, {
   forwardRef,
   LegacyRef,
   ReactNode,
+  Ref,
   useCallback,
   useEffect,
+  useMemo,
   useRef,
   useState,
 } from "react";
@@ -50,7 +55,7 @@ import { PieData } from "@/charts/types";
 
 interface IPieContainerProps {
   size: CardSize;
-  height: number;
+  height?: number;
   hasOverflow: boolean;
   optionsCount: number;
   children: ReactNode;
@@ -63,7 +68,10 @@ const PieContainer = forwardRef(function Container(
     <ChartContainer
       size={size}
       height={height}
-      ref={ref as LegacyRef<HTMLDivElement>}
+      ref={ref as Ref<HTMLDivElement>}
+      hasOverflow={hasOptionsOverflow(size, optionsCount, true)}
+      optionsCount={optionsCount}
+      withOptionImages
     >
       {children}
       {hasOverflow && (
@@ -139,7 +147,7 @@ function PieChartWIthOptionImages({
     largeContainerHeight < MIN_CHART_HEIGHT_L
       ? MIN_CHART_HEIGHT_L
       : largeContainerHeight;
-  const [size, setSize] = useState(cardSize);
+  const [size, setSize] = useState<CardSize>(cardSize);
   const toggleImg = () => {
     setQuestionImageUrl(questionImageUrl ? "" : questionImage);
   };
@@ -147,7 +155,6 @@ function PieChartWIthOptionImages({
     setSize(event.target.value as CardSize);
   };
   const downloadChart = async (chartInstance: ECharts) => {
-    console.log("downloadCHart");
     const url = await getSvgBlob(chartInstance);
     const anchorElement = document.createElement("a");
     anchorElement.href = url;
@@ -164,7 +171,9 @@ function PieChartWIthOptionImages({
       : true;
     if (size !== CardSize.small && !areBase64ImagesReady) {
       const base64Promises: Promise<string>[] = [];
-      const optionImageUrls: string[] = pieLegendData.map((item) => item[3]);
+      const optionImageUrls: string[] = pieLegendData.map(
+        (item: CustomLegendWithImage) => item[3]
+      );
       for (const url of optionImageUrls) {
         const b64 = urlToBase64(url).then((base64: string) =>
           resizeImageBase64(base64, 200)
@@ -172,11 +181,9 @@ function PieChartWIthOptionImages({
         base64Promises.push(b64);
       }
       const getBase64Promises = async () =>
-        await Promise.all(base64Promises)
-          .then((values) => {
-            return values;
-          })
-          .catch((e) => console.log("promise.all err;", e));
+        await Promise.all(base64Promises).then((values) => {
+          return values;
+        });
 
       const base64Urls = await getBase64Promises();
       if (base64Urls.length) {
@@ -212,8 +219,9 @@ function PieChartWIthOptionImages({
     isQuestionImageReady,
   ]);
   const onRenderEnded = useCallback(() => {
-    const areBase64ImagesReady = pieLegendData.every((legendItem) =>
-      isBase64Image(legendItem[3])
+    const areBase64ImagesReady = pieLegendData.every(
+      (legendItem: [number, number, string, string]) =>
+        isBase64Image(legendItem[3] as string)
     );
     const isQuestionImageReady = questionImageUrl
       ? isBase64Image(questionImageUrl)
@@ -223,12 +231,6 @@ function PieChartWIthOptionImages({
     setBase64ImagesReady(!!areBase64ImagesReady);
   }, [pieLegendData, questionImageUrl]);
   useEffect(() => {
-    console.log(
-      "eff",
-      downloadQueue,
-      areBase64ImagesReady,
-      isQuestionImageReady
-    );
     if (
       downloadQueue.length &&
       areBase64ImagesReady &&
@@ -256,11 +258,14 @@ function PieChartWIthOptionImages({
     optionsWithImagesLines,
     lContainerHeight
   );
-  const options = {
-    small,
-    medium,
-    large,
-  };
+  const options = useMemo(
+    () => ({
+      small,
+      medium,
+      large,
+    }),
+    [small, medium, , large]
+  );
 
   return (
     <>
@@ -320,7 +325,7 @@ function PieChartWIthOptionImages({
             onChartInit={onChartInit}
             onRenderEnded={onRenderEnded}
             containerRef={containerRef}
-            option={options[size]}
+            option={options[size] as ReactEChartsProps["option"]}
           />
         </PieContainer>
       </DndCard>

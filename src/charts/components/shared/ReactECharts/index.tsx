@@ -73,7 +73,7 @@ const ReactECharts = function ReactECharts({
     if (chartRef.current !== null) {
       const chart = getInstanceByDom(chartRef.current);
       chart?.clear();
-      chart?.setOption(option, settings);
+      chart?.setOption(option as any, settings);
     }
   }, [option, settings]); // Whenever theme changes we need to add option and setting due to it being deleted in cleanup function
 

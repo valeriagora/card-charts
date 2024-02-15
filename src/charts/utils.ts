@@ -85,7 +85,7 @@ export const getQuestionImage = (
   questionImageUrl: string,
   coordSysHeight: number,
   size: CardSize
-) => {
+): any => {
   const chartWidth = chartBoxDimensions[size].width;
   return [
     {
@@ -172,7 +172,7 @@ export function resizeImageBase64(
 
       // Draw the scaled image on the canvas
       const ctx = canvas.getContext("2d");
-      ctx.drawImage(img, 0, 0, maxWidth, scaledHeight);
+      ctx && ctx.drawImage(img, 0, 0, maxWidth, scaledHeight);
 
       // Convert the canvas to a Base64 string and resolve the promise
       resolve(canvas.toDataURL());

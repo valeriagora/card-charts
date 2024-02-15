@@ -34,6 +34,7 @@ export const renderMdLegendItem = (
   questionImageUrl: string,
   itemsLength: number
 ) => {
+  // @ts-ignore
   const xAxisStartPx = param.coordSys.x;
   const iconColor = getLegendIconColor(pieColors, param.dataIndex);
   const percents = api.value(0);
@@ -150,8 +151,9 @@ export const renderLgLegendItem = (
   containerHeight: number
 ) => {
   const itemsLength = optionHeights.length;
+  // @ts-ignore
   const xAxisStartPx = param.coordSys.x;
-  const [_, ySizePx] = api.size([1, 1]) as number[];
+  const [_, ySizePx] = api.size!([1, 1]) as number[];
   const iconColor = getLegendIconColor(pieColors, param.dataIndex);
   const questionImage = questionImageUrl
     ? getQuestionImage(
