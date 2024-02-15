@@ -1,7 +1,7 @@
 export const data = [
   {
     name: "Exciting Exciting Exciting Exciting Exciting Exciting Exciting Exciting Exciting Exciting",
-    value: 30,
+    value: 10,
   },
   {
     name: "Boring",
@@ -9,15 +9,15 @@ export const data = [
   },
   {
     name: "Close-ended",
-    value: 25,
+    value: 15,
   },
   {
     name: "Intriguing Intriguing Intriguing Intriguing Intriguing Intriguing Intriguing Intriguing Intriguing Intriguing Intriguing",
-    value: 22,
+    value: 5,
   },
   {
     name: "Engaging",
-    value: 1,
+    value: 10,
   },
   {
     name: "Neutral",
@@ -25,23 +25,39 @@ export const data = [
   },
   {
     name: "Short answer option",
-    value: 1,
+    value: 2,
   },
   {
-    name: "Intriguing Intriguing Intriguing Intriguing Intriguing Intriguing Intriguing Intriguing",
-    value: 22,
+    name: "Intriguing Intriguing 2",
+    value: 2,
   },
   {
-    name: "Engaging",
-    value: 1,
+    name: "Engaging 2",
+    value: 3,
   },
   {
-    name: "Neutral",
-    value: 1,
+    name: "Neutral 2",
+    value: 2,
   },
   {
-    name: "Short answer option",
-    value: 1,
+    name: "Short answer option 2",
+    value: 13,
+  },
+  {
+    name: "Exciting 2 Exciting Exciting Exciting Exciting Exciting Exciting Exciting Exciting Exciting",
+    value: 3,
+  },
+  {
+    name: "Boring 2",
+    value: 4,
+  },
+  {
+    name: "Close-ended 2",
+    value: 7,
+  },
+  {
+    name: "Intriguing 3 Intriguing Intriguing Intriguing Intriguing Intriguing Intriguing Intriguing Intriguing Intriguing Intriguing",
+    value: 3,
   },
 ];
 

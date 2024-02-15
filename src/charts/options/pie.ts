@@ -16,7 +16,7 @@ import {
 import { PIE_HIDDEN_AXISES } from "@/charts/constants/pie";
 
 const pieTooltip = {
-  show: false,
+  show: true,
 };
 const pieSeries = {
   type: "pie",
@@ -24,17 +24,13 @@ const pieSeries = {
   label: {
     show: false,
   },
-  emptyCircleStyle: {
-    color: "#6C7080",
-  },
   center: ["25%", "50%"],
   radius: [51, 91],
   name: "pie-series",
 };
 
-export const getSmOption = (pieData: any, pieLegendData: any) => {
-  const hasOverflow = pieData.length > 4;
-  const data = pieData;
+export const getSmOption = (data: any, pieLegendData: any) => {
+  const hasOverflow = data.length > 4;
   const legendData = hasOverflow ? pieLegendData.slice(0, 4) : pieLegendData;
   return {
     silent: true,
@@ -47,6 +43,9 @@ export const getSmOption = (pieData: any, pieLegendData: any) => {
       top: 0,
       bottom: 0,
       left: CHART_WIDTH_S,
+    },
+    itemStyle: {
+      color: "crimson",
     },
     series: [
       {
