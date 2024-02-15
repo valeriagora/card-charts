@@ -31,6 +31,7 @@ export const PIE_LEGEND_ITEM_TEXT_X_GAP = 4;
 export const PIE_LEGEND_ITEM_Y_GAP_ML = 8;
 export const PIE_LEGEND_ICON_X_PADDING = 4;
 export const PIE_LEGEND_ICON_RADIUS = 6;
+export const PIE_CHART_CONTAINER_Y_PADDING = 4;
 export const pieMaxSymbols = {
   small: 10,
   medium: {

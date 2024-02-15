@@ -147,6 +147,7 @@ function PieChartWIthOptionImages({
     setSize(event.target.value as CardSize);
   };
   const downloadChart = async (chartInstance: ECharts) => {
+    console.log("downloadCHart");
     const url = await getSvgBlob(chartInstance);
     const anchorElement = document.createElement("a");
     anchorElement.href = url;
@@ -158,6 +159,9 @@ function PieChartWIthOptionImages({
 
   const saveAsImage = useCallback(async () => {
     setIsSvgExporting(true);
+    const isQuestionImageReady = questionImageUrl
+      ? isBase64Image(questionImageUrl)
+      : true;
     if (size !== CardSize.small && !areBase64ImagesReady) {
       const base64Promises: Promise<string>[] = [];
       const optionImageUrls: string[] = pieLegendData.map((item) => item[3]);
@@ -168,9 +172,12 @@ function PieChartWIthOptionImages({
         base64Promises.push(b64);
       }
       const getBase64Promises = async () =>
-        await Promise.all(base64Promises).then((values) => {
-          return values;
-        });
+        await Promise.all(base64Promises)
+          .then((values) => {
+            return values;
+          })
+          .catch((e) => console.log("promise.all err;", e));
+
       const base64Urls = await getBase64Promises();
       if (base64Urls.length) {
         setPieLegendData((prev: any) => {
@@ -182,23 +189,20 @@ function PieChartWIthOptionImages({
           );
           return newData;
         });
-        setDownloadQueue([...downloadQueue, "download"]);
       }
-      return;
     }
-    const isQuestionImageReady = questionImageUrl
-      ? isBase64Image(questionImageUrl)
-      : true;
     if (size !== CardSize.small && !isQuestionImageReady) {
       const base64 = urlToBase64(questionImageUrl).then((base64: string) =>
         resizeImageBase64(base64, 200)
       );
       const base64QImg = await Promise.resolve(base64);
       base64QImg && setQuestionImageUrl(base64QImg);
-      setDownloadQueue([...downloadQueue, "download"]);
-      return;
     }
-    chartInstance && downloadChart(chartInstance);
+    if (size === CardSize.small) {
+      chartInstance && downloadChart(chartInstance);
+    } else {
+      setDownloadQueue([...downloadQueue, "download"]);
+    }
   }, [
     downloadQueue,
     chartInstance,
@@ -219,6 +223,12 @@ function PieChartWIthOptionImages({
     setBase64ImagesReady(!!areBase64ImagesReady);
   }, [pieLegendData, questionImageUrl]);
   useEffect(() => {
+    console.log(
+      "eff",
+      downloadQueue,
+      areBase64ImagesReady,
+      isQuestionImageReady
+    );
     if (
       downloadQueue.length &&
       areBase64ImagesReady &&

@@ -96,20 +96,77 @@ function BarChartWithOptionImages({
     anchorElement.click();
     setIsSvgExporting(false);
   };
+  // const saveAsImage = useCallback(async () => {
+  //   setIsSvgExporting(true);
+  //   if (size !== CardSize.small && !areBase64ImagesReady) {
+  //     const base64Promises: Promise<string>[] = [];
+  //     const optionImageUrls: any[] = barLegendData.map((item) => item[3]);
+  //     for (const url of optionImageUrls) {
+  //       base64Promises.push(
+  //         urlToBase64(url).then((base64: string) =>
+  //           resizeImageBase64(base64, 200)
+  //         )
+  //       );
+  //     }
+  //     const getBase64Promises = async () =>
+  //       await Promise.all(base64Promises).then((values) => values);
+  //     const base64Urls = await getBase64Promises();
+  //     if (base64Urls.length) {
+  //       setBarLegendData((prev: any) => {
+  //         const newData = prev.map(
+  //           (item: CustomLegendWithImage, idx: number) => [
+  //             ...item.slice(0, 3),
+  //             base64Urls[idx],
+  //           ]
+  //         );
+  //         return newData;
+  //       });
+  //       setDownloadQueue([...downloadQueue, "download"]);
+  //     }
+  //     return;
+  //   }
+  //   const isQuestionImageReady = questionImageUrl
+  //     ? isBase64Image(questionImageUrl)
+  //     : true;
+  //   if (size !== CardSize.small && !isQuestionImageReady) {
+  //     const base64 = urlToBase64(questionImageUrl).then((base64: string) =>
+  //       resizeImageBase64(base64, 200)
+  //     );
+  //     const base64QImg = await Promise.resolve(base64);
+  //     base64QImg && setQuestionImageUrl(base64QImg);
+  //     setDownloadQueue([...downloadQueue, "download"]);
+  //     return;
+  //   }
+  //   chartInstance && downloadChart(chartInstance);
+  // }, [
+  //   downloadQueue,
+  //   chartInstance,
+  //   size,
+  //   questionImageUrl,
+  //   areBase64ImagesReady,
+  //   isQuestionImageReady,
+  // ]);
   const saveAsImage = useCallback(async () => {
     setIsSvgExporting(true);
+    const isQuestionImageReady = questionImageUrl
+      ? isBase64Image(questionImageUrl)
+      : true;
     if (size !== CardSize.small && !areBase64ImagesReady) {
       const base64Promises: Promise<string>[] = [];
-      const optionImageUrls: any[] = barLegendData.map((item) => item[3]);
+      const optionImageUrls: string[] = barLegendData.map((item) => item[3]);
       for (const url of optionImageUrls) {
-        base64Promises.push(
-          urlToBase64(url).then((base64: string) =>
-            resizeImageBase64(base64, 200)
-          )
+        const b64 = urlToBase64(url).then((base64: string) =>
+          resizeImageBase64(base64, 200)
         );
+        base64Promises.push(b64);
       }
       const getBase64Promises = async () =>
-        await Promise.all(base64Promises).then((values) => values);
+        await Promise.all(base64Promises)
+          .then((values) => {
+            return values;
+          })
+          .catch((e) => console.log("promise.all err;", e));
+
       const base64Urls = await getBase64Promises();
       if (base64Urls.length) {
         setBarLegendData((prev: any) => {
@@ -121,23 +178,20 @@ function BarChartWithOptionImages({
           );
           return newData;
         });
-        setDownloadQueue([...downloadQueue, "download"]);
       }
-      return;
     }
-    const isQuestionImageReady = questionImageUrl
-      ? isBase64Image(questionImageUrl)
-      : true;
     if (size !== CardSize.small && !isQuestionImageReady) {
       const base64 = urlToBase64(questionImageUrl).then((base64: string) =>
         resizeImageBase64(base64, 200)
       );
       const base64QImg = await Promise.resolve(base64);
       base64QImg && setQuestionImageUrl(base64QImg);
-      setDownloadQueue([...downloadQueue, "download"]);
-      return;
     }
-    chartInstance && downloadChart(chartInstance);
+    if (size === CardSize.small) {
+      chartInstance && downloadChart(chartInstance);
+    } else {
+      setDownloadQueue([...downloadQueue, "download"]);
+    }
   }, [
     downloadQueue,
     chartInstance,

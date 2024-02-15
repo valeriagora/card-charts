@@ -62,7 +62,7 @@ export const getMdOption = (
       left: CHART_WIDTH_M,
       right: 0,
       top: 0,
-      bottom: 0,
+      bottom: 1,
     },
   };
 };
@@ -105,6 +105,6 @@ export const getLgOption = (
     left: CHART_WIDTH_L,
     right: 0,
     top: 0,
-    bottom: 0,
+    bottom: 1,
   },
 });
