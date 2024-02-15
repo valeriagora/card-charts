@@ -61,7 +61,7 @@ export const ChartContainerStyled = styled("div")<{
           ? height
           : MIN_CHART_HEIGHT_L
         : chartBoxDimensions[size].height,
-    border: "1px solid slateblue",
+    // border: "1px solid slateblue",
     display: "flex",
     alignItems: "center",
     boxSizing: "border-box",

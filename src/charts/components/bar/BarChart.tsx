@@ -42,6 +42,7 @@ interface IBarProps {
 function BarChart({ data, legendData, cardSize, questionImage }: IBarProps) {
   const [barChartData, setBarChartData] = useState(data);
   const [barLegendData, setBarLegendData] = useState<CustomLegend>(legendData);
+  const [isSvgExporting, setIsSvgExporting] = useState(false);
   const [questionImageUrl, setQuestionImageUrl] = useState("");
   const [showT2B, setShowT2B] = useState(false);
   const [isQuestionImageReady, setIsQuestionImageReady] = useState(false);
@@ -80,9 +81,11 @@ function BarChart({ data, legendData, cardSize, questionImage }: IBarProps) {
     anchorElement.download = `bar-chart-${size}.svg`;
     document.body.appendChild(anchorElement);
     anchorElement.click();
+    setIsSvgExporting(false);
   };
 
   const saveAsImage = useCallback(async () => {
+    setIsSvgExporting(true);
     const isQuestionImageReady = questionImageUrl
       ? isBase64Image(questionImageUrl)
       : true;
@@ -179,7 +182,9 @@ function BarChart({ data, legendData, cardSize, questionImage }: IBarProps) {
         variant="contained"
         onClick={toggleT2B}
         disabled={
-          size === CardSize.small || (size === CardSize.medium && withImage)
+          size === CardSize.small ||
+          (size === CardSize.medium && withImage) ||
+          isSvgExporting
         }
       >
         Toggle T2B/B2B
@@ -188,7 +193,7 @@ function BarChart({ data, legendData, cardSize, questionImage }: IBarProps) {
         sx={{ marginBottom: 4, display: "block" }}
         variant="contained"
         onClick={toggleImg}
-        disabled={size === CardSize.small}
+        disabled={size === CardSize.small || isSvgExporting}
       >
         Toggle image
       </Button>
@@ -196,6 +201,7 @@ function BarChart({ data, legendData, cardSize, questionImage }: IBarProps) {
         sx={{ marginBottom: 4, display: "block" }}
         variant="contained"
         onClick={saveAsImage}
+        disabled={isSvgExporting}
       >
         Export as svg
       </Button>
@@ -211,16 +217,19 @@ function BarChart({ data, legendData, cardSize, questionImage }: IBarProps) {
             value={CardSize.small}
             control={<Radio />}
             label="Small"
+            disabled={isSvgExporting}
           />
           <FormControlLabel
             value={CardSize.medium}
             control={<Radio />}
             label="Medium"
+            disabled={isSvgExporting}
           />
           <FormControlLabel
             value={CardSize.large}
             control={<Radio />}
             label="Large"
+            disabled={isSvgExporting}
           />
         </RadioGroup>
       </FormControl>

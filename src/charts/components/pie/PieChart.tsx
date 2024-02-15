@@ -43,6 +43,7 @@ function PieChart({
     registerCoverShape();
   }, []);
   const [chartInstance, setChartInstance] = useState<ECharts | null>(null);
+  const [isSvgExporting, setIsSvgExporting] = useState(false);
   const onChartInit = useCallback((chartInstance: ECharts) => {
     setChartInstance(chartInstance);
   }, []);
@@ -87,9 +88,11 @@ function PieChart({
     anchorElement.download = `pie-chart-${size}.svg`;
     document.body.appendChild(anchorElement);
     anchorElement.click();
+    setIsSvgExporting(false);
   };
 
   const saveAsImage = useCallback(async () => {
+    setIsSvgExporting(true);
     const isQuestionImageReady = questionImageUrl
       ? isBase64Image(questionImageUrl)
       : true;
@@ -146,7 +149,7 @@ function PieChart({
         sx={{ marginBottom: 4, display: "block" }}
         variant="contained"
         onClick={toggleImg}
-        disabled={size === CardSize.small}
+        disabled={size === CardSize.small || isSvgExporting}
       >
         Toggle image
       </Button>
@@ -154,6 +157,7 @@ function PieChart({
         sx={{ marginBottom: 4, display: "block" }}
         variant="contained"
         onClick={saveAsImage}
+        disabled={isSvgExporting}
       >
         Export as svg
       </Button>

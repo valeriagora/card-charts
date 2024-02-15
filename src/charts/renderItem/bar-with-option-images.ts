@@ -109,7 +109,7 @@ export const renderBarMdLegendItem = (
           width: OPTION_IMAGE_SIDE,
           height: OPTION_IMAGE_SIDE,
         },
-        position: [coverX, coverY],
+        position: [coverX, coverY - 1],
       },
     ],
   };
@@ -189,7 +189,7 @@ export const renderBarLgLegendItem = (
           width: OPTION_IMAGE_SIDE,
           height: OPTION_IMAGE_SIDE,
         },
-        position: [coverX, coverY],
+        position: [coverX, coverY - 1],
       },
     ],
   };

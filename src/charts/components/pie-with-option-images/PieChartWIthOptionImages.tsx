@@ -104,6 +104,7 @@ function PieChartWIthOptionImages({
   }, []);
   const [pieChartData, setPieChartData] = useState<PieData[]>(pieData);
   const [pieLegendData, setPieLegendData] = useState(legendData);
+  const [isSvgExporting, setIsSvgExporting] = useState(false);
   const [questionImageUrl, setQuestionImageUrl] = useState("");
   const [isQuestionImageReady, setIsQuestionImageReady] = useState(false);
   const containerRef = useRef<HTMLDivElement | null>(null);
@@ -131,7 +132,6 @@ function PieChartWIthOptionImages({
     }
     return OPTION_IMAGE_SIDE;
   });
-
   const largeContainerHeight =
     optionHeights.reduce((total, height) => (total += height), 0) +
     PIE_LEGEND_ITEM_Y_GAP_ML * (optionHeights.length - 1);
@@ -153,21 +153,24 @@ function PieChartWIthOptionImages({
     anchorElement.download = `pie-chart-${size}.svg`;
     document.body.appendChild(anchorElement);
     anchorElement.click();
+    setIsSvgExporting(false);
   };
 
   const saveAsImage = useCallback(async () => {
+    setIsSvgExporting(true);
     if (size !== CardSize.small && !areBase64ImagesReady) {
       const base64Promises: Promise<string>[] = [];
       const optionImageUrls: string[] = pieLegendData.map((item) => item[3]);
       for (const url of optionImageUrls) {
-        base64Promises.push(
-          urlToBase64(url).then((base64: string) =>
-            resizeImageBase64(base64, 200)
-          )
+        const b64 = urlToBase64(url).then((base64: string) =>
+          resizeImageBase64(base64, 200)
         );
+        base64Promises.push(b64);
       }
       const getBase64Promises = async () =>
-        await Promise.all(base64Promises).then((values) => values);
+        await Promise.all(base64Promises).then((values) => {
+          return values;
+        });
       const base64Urls = await getBase64Promises();
       if (base64Urls.length) {
         setPieLegendData((prev: any) => {
@@ -255,7 +258,7 @@ function PieChartWIthOptionImages({
         sx={{ marginBottom: 4, display: "block" }}
         variant="contained"
         onClick={toggleImg}
-        disabled={size === CardSize.small}
+        disabled={size === CardSize.small || isSvgExporting}
       >
         Toggle image
       </Button>
@@ -263,6 +266,7 @@ function PieChartWIthOptionImages({
         sx={{ marginBottom: 4, display: "block" }}
         variant="contained"
         onClick={saveAsImage}
+        disabled={isSvgExporting}
       >
         Export as svg
       </Button>
@@ -278,16 +282,19 @@ function PieChartWIthOptionImages({
             value={CardSize.small}
             control={<Radio />}
             label="Small"
+            disabled={isSvgExporting}
           />
           <FormControlLabel
             value={CardSize.medium}
             control={<Radio />}
             label="Medium"
+            disabled={isSvgExporting}
           />
           <FormControlLabel
             value={CardSize.large}
             control={<Radio />}
             label="Large"
+            disabled={isSvgExporting}
           />
         </RadioGroup>
       </FormControl>

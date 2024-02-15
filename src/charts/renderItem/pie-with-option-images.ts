@@ -124,7 +124,7 @@ export const renderMdLegendItem = (
           width: OPTION_IMAGE_SIDE,
           height: OPTION_IMAGE_SIDE,
         },
-        position: [coverX, coverY],
+        position: [coverX, coverY - 1],
       },
       {
         type: "circle",
@@ -268,7 +268,9 @@ export const renderLgLegendItem = (
         },
         position: [
           coverX,
-          itemsLength === 1 ? ySizePx / 2 - OPTION_IMAGE_SIDE / 2 : coverY,
+          itemsLength === 1
+            ? ySizePx / 2 - OPTION_IMAGE_SIDE / 2 - 1
+            : coverY - 1,
         ],
       },
       {

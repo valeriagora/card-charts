@@ -51,6 +51,7 @@ function BarChartWithOptionImages({
   const [barChartData, setBarChartData] = useState(data);
   const [barLegendData, setBarLegendData] =
     useState<CustomLegendWithImage>(legendData);
+  const [isSvgExporting, setIsSvgExporting] = useState(false);
   const [questionImageUrl, setQuestionImageUrl] = useState("");
   const [showT2B, setShowT2B] = useState(false);
   const [isQuestionImageReady, setIsQuestionImageReady] = useState(false);
@@ -93,8 +94,10 @@ function BarChartWithOptionImages({
     anchorElement.download = `bar-chart.svg`;
     document.body.appendChild(anchorElement);
     anchorElement.click();
+    setIsSvgExporting(false);
   };
   const saveAsImage = useCallback(async () => {
+    setIsSvgExporting(true);
     if (size !== CardSize.small && !areBase64ImagesReady) {
       const base64Promises: Promise<string>[] = [];
       const optionImageUrls: any[] = barLegendData.map((item) => item[3]);
@@ -148,7 +151,6 @@ function BarChartWithOptionImages({
     barLegendData,
     hasOptionsOverflow(size, barChartData.length, true)
   );
-
   const medium = getMdOption(
     barChartData,
     barLegendData,
@@ -217,7 +219,9 @@ function BarChartWithOptionImages({
         variant="contained"
         onClick={toggleT2B}
         disabled={
-          size === CardSize.small || (size === CardSize.medium && withImage)
+          size === CardSize.small ||
+          (size === CardSize.medium && withImage) ||
+          isSvgExporting
         }
       >
         Toggle T2B/B2B
@@ -226,7 +230,7 @@ function BarChartWithOptionImages({
         sx={{ marginBottom: 4, display: "block" }}
         variant="contained"
         onClick={toggleImg}
-        disabled={size === CardSize.small}
+        disabled={size === CardSize.small || isSvgExporting}
       >
         Toggle image
       </Button>
@@ -234,6 +238,7 @@ function BarChartWithOptionImages({
         sx={{ marginBottom: 4, display: "block" }}
         variant="contained"
         onClick={saveAsImage}
+        disabled={isSvgExporting}
       >
         Export as svg
       </Button>
@@ -246,16 +251,19 @@ function BarChartWithOptionImages({
           name="radio-buttons-group"
         >
           <FormControlLabel
+            disabled={isSvgExporting}
             value={CardSize.small}
             control={<Radio />}
             label="Small"
           />
           <FormControlLabel
+            disabled={isSvgExporting}
             value={CardSize.medium}
             control={<Radio />}
             label="Medium"
           />
           <FormControlLabel
+            disabled={isSvgExporting}
             value={CardSize.large}
             control={<Radio />}
             label="Large"
