@@ -10,12 +10,10 @@ import {
   FormControl,
   RadioGroup,
   FormLabel,
+  useMediaQuery,
+  useTheme,
 } from "@mui/material";
 import React, {
-  forwardRef,
-  LegacyRef,
-  ReactNode,
-  Ref,
   useCallback,
   useEffect,
   useMemo,
@@ -28,7 +26,6 @@ import {
 } from "@/charts/options/pie-with-option-images";
 import { getSmOption } from "@/charts/options/pie";
 import {
-  chartOptionsOverflow,
   OPTION_IMAGE_SIDE,
   TEXT_LINE_HEIGHT,
   MIN_CHART_HEIGHT_L,
@@ -38,71 +35,37 @@ import {
   PIE_LEGEND_ITEM_Y_GAP_ML,
 } from "@/charts/constants/pie";
 import { DndCard } from "@/charts/components/shared/DndCard";
-import { CardSize, CustomLegendWithImage } from "@/charts/types";
+import {
+  CardSize,
+  CustomLegendWithImage,
+  CustomLegendWithImageItem,
+  IBreakpoint,
+  IPieBarData,
+} from "@/charts/types";
 import { ECharts } from "echarts";
 import { ChartContainer } from "@/charts/components/shared/ChartContainer";
 import {
   breakWord,
   getSvgBlob,
+  hasOptionsOverflow,
   isBase64Image,
   registerCoverShape,
   resizeImageBase64,
   urlToBase64,
 } from "@/charts/utils";
-import { OverflowInfo } from "@/charts/components/shared/styledComponents";
-import Image from "next/image";
-import { PieData } from "@/charts/types";
 
-interface IPieContainerProps {
-  size: CardSize;
-  height?: number;
-  hasOverflow: boolean;
-  optionsCount: number;
-  children: ReactNode;
+interface IPieChartWithOptionImages {
+  data: IPieBarData[];
+  legendData: CustomLegendWithImage;
+  cardSize: CardSize;
+  questionImage: string;
 }
-const PieContainer = forwardRef(function Container(
-  { size, height, hasOverflow, optionsCount, children }: IPieContainerProps,
-  ref
-) {
-  return (
-    <ChartContainer
-      size={size}
-      height={height}
-      ref={ref as Ref<HTMLDivElement>}
-      hasOverflow={hasOptionsOverflow(size, optionsCount, true)}
-      optionsCount={optionsCount}
-      withOptionImages
-    >
-      {children}
-      {hasOverflow && (
-        <OverflowInfo>
-          {size !== CardSize.large &&
-            chartOptionsOverflow[size as CardSize.small | CardSize.medium]
-              .withImgOptions}
-          / {optionsCount} options{" "}
-          <Image width={16} height={16} src={"/info.svg"} alt="info" />
-        </OverflowInfo>
-      )}
-    </ChartContainer>
-  );
-});
-
-const hasOptionsOverflow = (
-  size: CardSize,
-  length: number,
-  withImageOptions: boolean = false
-) => {
-  if (size === CardSize.large) return false;
-  return withImageOptions
-    ? length > chartOptionsOverflow[size].withImgOptions
-    : length > chartOptionsOverflow[size].default;
-};
 function PieChartWIthOptionImages({
+  data,
+  legendData,
   cardSize = CardSize.small,
   questionImage,
-  pieData,
-  legendData,
-}: any) {
+}: IPieChartWithOptionImages) {
   useEffect(() => {
     registerCoverShape();
   }, []);
@@ -110,7 +73,6 @@ function PieChartWIthOptionImages({
   const onChartInit = useCallback((chartInstance: ECharts) => {
     setChartInstance(chartInstance);
   }, []);
-  const [pieChartData, setPieChartData] = useState<PieData[]>(pieData);
   const [pieLegendData, setPieLegendData] = useState(legendData);
   const [isSvgExporting, setIsSvgExporting] = useState(false);
   const [questionImageUrl, setQuestionImageUrl] = useState("");
@@ -118,9 +80,13 @@ function PieChartWIthOptionImages({
   const containerRef = useRef<HTMLDivElement | null>(null);
   const [downloadQueue, setDownloadQueue] = useState<string[]>([]);
   const [areBase64ImagesReady, setBase64ImagesReady] = useState(false);
-  const optionsWithImagesLines = pieChartData.reduce(
+  const theme = useTheme();
+  const matches = useMediaQuery(theme.breakpoints.up("lg"), {
+    noSsr: true,
+  });
+  const optionsWithImagesLines = data.reduce(
     (total: number[], current: any) => {
-      const { value, name } = current;
+      const { name } = current;
       const largeMaxSymbols = pieMaxSymbols.large.withOptionImgs;
       const linesCount = breakWord(
         `${name}`,
@@ -172,7 +138,7 @@ function PieChartWIthOptionImages({
     if (size !== CardSize.small && !areBase64ImagesReady) {
       const base64Promises: Promise<string>[] = [];
       const optionImageUrls: string[] = pieLegendData.map(
-        (item: CustomLegendWithImage) => item[3]
+        (item: CustomLegendWithImageItem) => item[3]
       );
       for (const url of optionImageUrls) {
         const b64 = urlToBase64(url).then((base64: string) =>
@@ -248,21 +214,41 @@ function PieChartWIthOptionImages({
     isQuestionImageReady,
     chartInstance,
   ]);
-  const small = getSmOption(pieChartData, pieLegendData);
-  const medium = getMdOption(pieChartData, pieLegendData, questionImageUrl);
-  const large = getLgOption(
-    pieChartData,
-    pieLegendData,
-    questionImageUrl,
-    optionHeights,
-    optionsWithImagesLines,
-    lContainerHeight
+  const breakpoint = IBreakpoint[matches ? "large" : "medium"];
+  const small = useMemo(
+    () => getSmOption(data, pieLegendData, breakpoint),
+    [data, pieLegendData, breakpoint]
+  );
+  const medium = useMemo(
+    () => getMdOption(data, pieLegendData, questionImageUrl, breakpoint),
+    [data, pieLegendData, questionImageUrl, breakpoint]
+  );
+  const large = useMemo(
+    () =>
+      getLgOption(
+        data,
+        pieLegendData,
+        questionImageUrl,
+        optionHeights,
+        optionsWithImagesLines,
+        lContainerHeight,
+        breakpoint
+      ),
+    [
+      data,
+      pieLegendData,
+      questionImageUrl,
+      optionHeights,
+      optionsWithImagesLines,
+      lContainerHeight,
+      breakpoint,
+    ]
   );
   const options = useMemo(
     () => ({
-      small,
-      medium,
-      large,
+      S: small,
+      M: medium,
+      L: large,
     }),
     [small, medium, , large]
   );
@@ -314,12 +300,14 @@ function PieChartWIthOptionImages({
         </RadioGroup>
       </FormControl>
       <DndCard size={size}>
-        <PieContainer
+        <ChartContainer
           size={size}
           ref={containerRef}
           height={size === CardSize.large ? lContainerHeight : undefined}
-          optionsCount={pieChartData.length}
-          hasOverflow={hasOptionsOverflow(size, pieChartData.length, true)}
+          optionsCount={data.length}
+          hasOverflow={hasOptionsOverflow(size, data.length, true)}
+          withOptionImages
+          breakpoint={breakpoint}
         >
           <ReactECharts
             onChartInit={onChartInit}
@@ -327,7 +315,7 @@ function PieChartWIthOptionImages({
             containerRef={containerRef}
             option={options[size] as ReactEChartsProps["option"]}
           />
-        </PieContainer>
+        </ChartContainer>
       </DndCard>
     </>
   );

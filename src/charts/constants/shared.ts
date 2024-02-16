@@ -1,19 +1,68 @@
-import { IChartOptionsOverflow } from "@/charts/types";
+import { CardSize, IBreakpoint, IChartOptionsOverflow } from "@/charts/types";
 
-export const chartBoxDimensions = {
-  small: {
-    width: 280,
-    height: 120,
+export const CARD_DIMENSIONS = {
+  [IBreakpoint.medium]: {
+    S: {
+      width: 320,
+      height: 200,
+    },
+    M: {
+      width: 656,
+      height: 416,
+    },
+    L: {
+      width: 992,
+      height: "100%",
+    },
   },
-  medium: {
-    width: 616,
-    height: 336,
-  },
-  large: {
-    width: 952,
-    height: "auto",
+  [IBreakpoint.large]: {
+    S: {
+      width: 348,
+      height: 200,
+    },
+    M: {
+      width: 712,
+      height: 416,
+    },
+    L: {
+      width: 1076,
+      height: "100%",
+    },
   },
 };
+export const CHART_BOX_DIMENSIONS = {
+  // breakpoint size
+  [IBreakpoint.medium]: {
+    // card size
+    S: {
+      width: 280,
+      height: 120,
+    },
+    M: {
+      width: 616,
+      height: 336,
+    },
+    L: {
+      width: 952,
+      height: "auto",
+    },
+  },
+  [IBreakpoint.large]: {
+    S: {
+      width: 308,
+      height: 120,
+    },
+    M: {
+      width: 672,
+      height: 336,
+    },
+    L: {
+      width: 1036,
+      height: "auto",
+    },
+  },
+};
+
 export const pieColors = [
   "#25B4C8",
   "#EF9B91",
@@ -35,9 +84,20 @@ export const OPTION_IMAGE_SIDE = 72;
 export const OPTION_IMAGE_MARGIN_RIGHT = 8;
 export const TEXT_LINE_HEIGHT = 20;
 // chart widths
-export const CHART_WIDTH_S = 120;
-export const CHART_WIDTH_M = 304;
-export const CHART_WIDTH_L = 472;
+export const CHART_WIDTHS = {
+  //breakpoint size
+  [IBreakpoint.medium]: {
+    // card size
+    S: 120,
+    M: 304,
+    L: 472,
+  },
+  [IBreakpoint.large]: {
+    S: 120,
+    M: 332,
+    L: 514,
+  },
+};
 // chart container horizontal gaps
 export const CHART_CONTAINER_X_GAP_S = 12;
 export const CHART_CONTAINER_X_GAP_ML = 8;
@@ -46,8 +106,8 @@ export const RECTANGLE_WITH_RADIUS_CUSTOM_SHAPE =
   "RECTANGLE_WITH_RADIUS_CUSTOM_SHAPE";
 export const MIN_CHART_HEIGHT_L = 188;
 export const chartOptionsOverflow: IChartOptionsOverflow = {
-  small: { default: 4, withImgOptions: 4 },
-  medium: {
+  [CardSize.small]: { default: 4, withImgOptions: 4 },
+  [CardSize.medium]: {
     default: 11,
     withImgOptions: 4,
   },

@@ -2,12 +2,7 @@ import {
   CustomSeriesRenderItemAPI,
   CustomSeriesRenderItemParams,
 } from "echarts";
-import {
-  CHART_WIDTH_L,
-  CHART_WIDTH_M,
-  pieColors,
-  CHART_WIDTH_S,
-} from "@/charts/constants/shared";
+import { CHART_WIDTHS, pieColors } from "@/charts/constants/shared";
 import {
   renderSmLegendItem,
   renderMdLegendItem,
@@ -15,7 +10,7 @@ import {
 } from "@/charts/renderItem/pie";
 import { PIE_HIDDEN_AXISES } from "@/charts/constants/pie";
 import { ReactEChartsProps } from "../components/shared/ReactECharts";
-import { CustomLegend } from "../types";
+import { CustomLegend, CustomLegendWithImage, IBreakpoint } from "../types";
 
 const pieTooltip = {
   show: false,
@@ -33,7 +28,8 @@ const pieSeries = {
 
 export const getSmOption = (
   data: { name: string; value: number }[],
-  pieLegendData: CustomLegend
+  pieLegendData: CustomLegend | CustomLegendWithImage,
+  breakpoint: IBreakpoint
 ): ReactEChartsProps["option"] => {
   const hasOverflow = data.length > 4;
   const legendData = hasOverflow ? pieLegendData.slice(0, 4) : pieLegendData;
@@ -47,7 +43,7 @@ export const getSmOption = (
       right: 0,
       top: 0,
       bottom: 0,
-      left: CHART_WIDTH_S,
+      left: CHART_WIDTHS[breakpoint].S,
     },
     series: [
       {
@@ -55,7 +51,7 @@ export const getSmOption = (
         renderItem: (
           param: CustomSeriesRenderItemParams,
           api: CustomSeriesRenderItemAPI
-        ) => renderSmLegendItem(param, api, legendData.length),
+        ) => renderSmLegendItem(param, api, legendData.length, breakpoint),
         data: legendData,
       },
       {
@@ -70,7 +66,8 @@ export const getSmOption = (
 export const getMdOption = (
   pieData: { name: string; value: number }[],
   pieLegendData: CustomLegend,
-  questionImage: string
+  questionImage: string,
+  breakpoint: IBreakpoint
 ): ReactEChartsProps["option"] => {
   const hasOverflow = pieData.length > 11;
   const data = hasOverflow ? pieData.slice(0, 11) : pieData;
@@ -87,7 +84,14 @@ export const getMdOption = (
         renderItem: (
           param: CustomSeriesRenderItemParams,
           api: CustomSeriesRenderItemAPI
-        ) => renderMdLegendItem(param, api, questionImage, data.length),
+        ) =>
+          renderMdLegendItem(
+            param,
+            api,
+            questionImage,
+            data.length,
+            breakpoint
+          ),
         data: legendData,
       },
       {
@@ -96,7 +100,7 @@ export const getMdOption = (
       },
     ],
     grid: {
-      left: CHART_WIDTH_M,
+      left: CHART_WIDTHS[breakpoint].M,
       right: 0,
       top: 0,
       bottom: 0,
@@ -109,7 +113,8 @@ export const getLgOption = (
   questionImage: string,
   optionHeights: number[],
   optionsWithImagesLines: number[],
-  containerHeight: number
+  containerHeight: number,
+  breakpoint: IBreakpoint
 ) => ({
   silent: true,
   animation: false,
@@ -129,7 +134,8 @@ export const getLgOption = (
           questionImage,
           optionHeights,
           optionsWithImagesLines,
-          containerHeight
+          containerHeight,
+          breakpoint
         ),
       data: pieLegendData,
     },
@@ -139,7 +145,7 @@ export const getLgOption = (
     },
   ],
   grid: {
-    left: CHART_WIDTH_L,
+    left: CHART_WIDTHS[breakpoint].L,
     right: 0,
     top: 0,
     bottom: 0,

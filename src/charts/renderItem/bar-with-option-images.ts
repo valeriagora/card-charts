@@ -1,34 +1,34 @@
 import { breakWord, getQuestionImage, truncate } from "@/charts/utils";
 import {
-  CustomSeriesRenderItem,
   CustomSeriesRenderItemAPI,
   CustomSeriesRenderItemParams,
   CustomSeriesRenderItemReturn,
 } from "echarts";
 import {
   MAX_PERCENTS_TEXT_WIDTH,
-  chartBoxDimensions,
   legendTextStyles,
   OPTION_IMAGE_SIDE,
   RECTANGLE_WITH_RADIUS_CUSTOM_SHAPE,
   OPTION_IMAGE_MARGIN_RIGHT,
   CHART_CONTAINER_X_GAP_ML,
-  CHART_WIDTH_M,
-  CHART_WIDTH_L,
+  CHART_BOX_DIMENSIONS,
+  CHART_WIDTHS,
 } from "@/charts/constants/shared";
 import {
   BAR_CHART_CONTAINER_PADDING_BOTTOM_ML,
   BAR_Y_AXIS_TEXT_X_GAP_ML,
   barMaxSymbolsCount,
+  BAR_Y_AXISES_WIDTHS,
 } from "@/charts/constants/bar";
-import { CardSize } from "../types";
+import { CardSize, IBreakpoint } from "../types";
 
 export const renderBarMdLegendItem = (
   param: CustomSeriesRenderItemParams,
   api: CustomSeriesRenderItemAPI,
   gridVerticalPadding: number,
   showT2B: boolean,
-  questionImageUrl: string
+  questionImageUrl: string,
+  breakpoint: IBreakpoint
 ): CustomSeriesRenderItemReturn => {
   const [_, ySizePx] = api.size!([1, 1]) as number[];
   const percents = api.value(0);
@@ -44,11 +44,12 @@ export const renderBarMdLegendItem = (
   const questionImage = questionImageUrl
     ? getQuestionImage(
         questionImageUrl,
-        chartBoxDimensions.medium.height,
-        CardSize.medium
+        CHART_BOX_DIMENSIONS[breakpoint].M.height,
+        CardSize.medium,
+        breakpoint
       )
     : [];
-  const coverX = CHART_WIDTH_M + CHART_CONTAINER_X_GAP_ML;
+  const coverX = BAR_Y_AXISES_WIDTHS[breakpoint].M + CHART_CONTAINER_X_GAP_ML;
   const percentsX = coverX + OPTION_IMAGE_SIDE + OPTION_IMAGE_MARGIN_RIGHT;
   const labelX = percentsX + MAX_PERCENTS_TEXT_WIDTH + BAR_Y_AXIS_TEXT_X_GAP_ML;
   const labelY =
@@ -114,7 +115,8 @@ export const renderBarLgLegendItem = (
   api: CustomSeriesRenderItemAPI,
   showT2B: boolean,
   questionImageUrl: string,
-  containerHeight: number
+  containerHeight: number,
+  breakpoint: IBreakpoint
 ): CustomSeriesRenderItemReturn => {
   const [_, ySizePx] = api.size!([1, 1]) as number[];
   const percents = api.value(0);
@@ -133,9 +135,14 @@ export const renderBarLgLegendItem = (
     : maxSymbolsCount.default;
   const truncatedText = truncate(label as string, maxSymbols);
   const questionImage = questionImageUrl
-    ? getQuestionImage(questionImageUrl, containerHeight, CardSize.large)
+    ? getQuestionImage(
+        questionImageUrl,
+        containerHeight,
+        CardSize.large,
+        breakpoint
+      )
     : [];
-  const coverX = CHART_WIDTH_L + CHART_CONTAINER_X_GAP_ML;
+  const coverX = CHART_WIDTHS[breakpoint].L + CHART_CONTAINER_X_GAP_ML;
   const percentsX = coverX + OPTION_IMAGE_SIDE + OPTION_IMAGE_MARGIN_RIGHT;
   const labelX = percentsX + MAX_PERCENTS_TEXT_WIDTH + BAR_Y_AXIS_TEXT_X_GAP_ML;
   const labelY = param.dataIndex * ySizePx + (ySizePx - 16) / 2 - 2;

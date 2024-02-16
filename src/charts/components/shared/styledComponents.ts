@@ -1,24 +1,18 @@
 import {
-  chartBoxDimensions,
+  CARD_DIMENSIONS,
+  CHART_BOX_DIMENSIONS,
   MIN_CHART_HEIGHT_L,
 } from "@/charts/constants/shared";
-import { CardSize } from "@/charts/types";
+import { CardSize, IBreakpoint } from "@/charts/types";
 import { styled } from "@mui/material";
-const cardWidths = {
-  small: 320,
-  medium: 656,
-  large: 992,
-};
-const cardHeights = {
-  small: 200,
-  medium: 416,
-  large: "100%",
-};
 
-export const CardContainer = styled("div")<{ size: CardSize }>(({ size }) => ({
+export const CardContainer = styled("div")<{
+  size: CardSize;
+  breakpoint: IBreakpoint;
+}>(({ size, breakpoint }) => ({
   padding: "12px 20px 20px 20px",
-  width: cardWidths[size],
-  height: cardHeights[size],
+  width: CARD_DIMENSIONS[breakpoint][size].width,
+  height: CARD_DIMENSIONS[breakpoint][size].height,
   background: " #222430",
   borderRadius: 16,
   boxSizing: "border-box",
@@ -50,8 +44,9 @@ export const OverflowInfo = styled("div")({
 export const ChartContainerStyled = styled("div")<{
   size: CardSize;
   height?: number;
-}>(({ size, height }) => {
-  const width: number = chartBoxDimensions[size].width;
+  breakpoint: IBreakpoint;
+}>(({ size, height, breakpoint }) => {
+  const width: number = CHART_BOX_DIMENSIONS[breakpoint][size].width;
   return {
     position: "relative",
     width,
@@ -60,8 +55,8 @@ export const ChartContainerStyled = styled("div")<{
         ? height > MIN_CHART_HEIGHT_L
           ? height
           : MIN_CHART_HEIGHT_L
-        : chartBoxDimensions[size].height,
-    // border: "1px solid slateblue",
+        : CHART_BOX_DIMENSIONS[breakpoint][size].height,
+    border: "1px solid slateblue",
     display: "flex",
     alignItems: "center",
     boxSizing: "border-box",

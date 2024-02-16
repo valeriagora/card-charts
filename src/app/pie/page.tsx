@@ -13,7 +13,7 @@ const legendData: CustomLegend = data.map(({ value, name }, idx) => [
 function Pie() {
   return (
     <PieChart
-      pieData={data}
+      data={data}
       legendData={legendData}
       cardSize={CardSize.small}
       questionImage={url}

@@ -10,11 +10,24 @@ import {
   FormControl,
   RadioGroup,
   FormLabel,
+  useMediaQuery,
+  useTheme,
 } from "@mui/material";
-import React, { useCallback, useEffect, useRef, useState } from "react";
+import React, {
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 import { getSmOption, getMdOption, getLgOption } from "@/charts/options/pie";
 import { DndCard } from "@/charts/components/shared/DndCard";
-import { CardSize } from "@/charts/types";
+import {
+  CardSize,
+  CustomLegend,
+  IBreakpoint,
+  IPieBarData,
+} from "@/charts/types";
 import { ECharts } from "echarts";
 import {
   breakWord,
@@ -36,12 +49,18 @@ import {
 import { PieData } from "@/charts/types";
 import { ChartContainer } from "@/charts/components/shared/ChartContainer";
 
+interface IPieChartProps {
+  data: IPieBarData[];
+  legendData: CustomLegend;
+  cardSize: CardSize;
+  questionImage: string;
+}
 function PieChart({
-  pieData,
+  data,
   legendData,
   cardSize = CardSize.small,
   questionImage,
-}: any) {
+}: IPieChartProps) {
   useEffect(() => {
     registerCoverShape();
   }, []);
@@ -50,13 +69,15 @@ function PieChart({
   const onChartInit = useCallback((chartInstance: ECharts) => {
     setChartInstance(chartInstance);
   }, []);
-  const [pieChartData, setPieChartData] = useState<PieData[]>(pieData);
-  const [pieLegendData, setPieLegendData] = useState(legendData);
   const [questionImageUrl, setQuestionImageUrl] = useState("");
   const [isQuestionImageReady, setIsQuestionImageReady] = useState(false);
   const containerRef = useRef<HTMLDivElement | null>(null);
   const [downloadQueue, setDownloadQueue] = useState<string[]>([]);
-  const optionsLines = pieChartData.reduce((total: number[], current: any) => {
+  const theme = useTheme();
+  const matches = useMediaQuery(theme.breakpoints.up("lg"), {
+    noSsr: true,
+  });
+  const optionsLines = data.reduce((total: number[], current: any) => {
     const { name } = current;
     const largeMaxSymbols = pieMaxSymbols.large.withoutOptionImgs;
     const linesCount = breakWord(
@@ -121,7 +142,7 @@ function PieChart({
       ? isBase64Image(questionImageUrl)
       : true;
     setIsQuestionImageReady(isQuestionImageReady);
-  }, [pieLegendData, questionImageUrl]);
+  }, [legendData, questionImageUrl]);
   useEffect(() => {
     if (downloadQueue.length && chartInstance && isQuestionImageReady) {
       setTimeout(() => {
@@ -130,21 +151,44 @@ function PieChart({
       }, 1000);
     }
   }, [downloadQueue, isQuestionImageReady, chartInstance]);
-  const small = getSmOption(pieChartData, pieLegendData);
-  const medium = getMdOption(pieChartData, pieLegendData, questionImageUrl);
-  const large = getLgOption(
-    pieChartData,
-    pieLegendData,
-    questionImageUrl,
-    optionHeights,
-    optionsLines,
-    lContainerHeight
+  const breakpoint = IBreakpoint[matches ? "large" : "medium"];
+  const small = useMemo(
+    () => getSmOption(data, legendData, breakpoint),
+    [data, legendData, breakpoint]
   );
-  const options = {
-    small,
-    medium,
-    large,
-  };
+  const medium = useMemo(
+    () => getMdOption(data, legendData, questionImageUrl, breakpoint),
+    [data, legendData, questionImageUrl, breakpoint]
+  );
+  const large = useMemo(
+    () =>
+      getLgOption(
+        data,
+        legendData,
+        questionImageUrl,
+        optionHeights,
+        optionsLines,
+        lContainerHeight,
+        breakpoint
+      ),
+    [
+      data,
+      legendData,
+      questionImageUrl,
+      optionHeights,
+      optionsLines,
+      lContainerHeight,
+      breakpoint,
+    ]
+  );
+  const options = useMemo(
+    () => ({
+      S: small,
+      M: medium,
+      L: large,
+    }),
+    [small, medium, large]
+  );
 
   return (
     <>
@@ -194,8 +238,9 @@ function PieChart({
           size={size}
           ref={containerRef}
           height={size === CardSize.large ? lContainerHeight : undefined}
-          optionsCount={pieChartData.length}
-          hasOverflow={hasOptionsOverflow(size, pieChartData.length, false)}
+          optionsCount={data.length}
+          hasOverflow={hasOptionsOverflow(size, data.length, false)}
+          breakpoint={breakpoint}
         >
           <ReactECharts
             onChartInit={onChartInit}

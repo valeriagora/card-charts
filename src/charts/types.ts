@@ -1,9 +1,13 @@
+export interface IPieBarData {
+  name: string;
+  value: number;
+}
 export interface IChartOptionsOverflow {
-  small: {
+  [CardSize.small]: {
     default: number;
     withImgOptions: number;
   };
-  medium: {
+  [CardSize.medium]: {
     default: number;
     withImgOptions: number;
   };
@@ -13,11 +17,30 @@ export interface PieData {
   name: string;
 }
 export enum CardSize {
-  small = "small",
-  medium = "medium",
-  large = "large",
+  small = "S",
+  medium = "M",
+  large = "L",
 }
 export type CustomLegendItem = [number, number, string];
 export type CustomLegend = CustomLegendItem[];
 export type CustomLegendWithImageItem = [number, number, string, string];
 export type CustomLegendWithImage = CustomLegendWithImageItem[];
+
+export interface ICardDimensions {
+  small: {
+    width: number;
+    height: number;
+  };
+  medium: {
+    width: number;
+    height: number;
+  };
+  large: {
+    width: number;
+    height: string;
+  };
+}
+export enum IBreakpoint {
+  medium = "MEDIUM_BREAKPOINT",
+  large = "LARGE_BREAKPOINT",
+}

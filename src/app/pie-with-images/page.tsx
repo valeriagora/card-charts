@@ -12,7 +12,7 @@ function Pie() {
   return (
     <PieChartWIthOptionImages
       cardSize={CardSize.small}
-      pieData={data}
+      data={data}
       legendData={customSeriesData}
       questionImage={url}
     />

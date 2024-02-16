@@ -6,14 +6,12 @@ import {
 } from "echarts";
 import {
   MAX_PERCENTS_TEXT_WIDTH,
-  chartBoxDimensions,
   legendTextStyles,
   QUESTION_IMAGE_SIDE,
   CHART_CONTAINER_X_GAP_S,
-  CHART_WIDTH_L,
-  CHART_WIDTH_M,
-  CHART_WIDTH_S,
   CHART_CONTAINER_X_GAP_ML,
+  CHART_BOX_DIMENSIONS,
+  CHART_WIDTHS,
 } from "@/charts/constants/shared";
 import {
   barMaxSymbolsCount,
@@ -21,12 +19,13 @@ import {
   BAR_Y_AXIS_TEXT_X_GAP_ML,
   T2B_TEXT_RIGHT_PADDING,
 } from "@/charts/constants/bar";
-import { CardSize } from "../types";
+import { CardSize, IBreakpoint } from "../types";
 
 export const renderBarSmLegendItem = (
   param: CustomSeriesRenderItemParams,
   api: CustomSeriesRenderItemAPI,
-  gridVerticalPadding: number
+  gridVerticalPadding: number,
+  breakpoint: IBreakpoint
 ): CustomSeriesRenderItemReturn => {
   // @ts-ignore
   const xAxisStartPx: number = param.coordSys.x;
@@ -34,7 +33,8 @@ export const renderBarSmLegendItem = (
   const percents = api.value(0);
   const label = api.value(2);
   const truncatedText = truncate(label as string, barMaxSymbolsCount.small);
-  const percentsX = xAxisStartPx + CHART_WIDTH_S + CHART_CONTAINER_X_GAP_S;
+  const percentsX =
+    xAxisStartPx + CHART_WIDTHS[breakpoint].S + CHART_CONTAINER_X_GAP_S;
   const labelX = percentsX + MAX_PERCENTS_TEXT_WIDTH + BAR_Y_AXIS_TEXT_X_GAP_S;
   const labelY = param.dataIndex * ySizePx + gridVerticalPadding;
   return {
@@ -67,7 +67,8 @@ export const renderBarMdLegendItem = (
   api: CustomSeriesRenderItemAPI,
   gridVerticalPadding: number,
   showT2B: boolean,
-  questionImageUrl: string
+  questionImageUrl: string,
+  breakpoint: IBreakpoint
 ): CustomSeriesRenderItemReturn => {
   const [_, ySizePx] = api.size!([1, 1]) as number[];
   const percents = api.value(0);
@@ -82,11 +83,12 @@ export const renderBarMdLegendItem = (
   const questionImage = questionImageUrl
     ? getQuestionImage(
         questionImageUrl,
-        chartBoxDimensions.medium.height,
-        CardSize.medium
+        CHART_BOX_DIMENSIONS[breakpoint].M.height,
+        CardSize.medium,
+        breakpoint
       )
     : [];
-  const percentsX = CHART_WIDTH_M + CHART_CONTAINER_X_GAP_ML;
+  const percentsX = CHART_WIDTHS[breakpoint].M + CHART_CONTAINER_X_GAP_ML;
   const labelX = percentsX + MAX_PERCENTS_TEXT_WIDTH + BAR_Y_AXIS_TEXT_X_GAP_ML;
   const labelY =
     gridVerticalPadding + param.dataIndex * ySizePx + (ySizePx - 16) / 2 - 2;
@@ -122,7 +124,8 @@ export const renderBarLgLegendItem = (
   showT2B: boolean,
   questionImageUrl: string,
   gridVerticalPadding: number,
-  containerHeight: number
+  containerHeight: number,
+  breakpoint: IBreakpoint
 ): CustomSeriesRenderItemReturn => {
   const [_, ySizePx] = api.size!([1, 1]) as number[];
   const percents = api.value(0);
@@ -140,9 +143,14 @@ export const renderBarLgLegendItem = (
     : maxSymbolsCount.default;
   const truncatedText = truncate(label as string, maxSymbols);
   const questionImage = questionImageUrl
-    ? getQuestionImage(questionImageUrl, containerHeight, CardSize.large)
+    ? getQuestionImage(
+        questionImageUrl,
+        containerHeight,
+        CardSize.large,
+        breakpoint
+      )
     : [];
-  const percentsX = CHART_WIDTH_L + CHART_CONTAINER_X_GAP_ML;
+  const percentsX = CHART_WIDTHS[breakpoint].L + CHART_CONTAINER_X_GAP_ML;
   const labelX = percentsX + MAX_PERCENTS_TEXT_WIDTH + BAR_Y_AXIS_TEXT_X_GAP_ML;
   const labelY =
     gridVerticalPadding + param.dataIndex * ySizePx + (ySizePx - 16) / 2 - 2;
@@ -179,6 +187,7 @@ export const renderT2B = function (
   values: any,
   gridVerticalPadding: number,
   size: CardSize,
+  breakpoint: IBreakpoint,
   withImage = false
 ) {
   const [_, ySizePx] = api.size([1, 1]) as number[];
@@ -190,7 +199,7 @@ export const renderT2B = function (
   const penultimateValue = data[data.length - 2]?.value ?? 0;
   const lastValue = data[data.length - 1]?.value ?? 0;
   let b2bPercents = lastValue + penultimateValue;
-  let containerWidth = chartBoxDimensions[size].width;
+  let containerWidth = CHART_BOX_DIMENSIONS[breakpoint][size].width;
   const optionHeight = size === CardSize.large ? ySizePx : ySizePx;
   const containerHeight = optionHeight * 2;
   const textWidth = 60;

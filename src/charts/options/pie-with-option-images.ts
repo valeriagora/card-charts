@@ -2,16 +2,13 @@ import {
   CustomSeriesRenderItemAPI,
   CustomSeriesRenderItemParams,
 } from "echarts";
-import {
-  CHART_WIDTH_L,
-  CHART_WIDTH_M,
-  pieColors,
-} from "@/charts/constants/shared";
+import { CHART_WIDTHS, pieColors } from "@/charts/constants/shared";
 import {
   renderLgLegendItem,
   renderMdLegendItem,
 } from "@/charts/renderItem/pie-with-option-images";
 import { PIE_HIDDEN_AXISES } from "@/charts/constants/pie";
+import { IBreakpoint } from "../types";
 
 const pieTooltip = {
   show: false,
@@ -33,7 +30,8 @@ const pieSeries = {
 export const getMdOption = (
   pieData: any,
   pieLegendData: any,
-  questionImage: string
+  questionImage: string,
+  breakpoint: IBreakpoint
 ) => {
   const hasOverflow = pieData.length > 4;
   const data = hasOverflow ? pieData.slice(0, 4) : pieData;
@@ -50,7 +48,14 @@ export const getMdOption = (
         renderItem: (
           param: CustomSeriesRenderItemParams,
           api: CustomSeriesRenderItemAPI
-        ) => renderMdLegendItem(param, api, questionImage, data.length),
+        ) =>
+          renderMdLegendItem(
+            param,
+            api,
+            questionImage,
+            data.length,
+            breakpoint
+          ),
         data: legendData,
       },
       {
@@ -59,7 +64,7 @@ export const getMdOption = (
       },
     ],
     grid: {
-      left: CHART_WIDTH_M,
+      left: CHART_WIDTHS[breakpoint].M,
       right: 0,
       top: 0,
       bottom: 1,
@@ -72,7 +77,8 @@ export const getLgOption = (
   questionImage: string,
   optionHeights: number[],
   optionsWithImagesLines: number[],
-  containerHeight: number
+  containerHeight: number,
+  breakpoint: IBreakpoint
 ) => ({
   silent: true,
   animation: false,
@@ -92,7 +98,8 @@ export const getLgOption = (
           questionImage,
           optionHeights,
           optionsWithImagesLines,
-          containerHeight
+          containerHeight,
+          breakpoint
         ),
       data: pieLegendData,
     },
@@ -102,7 +109,7 @@ export const getLgOption = (
     },
   ],
   grid: {
-    left: CHART_WIDTH_L,
+    left: CHART_WIDTHS[breakpoint].L,
     right: 0,
     top: 0,
     bottom: 1,

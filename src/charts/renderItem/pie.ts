@@ -13,10 +13,10 @@ import {
   MAX_PERCENTS_TEXT_WIDTH,
   TEXT_LINE_HEIGHT,
   pieColors,
-  chartBoxDimensions,
   legendTextStyles,
   CHART_CONTAINER_X_GAP_S,
   CHART_CONTAINER_X_GAP_ML,
+  CHART_BOX_DIMENSIONS,
 } from "@/charts/constants/shared";
 import {
   pieMaxSymbols,
@@ -25,11 +25,12 @@ import {
   PIE_LEGEND_ITEM_TEXT_X_GAP,
   PIE_LEGEND_ITEM_Y_GAP_ML,
 } from "../constants/pie";
-import { CardSize } from "../types";
+import { CardSize, IBreakpoint } from "../types";
 export const renderSmLegendItem = (
   param: CustomSeriesRenderItemParams,
   api: CustomSeriesRenderItemAPI,
-  itemsLength: number
+  itemsLength: number,
+  breakpoint: IBreakpoint
 ): CustomSeriesRenderItemReturn => {
   // @ts-ignore
   const xAxisStartPx = param.coordSys.x;
@@ -43,7 +44,9 @@ export const renderSmLegendItem = (
     PIE_LEGEND_ICON_X_PADDING +
     PIE_LEGEND_ICON_RADIUS;
   const iconY =
-    (chartBoxDimensions.small.height - itemsLength * TEXT_LINE_HEIGHT) / 2 +
+    (CHART_BOX_DIMENSIONS[breakpoint].S.height -
+      itemsLength * TEXT_LINE_HEIGHT) /
+      2 +
     TEXT_LINE_HEIGHT / 2 +
     param.dataIndex * TEXT_LINE_HEIGHT;
   const percentsX =
@@ -54,7 +57,9 @@ export const renderSmLegendItem = (
   const labelX =
     percentsX + MAX_PERCENTS_TEXT_WIDTH + PIE_LEGEND_ITEM_TEXT_X_GAP;
   const labelY =
-    (chartBoxDimensions.small.height - itemsLength * TEXT_LINE_HEIGHT) / 2 +
+    (CHART_BOX_DIMENSIONS[breakpoint].S.height -
+      itemsLength * TEXT_LINE_HEIGHT) /
+      2 +
     param.dataIndex * TEXT_LINE_HEIGHT;
   return {
     type: "group",
@@ -97,7 +102,8 @@ export const renderMdLegendItem = (
   param: CustomSeriesRenderItemParams,
   api: CustomSeriesRenderItemAPI,
   questionImageUrl: string,
-  itemsLength: number
+  itemsLength: number,
+  breakpoint: IBreakpoint
 ): CustomSeriesRenderItemReturn => {
   // @ts-ignore
   const xAxisStartPx = param.coordSys.x;
@@ -105,7 +111,7 @@ export const renderMdLegendItem = (
   const percents = api.value(0);
   const label = api.value(2);
   const verticalPadding =
-    (chartBoxDimensions.medium.height -
+    (CHART_BOX_DIMENSIONS[breakpoint].M.height -
       itemsLength * TEXT_LINE_HEIGHT -
       (itemsLength - 1) * PIE_LEGEND_ITEM_Y_GAP_ML) /
     2;
@@ -113,7 +119,8 @@ export const renderMdLegendItem = (
     ? getQuestionImage(
         questionImageUrl,
         (param.coordSys as any).height,
-        CardSize.medium
+        CardSize.medium,
+        breakpoint
       )
     : [];
   const iconY =
@@ -184,7 +191,8 @@ export const renderLgLegendItem = (
   questionImageUrl: string,
   optionHeights: number[],
   optionsWithImagesLines: number[],
-  containerHeight: number
+  containerHeight: number,
+  breakpoint: IBreakpoint
 ) => {
   const itemsLength = optionHeights.length;
   // @ts-ignore
@@ -195,7 +203,8 @@ export const renderLgLegendItem = (
     ? getQuestionImage(
         questionImageUrl,
         (param.coordSys as any).height,
-        CardSize.large
+        CardSize.large,
+        breakpoint
       )
     : [];
   const percents = api.value(0);

@@ -1,7 +1,7 @@
 import { ECharts, graphic } from "echarts";
 import {
-  chartBoxDimensions,
   chartOptionsOverflow,
+  CHART_BOX_DIMENSIONS,
   IMAGE_BG_RADIUS,
   pieColors,
   QUESTION_IMAGE_SIDE,
@@ -12,7 +12,7 @@ import {
   BAR_Y_AXIS_TEXT_X_GAP_ML,
   BAR_CHART_CONTAINER_PADDING_BOTTOM_ML,
 } from "@/charts/constants/bar";
-import { CardSize } from "@/charts/types";
+import { CardSize, IBreakpoint } from "@/charts/types";
 
 export async function blobToBase64(blob: Blob): Promise<string> {
   return new Promise((resolve, _) => {
@@ -84,9 +84,10 @@ export const isBase64Image = (img: string) => img.startsWith("data:image");
 export const getQuestionImage = (
   questionImageUrl: string,
   coordSysHeight: number,
-  size: CardSize
+  size: CardSize,
+  breakpoint: IBreakpoint
 ): any => {
-  const chartWidth = chartBoxDimensions[size].width;
+  const chartWidth = CHART_BOX_DIMENSIONS[breakpoint][size].width;
   return [
     {
       type: RECTANGLE_WITH_RADIUS_CUSTOM_SHAPE,
@@ -186,15 +187,15 @@ export function resizeImageBase64(
 
 export const getBarsContainerHeight = (size: CardSize, length: number) => {
   if (size === CardSize.small) {
-    return length > chartOptionsOverflow.small.default
-      ? chartOptionsOverflow.small.default * TEXT_LINE_HEIGHT
+    return length > chartOptionsOverflow.S.default
+      ? chartOptionsOverflow.S.default * TEXT_LINE_HEIGHT
       : length * TEXT_LINE_HEIGHT;
   }
   if (size === CardSize.medium) {
-    return length > chartOptionsOverflow.medium.default
-      ? chartOptionsOverflow.medium.default * TEXT_LINE_HEIGHT +
+    return length > chartOptionsOverflow.M.default
+      ? chartOptionsOverflow.M.default * TEXT_LINE_HEIGHT +
           BAR_CHART_CONTAINER_PADDING_BOTTOM_ML +
-          BAR_Y_AXIS_TEXT_X_GAP_ML * (chartOptionsOverflow.medium.default - 1)
+          BAR_Y_AXIS_TEXT_X_GAP_ML * (chartOptionsOverflow.M.default - 1)
       : length * TEXT_LINE_HEIGHT +
           (length - 1) * BAR_Y_AXIS_TEXT_X_GAP_ML +
           BAR_CHART_CONTAINER_PADDING_BOTTOM_ML;

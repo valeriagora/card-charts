@@ -18,14 +18,19 @@ import {
 } from "@/charts/utils";
 import { getSmOption, getMdOption, getLgOption } from "@/charts/options/bar";
 import { MIN_CHART_HEIGHT_L } from "@/charts/constants/shared";
-import { Button } from "@mui/material";
+import { Button, useMediaQuery, useTheme } from "@mui/material";
 import { ECharts } from "echarts";
 import Radio from "@mui/material/Radio";
 import RadioGroup from "@mui/material/RadioGroup";
 import FormControlLabel from "@mui/material/FormControlLabel";
 import FormControl from "@mui/material/FormControl";
 import FormLabel from "@mui/material/FormLabel";
-import { CardSize, CustomLegend } from "@/charts/types";
+import {
+  CardSize,
+  CustomLegend,
+  IBreakpoint,
+  IPieBarData,
+} from "@/charts/types";
 import { ChartContainer } from "@/charts/components/shared/ChartContainer";
 import {
   BAR_HEIGHT,
@@ -34,14 +39,12 @@ import {
 } from "@/charts/constants/bar";
 
 interface IBarProps {
-  data: { name: string; value: number }[];
+  data: IPieBarData[];
   legendData: CustomLegend;
   cardSize: CardSize;
   questionImage: string;
 }
 function BarChart({ data, legendData, cardSize, questionImage }: IBarProps) {
-  const [barChartData, setBarChartData] = useState(data);
-  const [barLegendData, setBarLegendData] = useState<CustomLegend>(legendData);
   const [isSvgExporting, setIsSvgExporting] = useState(false);
   const [questionImageUrl, setQuestionImageUrl] = useState("");
   const [showT2B, setShowT2B] = useState(false);
@@ -51,6 +54,10 @@ function BarChart({ data, legendData, cardSize, questionImage }: IBarProps) {
   const [size, setSize] = useState<CardSize>(cardSize);
   const containerRef = useRef<HTMLDivElement | null>(null);
   const [downloadQueue, setDownloadQueue] = useState<string[]>([]);
+  const theme = useTheme();
+  const matches = useMediaQuery(theme.breakpoints.up("lg"), {
+    noSsr: true,
+  });
 
   useEffect(() => {
     registerCoverShape();
@@ -72,7 +79,7 @@ function BarChart({ data, legendData, cardSize, questionImage }: IBarProps) {
       ? isBase64Image(questionImageUrl)
       : true;
     setIsQuestionImageReady(isQuestionImageReady);
-  }, [barLegendData, questionImageUrl]);
+  }, [legendData, questionImageUrl]);
 
   const downloadChart = async (chartInstance: ECharts) => {
     const url = await getSvgBlob(chartInstance);
@@ -106,31 +113,34 @@ function BarChart({ data, legendData, cardSize, questionImage }: IBarProps) {
     questionImageUrl,
     isQuestionImageReady,
   ]);
+  const breakpoint = matches ? IBreakpoint.large : IBreakpoint.medium;
   const small = useMemo(
     () =>
       getSmOption(
-        barChartData,
-        barLegendData,
-        hasOptionsOverflow(size, barChartData.length)
+        data,
+        legendData,
+        hasOptionsOverflow(size, data.length),
+        breakpoint
       ),
-    [barChartData, size]
+    [data, size, breakpoint]
   );
   const medium = useMemo(
     () =>
       getMdOption(
-        barChartData,
-        barLegendData,
+        data,
+        legendData,
         withImage,
-        hasOptionsOverflow(size, barChartData.length),
+        hasOptionsOverflow(size, data.length),
         showT2B,
-        questionImageUrl
+        questionImageUrl,
+        breakpoint
       ),
-    [barChartData, size, withImage, showT2B, isQuestionImageReady]
+    [data, size, withImage, showT2B, isQuestionImageReady, breakpoint]
   );
   const lContainerHeight =
     BAR_CHART_CONTAINER_PADDING_BOTTOM_ML +
-    BAR_HEIGHT * barChartData.length +
-    (barChartData.length - 1) * BAR_Y_GAP_ML;
+    BAR_HEIGHT * data.length +
+    (data.length - 1) * BAR_Y_GAP_ML;
   const largeContainerHeight =
     lContainerHeight > MIN_CHART_HEIGHT_L
       ? lContainerHeight
@@ -138,20 +148,21 @@ function BarChart({ data, legendData, cardSize, questionImage }: IBarProps) {
   const large = useMemo(
     () =>
       getLgOption(
-        barChartData,
-        barLegendData,
+        data,
+        legendData,
         withImage,
         showT2B,
         questionImageUrl,
-        largeContainerHeight
+        largeContainerHeight,
+        breakpoint
       ),
-    [barChartData, barLegendData, withImage, showT2B, isQuestionImageReady]
+    [data, legendData, withImage, showT2B, isQuestionImageReady, breakpoint]
   );
   const options = useMemo(
     () => ({
-      small,
-      medium,
-      large,
+      S: small,
+      M: medium,
+      L: large,
     }),
     [small, medium, , large]
   );
@@ -238,8 +249,9 @@ function BarChart({ data, legendData, cardSize, questionImage }: IBarProps) {
           ref={containerRef}
           size={size}
           height={size === CardSize.large ? largeContainerHeight : undefined}
-          optionsCount={barChartData.length}
-          hasOverflow={hasOptionsOverflow(size, barChartData.length)}
+          optionsCount={data.length}
+          hasOverflow={hasOptionsOverflow(size, data.length)}
+          breakpoint={breakpoint}
         >
           <ReactECharts
             containerRef={containerRef}
