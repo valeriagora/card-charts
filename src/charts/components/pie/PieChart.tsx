@@ -43,8 +43,8 @@ import {
   MIN_CHART_HEIGHT_L,
 } from "@/charts/constants/shared";
 import {
-  pieMaxSymbols,
   PIE_LEGEND_ITEM_Y_GAP_ML,
+  PIE_MAX_SYMBOLS,
 } from "@/charts/constants/pie";
 import { PieData } from "@/charts/types";
 import { ChartContainer } from "@/charts/components/shared/ChartContainer";
@@ -77,9 +77,10 @@ function PieChart({
   const matches = useMediaQuery(theme.breakpoints.up("lg"), {
     noSsr: true,
   });
+  const breakpoint = IBreakpoint[matches ? "large" : "medium"];
   const optionsLines = data.reduce((total: number[], current: any) => {
     const { name } = current;
-    const largeMaxSymbols = pieMaxSymbols.large.withoutOptionImgs;
+    const largeMaxSymbols = PIE_MAX_SYMBOLS[breakpoint].large.withoutOptionImgs;
     const linesCount = breakWord(
       `${name}`,
       questionImageUrl
@@ -151,7 +152,6 @@ function PieChart({
       }, 1000);
     }
   }, [downloadQueue, isQuestionImageReady, chartInstance]);
-  const breakpoint = IBreakpoint[matches ? "large" : "medium"];
   const small = useMemo(
     () => getSmOption(data, legendData, breakpoint),
     [data, legendData, breakpoint]

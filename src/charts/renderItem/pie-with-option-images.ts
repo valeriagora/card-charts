@@ -24,7 +24,7 @@ import {
   PIE_LEGEND_ICON_RADIUS,
   PIE_LEGEND_ITEM_TEXT_X_GAP,
   PIE_LEGEND_ITEM_Y_GAP_ML,
-  pieMaxSymbols,
+  PIE_MAX_SYMBOLS,
 } from "@/charts/constants/pie";
 import { CardSize, IBreakpoint } from "../types";
 
@@ -62,7 +62,8 @@ export const renderMdLegendItem = (
     param.dataIndex * (OPTION_IMAGE_SIDE + PIE_LEGEND_ITEM_Y_GAP_ML) +
     OPTION_IMAGE_SIDE / 2;
   const labelY = iconY - TEXT_LINE_HEIGHT / 2;
-  const maxSymbolsWithOptionImgs = pieMaxSymbols.medium.withOptionImgs;
+  const maxSymbolsWithOptionImgs =
+    PIE_MAX_SYMBOLS[breakpoint].medium.withOptionImgs;
   const truncatedText = truncate(
     label as string,
     questionImageUrl
@@ -169,7 +170,8 @@ export const renderLgLegendItem = (
   const percents = api.value(0);
   const label = api.value(2);
   const imageOptionUrl = api.value(3);
-  const maxSymbolsWithOptionImgs = pieMaxSymbols.large.withOptionImgs;
+  const maxSymbolsWithOptionImgs =
+    PIE_MAX_SYMBOLS[breakpoint].large.withOptionImgs;
   const labelChunks = breakWord(
     label as string,
     questionImageUrl

@@ -19,7 +19,7 @@ import {
   CHART_BOX_DIMENSIONS,
 } from "@/charts/constants/shared";
 import {
-  pieMaxSymbols,
+  PIE_MAX_SYMBOLS,
   PIE_LEGEND_ICON_RADIUS,
   PIE_LEGEND_ICON_X_PADDING,
   PIE_LEGEND_ITEM_TEXT_X_GAP,
@@ -37,7 +37,10 @@ export const renderSmLegendItem = (
   const iconColor = getLegendIconColor(pieColors, param.dataIndex);
   const percents = api.value(0);
   const label = api.value(2);
-  const truncatedText = truncate(label as string, pieMaxSymbols.small);
+  const truncatedText = truncate(
+    label as string,
+    PIE_MAX_SYMBOLS[breakpoint].small
+  );
   const iconX =
     xAxisStartPx +
     CHART_CONTAINER_X_GAP_S +
@@ -128,7 +131,8 @@ export const renderMdLegendItem = (
     param.dataIndex * (TEXT_LINE_HEIGHT + PIE_LEGEND_ITEM_Y_GAP_ML) +
     TEXT_LINE_HEIGHT / 2;
   const labelY = iconY - TEXT_LINE_HEIGHT / 2;
-  const maxSymbolsWithoutOptionImgs = pieMaxSymbols.medium.withoutOptionImgs;
+  const maxSymbolsWithoutOptionImgs =
+    PIE_MAX_SYMBOLS[breakpoint].medium.withoutOptionImgs;
   const truncatedText = truncate(
     label as string,
     questionImageUrl
@@ -209,7 +213,8 @@ export const renderLgLegendItem = (
     : [];
   const percents = api.value(0);
   const label = api.value(2);
-  const maxSymbolsWithoutOptionImgs = pieMaxSymbols.large.withoutOptionImgs;
+  const maxSymbolsWithoutOptionImgs =
+    PIE_MAX_SYMBOLS[breakpoint].large.withoutOptionImgs;
   const labelChunks = breakWord(
     label as string,
     questionImageUrl

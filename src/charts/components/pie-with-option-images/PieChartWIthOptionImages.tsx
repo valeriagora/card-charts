@@ -31,8 +31,8 @@ import {
   MIN_CHART_HEIGHT_L,
 } from "@/charts/constants/shared";
 import {
-  pieMaxSymbols,
   PIE_LEGEND_ITEM_Y_GAP_ML,
+  PIE_MAX_SYMBOLS,
 } from "@/charts/constants/pie";
 import { DndCard } from "@/charts/components/shared/DndCard";
 import {
@@ -84,10 +84,11 @@ function PieChartWIthOptionImages({
   const matches = useMediaQuery(theme.breakpoints.up("lg"), {
     noSsr: true,
   });
+  const breakpoint = IBreakpoint[matches ? "large" : "medium"];
   const optionsWithImagesLines = data.reduce(
     (total: number[], current: any) => {
       const { name } = current;
-      const largeMaxSymbols = pieMaxSymbols.large.withOptionImgs;
+      const largeMaxSymbols = PIE_MAX_SYMBOLS[breakpoint].large.withOptionImgs;
       const linesCount = breakWord(
         `${name}`,
         questionImageUrl
@@ -214,7 +215,6 @@ function PieChartWIthOptionImages({
     isQuestionImageReady,
     chartInstance,
   ]);
-  const breakpoint = IBreakpoint[matches ? "large" : "medium"];
   const small = useMemo(
     () => getSmOption(data, pieLegendData, breakpoint),
     [data, pieLegendData, breakpoint]
