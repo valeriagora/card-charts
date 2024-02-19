@@ -21,13 +21,6 @@ export const CardContainer = styled("div")<{
   justifyContent: "space-between",
   overflow: "hidden",
 }));
-export const SmToMdChart = styled("div")(() => ({
-  position: "relative",
-  width: "100%",
-  height: "100%",
-  display: "flex",
-  alignItems: "center",
-}));
 export const OverflowInfo = styled("div")({
   position: "absolute",
   bottom: 0,
@@ -46,8 +39,7 @@ export const ChartContainerStyled = styled("div")<{
   height?: number;
   breakpoint: Breakpoint;
 }>(({ size, height, breakpoint }) => {
-  const width: number = CHART_BOX_DIMENSIONS[breakpoint][size].width;
-  console.log("w", width, breakpoint, size);
+  // const width: number = CHART_BOX_DIMENSIONS[breakpoint][size].width;
   return {
     position: "relative",
     width: "100%",
