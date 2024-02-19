@@ -25,12 +25,12 @@ import {
   PIE_LEGEND_ITEM_TEXT_X_GAP,
   PIE_LEGEND_ITEM_Y_GAP_ML,
 } from "../constants/pie";
-import { CardSize, IBreakpoint } from "../types";
+import { CardSize, Breakpoint } from "../types";
 export const renderSmLegendItem = (
   param: CustomSeriesRenderItemParams,
   api: CustomSeriesRenderItemAPI,
   itemsLength: number,
-  breakpoint: IBreakpoint
+  breakpoint: Breakpoint
 ): CustomSeriesRenderItemReturn => {
   // @ts-ignore
   const xAxisStartPx = param.coordSys.x;
@@ -106,7 +106,7 @@ export const renderMdLegendItem = (
   api: CustomSeriesRenderItemAPI,
   questionImageUrl: string,
   itemsLength: number,
-  breakpoint: IBreakpoint
+  breakpoint: Breakpoint
 ): CustomSeriesRenderItemReturn => {
   // @ts-ignore
   const xAxisStartPx = param.coordSys.x;
@@ -196,7 +196,7 @@ export const renderLgLegendItem = (
   optionHeights: number[],
   optionsWithImagesLines: number[],
   containerHeight: number,
-  breakpoint: IBreakpoint
+  breakpoint: Breakpoint
 ) => {
   const itemsLength = optionHeights.length;
   // @ts-ignore

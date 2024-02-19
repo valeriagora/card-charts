@@ -6,11 +6,11 @@ import {
 } from "./styledComponents";
 import styles from "@/app/page.module.css";
 import { useMediaQuery, useTheme } from "@mui/material";
-import { IBreakpoint } from "@/charts/types";
+import { Breakpoint } from "@/charts/types";
 export const DndCard = ({ title, children, size }: any) => {
   const theme = useTheme();
   const matches = useMediaQuery(theme.breakpoints.up("lg"));
-  const breakpoint = IBreakpoint[matches ? "large" : "medium"];
+  const breakpoint = Breakpoint[matches ? "large" : "medium"];
   // const cardDims = matches ? cardDimensionsLgBreakpoint : cardDimensions;
   return (
     <CardContainer size={size} id="capture" breakpoint={breakpoint}>

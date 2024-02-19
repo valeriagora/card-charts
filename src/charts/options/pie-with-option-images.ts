@@ -8,7 +8,7 @@ import {
   renderMdLegendItem,
 } from "@/charts/renderItem/pie-with-option-images";
 import { PIE_HIDDEN_AXISES } from "@/charts/constants/pie";
-import { IBreakpoint } from "../types";
+import { Breakpoint } from "../types";
 
 const pieTooltip = {
   show: false,
@@ -31,7 +31,7 @@ export const getMdOption = (
   pieData: any,
   pieLegendData: any,
   questionImage: string,
-  breakpoint: IBreakpoint
+  breakpoint: Breakpoint
 ) => {
   const hasOverflow = pieData.length > 4;
   const data = hasOverflow ? pieData.slice(0, 4) : pieData;
@@ -78,7 +78,7 @@ export const getLgOption = (
   optionHeights: number[],
   optionsWithImagesLines: number[],
   containerHeight: number,
-  breakpoint: IBreakpoint
+  breakpoint: Breakpoint
 ) => ({
   silent: true,
   animation: false,

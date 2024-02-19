@@ -19,13 +19,13 @@ import {
   BAR_Y_AXIS_TEXT_X_GAP_ML,
   T2B_TEXT_RIGHT_PADDING,
 } from "@/charts/constants/bar";
-import { CardSize, IBreakpoint } from "../types";
+import { CardSize, Breakpoint } from "../types";
 
 export const renderBarSmLegendItem = (
   param: CustomSeriesRenderItemParams,
   api: CustomSeriesRenderItemAPI,
   gridVerticalPadding: number,
-  breakpoint: IBreakpoint
+  breakpoint: Breakpoint
 ): CustomSeriesRenderItemReturn => {
   // @ts-ignore
   const xAxisStartPx: number = param.coordSys.x;
@@ -71,7 +71,7 @@ export const renderBarMdLegendItem = (
   gridVerticalPadding: number,
   showT2B: boolean,
   questionImageUrl: string,
-  breakpoint: IBreakpoint
+  breakpoint: Breakpoint
 ): CustomSeriesRenderItemReturn => {
   const [_, ySizePx] = api.size!([1, 1]) as number[];
   const percents = api.value(0);
@@ -129,7 +129,7 @@ export const renderBarLgLegendItem = (
   questionImageUrl: string,
   gridVerticalPadding: number,
   containerHeight: number,
-  breakpoint: IBreakpoint
+  breakpoint: Breakpoint
 ): CustomSeriesRenderItemReturn => {
   const [_, ySizePx] = api.size!([1, 1]) as number[];
   const percents = api.value(0);
@@ -192,7 +192,7 @@ export const renderT2B = function (
   values: any,
   gridVerticalPadding: number,
   size: CardSize,
-  breakpoint: IBreakpoint,
+  breakpoint: Breakpoint,
   withImage = false
 ) {
   const [_, ySizePx] = api.size([1, 1]) as number[];

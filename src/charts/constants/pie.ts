@@ -1,4 +1,4 @@
-import { IBreakpoint } from "../types";
+import { Breakpoint } from "../types";
 
 export const PIE_HIDDEN_AXISES = {
   xAxis: {
@@ -36,7 +36,7 @@ export const PIE_LEGEND_ICON_RADIUS = 6;
 export const PIE_CHART_CONTAINER_Y_PADDING = 4;
 export const PIE_MAX_SYMBOLS = {
   // breakpoint size
-  [IBreakpoint.medium]: {
+  [Breakpoint.medium]: {
     small: 10,
     medium: {
       withoutOptionImgs: {
@@ -59,7 +59,7 @@ export const PIE_MAX_SYMBOLS = {
       },
     },
   },
-  [IBreakpoint.large]: {
+  [Breakpoint.large]: {
     small: 16,
     medium: {
       withoutOptionImgs: {

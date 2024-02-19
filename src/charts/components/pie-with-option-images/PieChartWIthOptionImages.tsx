@@ -39,7 +39,7 @@ import {
   CardSize,
   CustomLegendWithImage,
   CustomLegendWithImageItem,
-  IBreakpoint,
+  Breakpoint,
   IPieBarData,
 } from "@/charts/types";
 import { ECharts } from "echarts";
@@ -84,7 +84,7 @@ function PieChartWIthOptionImages({
   const matches = useMediaQuery(theme.breakpoints.up("lg"), {
     noSsr: true,
   });
-  const breakpoint = IBreakpoint[matches ? "large" : "medium"];
+  const breakpoint = Breakpoint[matches ? "large" : "medium"];
   const optionsWithImagesLines = data.reduce(
     (total: number[], current: any) => {
       const { name } = current;

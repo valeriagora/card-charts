@@ -32,7 +32,7 @@ import FormLabel from "@mui/material/FormLabel";
 import {
   CardSize,
   CustomLegendWithImage,
-  IBreakpoint,
+  Breakpoint,
   IPieBarData,
 } from "@/charts/types";
 import { ChartContainer } from "@/charts/components/shared/ChartContainer";
@@ -158,7 +158,7 @@ function BarChartWithOptionImages({
     isQuestionImageReady,
   ]);
 
-  const breakpoint = IBreakpoint[matches ? "large" : "medium"];
+  const breakpoint = Breakpoint[matches ? "large" : "medium"];
   const small = useMemo(
     () =>
       getSmOption(

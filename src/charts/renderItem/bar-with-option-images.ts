@@ -20,7 +20,7 @@ import {
   BAR_MAX_SYMBOLS_COUNT,
   BAR_Y_AXISES_WIDTHS,
 } from "@/charts/constants/bar";
-import { CardSize, IBreakpoint } from "../types";
+import { CardSize, Breakpoint } from "../types";
 
 export const renderBarMdLegendItem = (
   param: CustomSeriesRenderItemParams,
@@ -28,7 +28,7 @@ export const renderBarMdLegendItem = (
   gridVerticalPadding: number,
   showT2B: boolean,
   questionImageUrl: string,
-  breakpoint: IBreakpoint
+  breakpoint: Breakpoint
 ): CustomSeriesRenderItemReturn => {
   const [_, ySizePx] = api.size!([1, 1]) as number[];
   const percents = api.value(0);
@@ -117,7 +117,7 @@ export const renderBarLgLegendItem = (
   showT2B: boolean,
   questionImageUrl: string,
   containerHeight: number,
-  breakpoint: IBreakpoint
+  breakpoint: Breakpoint
 ): CustomSeriesRenderItemReturn => {
   const [_, ySizePx] = api.size!([1, 1]) as number[];
   const percents = api.value(0);

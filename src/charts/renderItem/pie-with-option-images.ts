@@ -26,14 +26,14 @@ import {
   PIE_LEGEND_ITEM_Y_GAP_ML,
   PIE_MAX_SYMBOLS,
 } from "@/charts/constants/pie";
-import { CardSize, IBreakpoint } from "../types";
+import { CardSize, Breakpoint } from "../types";
 
 export const renderMdLegendItem = (
   param: CustomSeriesRenderItemParams,
   api: CustomSeriesRenderItemAPI,
   questionImageUrl: string,
   itemsLength: number,
-  breakpoint: IBreakpoint
+  breakpoint: Breakpoint
 ) => {
   // @ts-ignore
   const xAxisStartPx = param.coordSys.x;
@@ -152,7 +152,7 @@ export const renderLgLegendItem = (
   optionHeights: number[],
   optionsWithImagesLines: number[],
   containerHeight: number,
-  breakpoint: IBreakpoint
+  breakpoint: Breakpoint
 ) => {
   const itemsLength = optionHeights.length;
   // @ts-ignore

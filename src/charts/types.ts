@@ -40,7 +40,7 @@ export interface ICardDimensions {
     height: string;
   };
 }
-export enum IBreakpoint {
+export enum Breakpoint {
   medium = "MEDIUM_BREAKPOINT",
   large = "LARGE_BREAKPOINT",
 }

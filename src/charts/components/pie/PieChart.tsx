@@ -25,7 +25,7 @@ import { DndCard } from "@/charts/components/shared/DndCard";
 import {
   CardSize,
   CustomLegend,
-  IBreakpoint,
+  Breakpoint,
   IPieBarData,
 } from "@/charts/types";
 import { ECharts } from "echarts";
@@ -77,7 +77,7 @@ function PieChart({
   const matches = useMediaQuery(theme.breakpoints.up("lg"), {
     noSsr: true,
   });
-  const breakpoint = IBreakpoint[matches ? "large" : "medium"];
+  const breakpoint = Breakpoint[matches ? "large" : "medium"];
   const optionsLines = data.reduce((total: number[], current: any) => {
     const { name } = current;
     const largeMaxSymbols = PIE_MAX_SYMBOLS[breakpoint].large.withoutOptionImgs;

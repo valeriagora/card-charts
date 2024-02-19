@@ -12,7 +12,7 @@ import {
   BAR_Y_AXIS_TEXT_X_GAP_ML,
   BAR_CHART_CONTAINER_PADDING_BOTTOM_ML,
 } from "@/charts/constants/bar";
-import { CardSize, IBreakpoint } from "@/charts/types";
+import { CardSize, Breakpoint } from "@/charts/types";
 
 export async function blobToBase64(blob: Blob): Promise<string> {
   return new Promise((resolve, _) => {
@@ -85,7 +85,7 @@ export const getQuestionImage = (
   questionImageUrl: string,
   coordSysHeight: number,
   size: CardSize,
-  breakpoint: IBreakpoint
+  breakpoint: Breakpoint
 ): any => {
   const chartWidth = CHART_BOX_DIMENSIONS[breakpoint][size].width;
   console.log("chartWidth", chartWidth);

@@ -1,9 +1,9 @@
-import { IBreakpoint } from "../types";
+import { Breakpoint } from "../types";
 
 export const BAR_HEIGHT = 16;
 export const BAR_MAX_SYMBOLS_COUNT = {
   // breakpoint size
-  [IBreakpoint.medium]: {
+  [Breakpoint.medium]: {
     // card size
     small: 16,
     medium: {
@@ -33,7 +33,7 @@ export const BAR_MAX_SYMBOLS_COUNT = {
       },
     },
   },
-  [IBreakpoint.large]: {
+  [Breakpoint.large]: {
     small: 19,
     medium: {
       withoutOptionImgs: {
@@ -73,13 +73,13 @@ export const BAR_Y_GAP_ML = 12;
 export const BAR_Y_GAP_WITH_OPTION_IMG_ML = 64;
 export const BAR_Y_AXISES_WIDTHS = {
   // breakpoint size
-  [IBreakpoint.medium]: {
+  [Breakpoint.medium]: {
     // card size
     S: 148,
     M: 304,
     L: 472,
   },
-  [IBreakpoint.large]: {
+  [Breakpoint.large]: {
     S: 176,
     M: 332,
     L: 514,

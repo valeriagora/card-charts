@@ -21,7 +21,7 @@ import {
   CardSize,
   CustomLegend,
   CustomLegendWithImage,
-  IBreakpoint,
+  Breakpoint,
 } from "@/charts/types";
 import {
   renderBarLgLegendItem,
@@ -41,7 +41,7 @@ export const getSmOption = (
   data: { name: string; value: number }[],
   legendData: CustomLegend | CustomLegendWithImage,
   hasOverflow: boolean,
-  breakpoint: IBreakpoint
+  breakpoint: Breakpoint
 ): ReactEChartsProps["option"] => {
   const barData = hasOverflow ? data.slice(0, 4) : data;
   const legend = hasOverflow ? legendData.slice(0, 4) : legendData;
@@ -114,7 +114,7 @@ export const getMdOption = (
   hasOverflow: boolean,
   showT2B: boolean,
   questionImageUrl: string,
-  breakpoint: IBreakpoint
+  breakpoint: Breakpoint
 ): ReactEChartsProps["option"] => {
   const barData = hasOverflow ? data.slice(0, 11) : data;
   const legend = hasOverflow ? legendData.slice(0, 11) : legendData;
@@ -191,7 +191,7 @@ export const getLgOption = (
   showT2B: boolean,
   questionImageUrl: string,
   containerHeight: number,
-  breakpoint: IBreakpoint
+  breakpoint: Breakpoint
 ): ReactEChartsProps["option"] => {
   const gridVerticalPadding =
     (containerHeight -

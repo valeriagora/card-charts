@@ -3,12 +3,12 @@ import {
   CHART_BOX_DIMENSIONS,
   MIN_CHART_HEIGHT_L,
 } from "@/charts/constants/shared";
-import { CardSize, IBreakpoint } from "@/charts/types";
+import { CardSize, Breakpoint } from "@/charts/types";
 import { styled } from "@mui/material";
 
 export const CardContainer = styled("div")<{
   size: CardSize;
-  breakpoint: IBreakpoint;
+  breakpoint: Breakpoint;
 }>(({ size, breakpoint }) => ({
   padding: "12px 20px 20px 20px",
   width: CARD_DIMENSIONS[breakpoint][size].width,
@@ -44,7 +44,7 @@ export const OverflowInfo = styled("div")({
 export const ChartContainerStyled = styled("div")<{
   size: CardSize;
   height?: number;
-  breakpoint: IBreakpoint;
+  breakpoint: Breakpoint;
 }>(({ size, height, breakpoint }) => {
   const width: number = CHART_BOX_DIMENSIONS[breakpoint][size].width;
   console.log("w", width, breakpoint, size);

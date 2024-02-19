@@ -1,7 +1,7 @@
-import { CardSize, IBreakpoint, IChartOptionsOverflow } from "@/charts/types";
+import { CardSize, Breakpoint, IChartOptionsOverflow } from "@/charts/types";
 
 export const CARD_DIMENSIONS = {
-  [IBreakpoint.medium]: {
+  [Breakpoint.medium]: {
     S: {
       width: 320,
       height: 200,
@@ -15,7 +15,7 @@ export const CARD_DIMENSIONS = {
       height: "100%",
     },
   },
-  [IBreakpoint.large]: {
+  [Breakpoint.large]: {
     S: {
       width: 348,
       height: 200,
@@ -32,7 +32,7 @@ export const CARD_DIMENSIONS = {
 };
 export const CHART_BOX_DIMENSIONS = {
   // breakpoint size
-  [IBreakpoint.medium]: {
+  [Breakpoint.medium]: {
     // card size
     S: {
       width: 280,
@@ -47,7 +47,7 @@ export const CHART_BOX_DIMENSIONS = {
       height: "auto",
     },
   },
-  [IBreakpoint.large]: {
+  [Breakpoint.large]: {
     S: {
       width: 308,
       height: 120,
@@ -86,13 +86,13 @@ export const TEXT_LINE_HEIGHT = 20;
 // chart widths
 export const CHART_WIDTHS = {
   //breakpoint size
-  [IBreakpoint.medium]: {
+  [Breakpoint.medium]: {
     // card size
     S: 120,
     M: 304,
     L: 472,
   },
-  [IBreakpoint.large]: {
+  [Breakpoint.large]: {
     S: 120,
     M: 332,
     L: 514,

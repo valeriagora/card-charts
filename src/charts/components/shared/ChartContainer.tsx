@@ -1,5 +1,5 @@
 import { chartOptionsOverflow } from "@/charts/constants/shared";
-import { CardSize, IBreakpoint } from "@/charts/types";
+import { CardSize, Breakpoint } from "@/charts/types";
 import Image from "next/image";
 import { forwardRef, LegacyRef, ReactNode } from "react";
 import { ChartContainerStyled, OverflowInfo } from "./styledComponents";
@@ -11,7 +11,7 @@ interface IChartContainerProps {
   optionsCount: number;
   withOptionImages?: boolean;
   children: ReactNode;
-  breakpoint: IBreakpoint;
+  breakpoint: Breakpoint;
 }
 export const ChartContainer = forwardRef(function Container(
   {

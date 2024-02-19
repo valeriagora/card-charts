@@ -10,7 +10,7 @@ import {
 } from "@/charts/renderItem/pie";
 import { PIE_HIDDEN_AXISES } from "@/charts/constants/pie";
 import { ReactEChartsProps } from "../components/shared/ReactECharts";
-import { CustomLegend, CustomLegendWithImage, IBreakpoint } from "../types";
+import { CustomLegend, CustomLegendWithImage, Breakpoint } from "../types";
 
 const pieTooltip = {
   show: false,
@@ -29,7 +29,7 @@ const pieSeries = {
 export const getSmOption = (
   data: { name: string; value: number }[],
   pieLegendData: CustomLegend | CustomLegendWithImage,
-  breakpoint: IBreakpoint
+  breakpoint: Breakpoint
 ): ReactEChartsProps["option"] => {
   const hasOverflow = data.length > 4;
   const legendData = hasOverflow ? pieLegendData.slice(0, 4) : pieLegendData;
@@ -67,7 +67,7 @@ export const getMdOption = (
   pieData: { name: string; value: number }[],
   pieLegendData: CustomLegend,
   questionImage: string,
-  breakpoint: IBreakpoint
+  breakpoint: Breakpoint
 ): ReactEChartsProps["option"] => {
   const hasOverflow = pieData.length > 11;
   const data = hasOverflow ? pieData.slice(0, 11) : pieData;
@@ -114,7 +114,7 @@ export const getLgOption = (
   optionHeights: number[],
   optionsWithImagesLines: number[],
   containerHeight: number,
-  breakpoint: IBreakpoint
+  breakpoint: Breakpoint
 ) => ({
   silent: true,
   animation: false,
