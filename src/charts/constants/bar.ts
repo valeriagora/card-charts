@@ -1,32 +1,65 @@
 import { IBreakpoint } from "../types";
 
 export const BAR_HEIGHT = 16;
-export const barMaxSymbolsCount = {
-  small: 16,
-  medium: {
-    withoutOptionImgs: {
-      default: 40,
-      withT2B: 26,
-      withQuestionImg: 20,
+export const BAR_MAX_SYMBOLS_COUNT = {
+  // breakpoint size
+  [IBreakpoint.medium]: {
+    // card size
+    small: 16,
+    medium: {
+      withoutOptionImgs: {
+        default: 40,
+        withT2B: 26,
+        withQuestionImg: 20,
+      },
+      withOptionImgs: {
+        default: 27,
+        withT2B: 13,
+        withQuestionImg: 6,
+      },
     },
-    withOptionImgs: {
-      default: 27,
-      withT2B: 13,
-      withQuestionImg: 6,
+    large: {
+      withoutOptionImgs: {
+        default: 68,
+        withT2B: 53,
+        withQuestionImg: 46,
+        withQuestionImgAndT2B: 34,
+      },
+      withOptionImgs: {
+        default: 54,
+        withT2B: 40,
+        withQuestionImg: 35,
+        withQuestionImgAndT2B: 20,
+      },
     },
   },
-  large: {
-    withoutOptionImgs: {
-      default: 68,
-      withT2B: 53,
-      withQuestionImg: 46,
-      withQuestionImgAndT2B: 34,
+  [IBreakpoint.large]: {
+    small: 19,
+    medium: {
+      withoutOptionImgs: {
+        default: 44,
+        withT2B: 30,
+        withQuestionImg: 24,
+      },
+      withOptionImgs: {
+        default: 31,
+        withT2B: 17,
+        withQuestionImg: 10,
+      },
     },
-    withOptionImgs: {
-      default: 54,
-      withT2B: 40,
-      withQuestionImg: 35,
-      withQuestionImgAndT2B: 20,
+    large: {
+      withoutOptionImgs: {
+        default: 73,
+        withT2B: 60,
+        withQuestionImg: 53,
+        withQuestionImgAndT2B: 40,
+      },
+      withOptionImgs: {
+        default: 61,
+        withT2B: 45,
+        withQuestionImg: 40,
+        withQuestionImgAndT2B: 26,
+      },
     },
   },
 };

@@ -14,7 +14,7 @@ import {
   CHART_WIDTHS,
 } from "@/charts/constants/shared";
 import {
-  barMaxSymbolsCount,
+  BAR_MAX_SYMBOLS_COUNT,
   BAR_Y_AXIS_TEXT_X_GAP_S,
   BAR_Y_AXIS_TEXT_X_GAP_ML,
   T2B_TEXT_RIGHT_PADDING,
@@ -32,7 +32,10 @@ export const renderBarSmLegendItem = (
   const [_, ySizePx] = api.size!([1, 1]) as number[];
   const percents = api.value(0);
   const label = api.value(2);
-  const truncatedText = truncate(label as string, barMaxSymbolsCount.small);
+  const truncatedText = truncate(
+    label as string,
+    BAR_MAX_SYMBOLS_COUNT[breakpoint].small
+  );
   const percentsX =
     xAxisStartPx + CHART_WIDTHS[breakpoint].S + CHART_CONTAINER_X_GAP_S;
   const labelX = percentsX + MAX_PERCENTS_TEXT_WIDTH + BAR_Y_AXIS_TEXT_X_GAP_S;
@@ -73,7 +76,8 @@ export const renderBarMdLegendItem = (
   const [_, ySizePx] = api.size!([1, 1]) as number[];
   const percents = api.value(0);
   const label = api.value(2);
-  const maxSymbolsCount = barMaxSymbolsCount.medium.withoutOptionImgs;
+  const maxSymbolsCount =
+    BAR_MAX_SYMBOLS_COUNT[breakpoint].medium.withoutOptionImgs;
   const maxSymbols = !!questionImageUrl
     ? maxSymbolsCount.withQuestionImg
     : showT2B
@@ -133,7 +137,8 @@ export const renderBarLgLegendItem = (
   const isT2BAndQuestionImgShown = showT2B && !!questionImageUrl;
   const isOnlyT2BShown = showT2B && !questionImageUrl;
   const isOnlyImageShown = !!questionImageUrl && !showT2B;
-  const maxSymbolsCount = barMaxSymbolsCount.large.withoutOptionImgs;
+  const maxSymbolsCount =
+    BAR_MAX_SYMBOLS_COUNT[breakpoint].large.withoutOptionImgs;
   const maxSymbols = isT2BAndQuestionImgShown
     ? maxSymbolsCount.withQuestionImgAndT2B
     : isOnlyT2BShown

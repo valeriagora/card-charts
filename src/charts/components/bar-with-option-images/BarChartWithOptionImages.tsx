@@ -38,6 +38,7 @@ import {
 import { ChartContainer } from "@/charts/components/shared/ChartContainer";
 import {
   BAR_CHART_CONTAINER_PADDING_BOTTOM_ML,
+  BAR_HEIGHT,
   BAR_Y_GAP_WITH_OPTION_IMG_ML,
 } from "@/charts/constants/bar";
 
@@ -156,6 +157,7 @@ function BarChartWithOptionImages({
     areBase64ImagesReady,
     isQuestionImageReady,
   ]);
+
   const breakpoint = IBreakpoint[matches ? "large" : "medium"];
   const small = useMemo(
     () =>
@@ -183,7 +185,7 @@ function BarChartWithOptionImages({
   const lContainerHeight =
     BAR_CHART_CONTAINER_PADDING_BOTTOM_ML +
     BAR_Y_GAP_WITH_OPTION_IMG_ML * data.length +
-    16 * data.length;
+    BAR_HEIGHT * data.length;
   const largeContainerHeight =
     lContainerHeight > MIN_CHART_HEIGHT_L
       ? lContainerHeight

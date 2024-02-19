@@ -88,6 +88,7 @@ export const getQuestionImage = (
   breakpoint: IBreakpoint
 ): any => {
   const chartWidth = CHART_BOX_DIMENSIONS[breakpoint][size].width;
+  console.log("chartWidth", chartWidth);
   return [
     {
       type: RECTANGLE_WITH_RADIUS_CUSTOM_SHAPE,

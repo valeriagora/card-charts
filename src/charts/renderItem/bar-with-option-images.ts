@@ -17,7 +17,7 @@ import {
 import {
   BAR_CHART_CONTAINER_PADDING_BOTTOM_ML,
   BAR_Y_AXIS_TEXT_X_GAP_ML,
-  barMaxSymbolsCount,
+  BAR_MAX_SYMBOLS_COUNT,
   BAR_Y_AXISES_WIDTHS,
 } from "@/charts/constants/bar";
 import { CardSize, IBreakpoint } from "../types";
@@ -34,7 +34,8 @@ export const renderBarMdLegendItem = (
   const percents = api.value(0);
   const label = api.value(2);
   const optionImageUrl = api.value(3);
-  const maxSymbolsCount = barMaxSymbolsCount.medium.withOptionImgs;
+  const maxSymbolsCount =
+    BAR_MAX_SYMBOLS_COUNT[breakpoint].medium.withOptionImgs;
   const maxSymbols = !!questionImageUrl
     ? maxSymbolsCount.withQuestionImg
     : showT2B
@@ -125,7 +126,8 @@ export const renderBarLgLegendItem = (
   const isT2BAndQuestionImgShown = showT2B && !!questionImageUrl;
   const isOnlyT2BShown = showT2B && !questionImageUrl;
   const isOnlyImageShown = !!questionImageUrl && !showT2B;
-  const maxSymbolsCount = barMaxSymbolsCount.large.withOptionImgs;
+  const maxSymbolsCount =
+    BAR_MAX_SYMBOLS_COUNT[breakpoint].large.withOptionImgs;
   const maxSymbols = isT2BAndQuestionImgShown
     ? maxSymbolsCount.withQuestionImgAndT2B
     : isOnlyT2BShown

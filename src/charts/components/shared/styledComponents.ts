@@ -47,16 +47,16 @@ export const ChartContainerStyled = styled("div")<{
   breakpoint: IBreakpoint;
 }>(({ size, height, breakpoint }) => {
   const width: number = CHART_BOX_DIMENSIONS[breakpoint][size].width;
+  console.log("w", width, breakpoint, size);
   return {
     position: "relative",
-    width,
+    width: "100%",
     height:
       size === CardSize.large && height
         ? height > MIN_CHART_HEIGHT_L
           ? height
           : MIN_CHART_HEIGHT_L
         : CHART_BOX_DIMENSIONS[breakpoint][size].height,
-    border: "1px solid slateblue",
     display: "flex",
     alignItems: "center",
     boxSizing: "border-box",
